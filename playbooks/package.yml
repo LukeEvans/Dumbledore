@@ -1,0 +1,30 @@
+---
+
+- name: Package Project
+  hosts: localhost
+  user: root
+  gather_facts: false
+
+  vars:
+
+    # Parallelization Hints
+
+    # Roles
+
+    # Minimum Role instances
+
+    # Seed node ip
+   
+    # Redis address
+
+  tasks:
+
+    # Remove old distribution
+    - name: Remove old distribution
+      local_action: shell rm -r ../target/dumbledore-dist
+      ignore_errors: yes
+   
+    # Run dist
+    - name: Run sbt dist
+      local_action: shell cd .. && sbt dist
+
