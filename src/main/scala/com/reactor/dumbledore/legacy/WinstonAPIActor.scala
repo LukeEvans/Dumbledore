@@ -39,6 +39,14 @@ class WinstonAPIActor extends Actor with ActorLogging {
     	  case Failure(failure) => println(failure)  
     	}
       }
+      case "PUT" =>{
+    	var requestObj = new HttpRequest(HttpMethods.PUT, request.uri.withAuthority("v036.winstonapi.com", 0), Nil, request.entity)
+    	val response = (IO(Http) ? requestObj).mapTo[HttpResponse]
+    	response onComplete{
+    	  case Success(json) => origin ! ResponseContainer(json)
+    	  case Failure(failure) => println(failure)  
+    	}
+      }
       case "GET" =>{
     	var requestObj = new HttpRequest(HttpMethods.GET, request.uri.withAuthority("v036.winstonapi.com", 0))
     	val response = (IO(Http) ? requestObj).mapTo[HttpResponse]
