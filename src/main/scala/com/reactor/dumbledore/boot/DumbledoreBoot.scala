@@ -13,8 +13,13 @@ import akka.cluster.routing.ClusterRouterSettings
 import akka.io.IO
 import akka.kernel.Bootable
 import akka.cluster.ClusterEvent.ClusterDomainEvent
+import akka.pattern.ask
 import spray.can.Http
 import com.reactor.dumbledore.engine.EngineActor
+import spray.http.HttpRequest
+import spray.http._
+import HttpMethods._
+import com.reactor.dumbledore.legacy.WinstonAPIActor
 
 class DumbledoreBoot extends Bootable {
   val ip = IPTools.getPrivateIp(); 
@@ -28,9 +33,9 @@ class DumbledoreBoot extends Bootable {
   
   Cluster(system) registerOnMemberUp{
     
-    val engineActor = system.actorOf(Props(classOf[EngineActor]))
+    val winstonAPIActor = system.actorOf(Props(classOf[WinstonAPIActor]))
     
-	val service = system.actorOf(Props(classOf[ApiActor], engineActor).withRouter(	
+	val service = system.actorOf(Props(classOf[ApiActor], winstonAPIActor).withRouter(	
 	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	  ClusterRouterSettings(
    	  totalInstances = 100, maxInstancesPerNode = 1,
