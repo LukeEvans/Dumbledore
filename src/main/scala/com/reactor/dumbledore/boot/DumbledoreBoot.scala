@@ -15,7 +15,6 @@ import akka.kernel.Bootable
 import akka.cluster.ClusterEvent.ClusterDomainEvent
 import akka.pattern.ask
 import spray.can.Http
-import com.reactor.dumbledore.engine.EngineActor
 import spray.http.HttpRequest
 import spray.http._
 import HttpMethods._
