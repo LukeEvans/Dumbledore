@@ -1,2 +1,2 @@
 upstart_files:
-  - accio-frontend.conf
+  - dumbledore-frontend.conf
