@@ -3,6 +3,6 @@
 - name: Pause
   pause: seconds=60
   
-- name: name: Copy upstart scripts
+- name: Copy upstart scripts
   copy: src={{ item }} dest=/etc/init/
   with_items: upstart_files
