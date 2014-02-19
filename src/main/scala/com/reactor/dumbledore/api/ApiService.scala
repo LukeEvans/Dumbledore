@@ -1,6 +1,5 @@
 package com.reactor.dumbledore.api
 
-import scala.compat.Platform
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
 import com.fasterxml.jackson.core.JsonParseException
@@ -9,20 +8,35 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import akka.actor.Actor
+import akka.actor.ActorRef
+import akka.actor.ActorSystem
+import akka.actor.RepointableActorRef
+import akka.io.IO
+import spray.can.Http
+import akka.pattern.AskTimeoutException
+import akka.pattern.ask
 import akka.util.Timeout
+import spray.http._
+import spray.http.HttpMethods._
+import spray.http.HttpRequest
+import spray.http.StatusCodes.BadRequest
+import spray.http.StatusCodes.InternalServerError
+import spray.http.StatusCodes.RequestTimeout
 import spray.routing.ExceptionHandler
 import spray.routing.HttpService
 import spray.util.LoggingContext
-import spray.http.StatusCodes.{BadRequest, InternalServerError, RequestTimeout}
-import akka.pattern.AskTimeoutException
-import akka.actor.ActorRef
-import akka.actor.RepointableActorRef
+import spray.http.Uri.Host
+import com.reactor.dumbledore.messaging._
+import scala.util.Success
+import scala.util.Failure
+import com.reactor.dumbledore.messaging.request
 
 trait ApiService extends HttpService{
-  
-  val engineActor:ActorRef
+
+  val winstonAPIActor:ActorRef
   
   private implicit val timeout = Timeout(5 seconds);
+  private implicit val system = ActorSystem("DumbledoreClusterSystem-0-1")
   
   val mapper = new ObjectMapper() with ScalaObjectMapper
     mapper.registerModule(DefaultScalaModule)
@@ -31,9 +45,20 @@ trait ApiService extends HttpService{
   val apiRoute =
         path(""){
           get{
-        	  //getFromResource("web/index.html") // html index
             complete{
               "Dumbledore API 1.0"
+            }
+          }
+        }~
+        path(Rest ){ restPath =>
+          entity(as[HttpRequest]){
+            obj =>{
+            	complete{
+                  winstonAPIActor.ask(RequestContainer(obj))(10.seconds).mapTo[ResponseContainer] map{
+                    container =>
+                      container.response
+                  }
+                } 
             }
           }
         }~
@@ -49,12 +74,11 @@ trait ApiService extends HttpService{
           val resourcePath = "/usr/local/reducto-dist" + "/config/loader/" + path
           getFromFile(resourcePath)
         }
-
 }
 
-class ApiActor(engine:ActorRef) extends Actor with ApiService {
+class ApiActor(winston:ActorRef) extends Actor with ApiService {
 	def actorRefFactory = context
-	val engineActor = engine
+	val winstonAPIActor = winston
 	println("Starting API Service actor...")
   
 implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
