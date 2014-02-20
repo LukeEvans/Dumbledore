@@ -19,6 +19,7 @@ import spray.http.HttpRequest
 import spray.http._
 import HttpMethods._
 import com.reactor.dumbledore.legacy.WinstonAPIActor
+import akka.routing.RoundRobinRouter
 
 class DumbledoreBoot extends Bootable {
   val ip = IPTools.getPrivateIp(); 
@@ -32,7 +33,11 @@ class DumbledoreBoot extends Bootable {
   
   Cluster(system) registerOnMemberUp{
     
-    val winstonAPIActor = system.actorOf(Props(classOf[WinstonAPIActor]))
+    val winstonAPIActor = system.actorOf(Props(classOf[WinstonAPIActor]).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+			ClusterRouterSettings(
+			totalInstances = 100, maxInstancesPerNode = 1,
+			allowLocalRoutees = true, useRole = Some("dumbledore-frontend")))),
+			name = "splitMaster")
     
 	val service = system.actorOf(Props(classOf[ApiActor], winstonAPIActor).withRouter(	
 	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
