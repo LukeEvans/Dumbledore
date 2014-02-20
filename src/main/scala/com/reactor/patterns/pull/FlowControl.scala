@@ -31,7 +31,7 @@ class FlowControlArgs() {
   
 }
 
-case class FlowControlConfig(name:String, actorType:String, parallel:Int=1, role:String="reducto-frontend")
+case class FlowControlConfig(name:String, actorType:String, parallel:Int=1, role:String="dumbledore-frontend")
 
 object FlowControlFactory extends {
   def flowControlledActorForContext(context:ActorContext, flowConfig:FlowControlConfig, args:FlowControlArgs = new FlowControlArgs): ActorRef = {
