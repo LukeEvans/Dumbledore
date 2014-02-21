@@ -6,24 +6,30 @@ import com.reactor.dumbledore.messaging.ServiceRequest
 import akka.actor.ActorRef
 import com.reactor.dumbledore.utilities.Location
 import com.reactor.dumbledore.messaging.SingleDataContainer
+import scala.util.Random
 
 class ServiceActor(args:FlowControlArgs) extends FlowControlActor(args){
-
-  ready
+  var s = 0
+  override def preStart() = {
+    s = Random.nextInt
+    println("Service Actor Starting + " + s)
+  }
+  
+  ready()
   
   def receive = {
     case service:ServiceRequest => 
-      println("received service request")
+      println("received service request - " + s)
       handleServiceRequest(service, sender)
-      complete
+      complete()
     case a:Any => println("ServiceActor:Unknown message received - " + a)
   }
   
   def handleServiceRequest(request:ServiceRequest, origin:ActorRef){
     
     request.params match {
-      case Some(params) => origin ! SingleDataContainer(Service.getData(request.endpoint, params))
-      case None => origin ! SingleDataContainer(Service.getData(request.endpoint))
+      case Some(params) => reply(origin, SingleDataContainer(Service.getData(request.endpoint, params))) //origin ! SingleDataContainer(Service.getData(request.endpoint, params))
+      case None => reply(origin, SingleDataContainer(Service.getData(request.endpoint)))
     }   
   }
 }

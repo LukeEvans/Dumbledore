@@ -82,4 +82,9 @@ abstract class FlowControlActor(args:FlowControlArgs) extends Actor with ActorLo
 	def complete() {
 	  args.manager ! WorkComplete()
 	}
+	
+	// Return to sender from proper actor
+	def reply(origin:ActorRef, msg:Any) {
+	  origin.tell(msg, origin)
+	}
 }

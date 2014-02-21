@@ -19,6 +19,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import scala.util.Failure
 import scala.util.Success
+import scala.collection.mutable.ArrayBuffer
 
 class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(args) {
   
@@ -29,6 +30,8 @@ class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(a
 		  				  "nearby_places" -> "/yelp",
 		  				  "stocks" -> "/stocks")
   
+  val serviceActor = args.serviceActor		  				  
+		  				  
   ready
   override def preStart() = println("Creating NotificationManagerActor")
   override def postStop() = println("Stopping NotificationManagerActor")
@@ -44,23 +47,25 @@ class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(a
 	val params = getUserParams(creds)
     val data:ArrayList[ArrayList[Object]] = new ArrayList[ArrayList[Object]]
 	
-	val results = noteServices.map {
-	  service => (args.serviceActor ? ServiceRequest(service._2, Some(params))).mapTo[SingleDataContainer]
+	val results = new ArrayBuffer[Future[SingleDataContainer]]
+	
+	noteServices.map {
+	  service => 
+	    println("Send service request")
+	    results += (serviceActor ? ServiceRequest(service._2, Some(params))).mapTo[SingleDataContainer]
 	}
-	
-	val futureData = Future.sequence(results)
-	
-	futureData onComplete{
+		
+	Future.sequence(results) onComplete{
 	  case Success(dataList) => 
 	    println("futureData complete")
 	    dataList map {
 	    	dataContainer => data.add(dataContainer.data)
 	    }
-	    origin ! DataContainer(data)
-	    complete
+	    reply(origin, DataContainer(data))
+	    complete()
 	  case Failure(failure) => 
 	    println(failure)
-	    complete
+	    complete()
 	}
   }
   
