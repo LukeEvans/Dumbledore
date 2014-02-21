@@ -30,10 +30,13 @@ import com.reactor.dumbledore.messaging._
 import scala.util.Success
 import scala.util.Failure
 import com.reactor.dumbledore.messaging.request
+import com.reactor.dumbledore.messaging.NotificationRequest
+import scala.reflect.ClassTag
 
 trait ApiService extends HttpService{
 
   val winstonAPIActor:ActorRef
+  val notificationActor:ActorRef
   
   private implicit val timeout = Timeout(5 seconds);
   private implicit val system = ActorSystem("DumbledoreClusterSystem-0-1")
@@ -50,6 +53,40 @@ trait ApiService extends HttpService{
             }
           }
         }~
+        path("notifications"){
+         get{
+           respondWithMediaType(MediaTypes.`application/json`){
+             entity(as[HttpRequest]){
+               obj =>{
+                 val response = new Result()
+                 val request = new NotificationRequest(obj)
+                 complete{
+                   notificationActor.ask(NotificationRequestContainer(request))(15.seconds).mapTo[DataContainer] map{
+                     container =>
+                       response.finish(container.data, mapper)
+                   }
+                 }
+               }
+             }
+           }
+         }~
+         post{
+           respondWithMediaType(MediaTypes.`application/json`){
+             entity(as[String]){
+               obj =>{
+                 val response = new Result()
+                 val request = new NotificationRequest(obj)
+                 complete{
+                   notificationActor.ask(NotificationRequestContainer(request))(15.seconds).mapTo[DataContainer] map{
+                     container =>
+                       response.finish(container.data, mapper)
+                   }
+                 }
+               }
+             }
+           }
+         }
+        }
         path(Rest ){ restPath =>
           entity(as[HttpRequest]){
             obj =>{
@@ -76,9 +113,10 @@ trait ApiService extends HttpService{
         }
 }
 
-class ApiActor(winston:ActorRef) extends Actor with ApiService {
+class ApiActor(winston:ActorRef, notifications:ActorRef) extends Actor with ApiService {
 	def actorRefFactory = context
 	val winstonAPIActor = winston
+	val notificationActor = notifications
 	println("Starting API Service actor...")
   
 implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
