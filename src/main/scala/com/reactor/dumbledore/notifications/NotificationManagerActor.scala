@@ -20,9 +20,11 @@ import akka.util.Timeout
 import scala.util.Failure
 import scala.util.Success
 import scala.collection.mutable.ArrayBuffer
+import com.reactor.dumbledore.messaging.Test
+import scala.util.Random
 
 class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(args) {
-  
+  var id = 0
   val noteServices = Map("fb_messages" -> "/social/facebook/inbox",
 		  				  "fb_notifications" -> "/social/facebook/notifications",
 		  				  "fb_birthdays" -> "/social/facebook/birthdays",
@@ -30,14 +32,17 @@ class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(a
 		  				  "nearby_places" -> "/yelp",
 		  				  "stocks" -> "/stocks")
   
-  val serviceActor = args.serviceActor		  				  
-		  				  
+  val serviceActor = args.serviceActor	  				  
   ready
-  override def preStart() = println("Creating NotificationManagerActor")
+  override def preStart() = {id = Random.nextInt; println("Creating NotificationManagerActor - " + id)}
   override def postStop() = println("Stopping NotificationManagerActor")
 	
   override def receive = {
     case reqContainer:NotificationRequestContainer => manage(reqContainer.request, sender)
+    case test:Test => 
+      println("received: " + id)
+      Thread.sleep(3000)
+      complete()
     case a:Any => println("Unknown Message: " + a.toString)
   }
 	

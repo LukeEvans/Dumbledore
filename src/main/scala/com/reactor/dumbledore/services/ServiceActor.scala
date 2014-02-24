@@ -28,8 +28,8 @@ class ServiceActor(args:FlowControlArgs) extends FlowControlActor(args){
   def handleServiceRequest(request:ServiceRequest, origin:ActorRef){
     
     request.params match {
-      case Some(params) => reply(origin, SingleDataContainer(Service.getData(request.endpoint, params))) //origin ! SingleDataContainer(Service.getData(request.endpoint, params))
-      case None => reply(origin, SingleDataContainer(Service.getData(request.endpoint)))
+      case Some(params) => reply(origin, SingleDataContainer(Service.request(request.endpoint, Some(params)))) //origin ! SingleDataContainer(Service.getData(request.endpoint, params))
+      case None => reply(origin, SingleDataContainer(Service.request(request.endpoint, None)))
     }   
   }
 }

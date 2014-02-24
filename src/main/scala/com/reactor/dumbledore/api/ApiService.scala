@@ -53,6 +53,19 @@ trait ApiService extends HttpService{
             }
           }
         }~
+        path("test"){
+          entity(as[HttpRequest]){
+            obj =>{
+              for(i <- 0 to 3){
+                println("Test sent")
+              	notificationActor ! Test()
+              }
+              complete{
+                "ok"
+              }
+            }
+          }
+        }
         path("notifications"){
          get{
            respondWithMediaType(MediaTypes.`application/json`){
