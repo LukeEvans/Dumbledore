@@ -21,7 +21,7 @@ import com.reactor.patterns.pull.FlowControlArgs
 
 class WinstonAPIActor(args:FlowControlArgs) extends FlowControlActor(args){//extends Actor with ActorLogging {
   private implicit val system = ActorSystem("DumbledoreClusterSystem-0-1")
-  private implicit val timeout = Timeout(5 seconds)
+  private implicit val timeout = Timeout(30 seconds)
   
   ready
   

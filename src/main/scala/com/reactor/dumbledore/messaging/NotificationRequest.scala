@@ -11,6 +11,7 @@ class NotificationRequest extends Message {
   var udid:String = ""
   var lat:Double = 0.0
   var long:Double = 0.0
+  var time:RequestTime = null
   
   def this(request:HttpRequest){
     this()
@@ -19,6 +20,8 @@ class NotificationRequest extends Message {
       lat = request.uri.query.get("lat").get.toDouble
     if(request.uri.query.get("long") != None) 
       long = request.uri.query.get("long").get.toDouble
+    if(request.uri.query.get("timezone_offset") != None)
+      time = new RequestTime(request.uri.query.get("timezone_offset").get)
   }
   
   def this(request:String){
@@ -32,5 +35,7 @@ class NotificationRequest extends Message {
       lat = reqJson.get("lat").asDouble()
     if(reqJson.has("long"))
       long = reqJson.get("long").asDouble()
+    if(reqJson.has("timezone_offset"))
+      time = new RequestTime(reqJson.get("timezone_offset").asText())
   }
 }
