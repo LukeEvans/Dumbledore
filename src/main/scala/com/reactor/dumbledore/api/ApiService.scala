@@ -86,12 +86,12 @@ trait ApiService extends HttpService{
              }
            }
          }
-        }
+        }~
         path(Rest ){ restPath =>
           entity(as[HttpRequest]){
             obj =>{
             	complete{
-                  winstonAPIActor.ask(RequestContainer(obj))(10.seconds).mapTo[ResponseContainer] map{
+                  winstonAPIActor.ask(RequestContainer(obj))(30.seconds).mapTo[ResponseContainer] map{
                     container =>
                       container.response
                   }

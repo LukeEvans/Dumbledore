@@ -24,15 +24,12 @@ import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
 import scala.util.Random
+import com.github.nscala_time.time.Imports.DateTime
 
 
 class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(args) {
-  val noteServices = Map("fb_messages" -> "/social/facebook/inbox",
-		  				  "fb_notifications" -> "/social/facebook/notifications",
-		  				  "fb_birthdays" -> "/social/facebook/birthdays",
-		  				  "nearby_photos" -> "/instagram/location",
-		  				  "nearby_places" -> "/yelp",
-		  				  "stocks" -> "/stocks")	  				  
+
+  val notifManager = new NotificationManager
 
   ready
   override def preStart() = println("Creating NotificationManagerActor")
@@ -48,16 +45,21 @@ class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(a
   }
 	
   def manage(request:NotificationRequest, origin:ActorRef){ 
-    implicit val timeout = Timeout(10 seconds);
+    implicit val timeout = Timeout(30 seconds);
 	val creds = getUserCreds(request)
 	val params = getUserParams(creds)
     val data:ArrayList[ArrayList[Object]] = new ArrayList[ArrayList[Object]]
 	
 	val results = new ArrayBuffer[Future[SingleDataContainer]]
 	
-	noteServices.map {
-	  service => 
-	    results += (args.serviceActor ? ServiceRequest(service._2, Some(params))).mapTo[SingleDataContainer]
+	// Calculate offset
+	val time = DateTime.now
+	val ids = List("facebook_birthdays", "facebook_messages", "facebook_notifications", "nearby_photos",
+					"nearby_places", "stocks")
+	
+	notifManager.getServices(ids, time).map{
+	  service =>
+	    results += (args.serviceActor ? ServiceRequest(service, Some(params))).mapTo[SingleDataContainer]
 	}
 		
 	Future.sequence(results) onComplete{

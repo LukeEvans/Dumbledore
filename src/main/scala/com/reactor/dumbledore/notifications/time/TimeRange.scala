@@ -1,23 +1,24 @@
 package com.reactor.dumbledore.notifications.time
 
 import com.github.nscala_time.time.Imports._
+import scala.collection.mutable.Map
 
 class TimeRange {
-  private var startTime:DateTime = null
-  private var stopTime:DateTime = null
-  private var params:Map[String, String] = null
+  private var start:Time = null
+  private var stop:Time = null
+  private var params:Option[Map[String, String]] = null
   
-  def this(start:DateTime, stop:DateTime, params:Map[String, String]){
+  def this(start:Time, stop:Time, params:Option[Map[String, String]]){
     this()
-    this.startTime = start
-    this.stopTime = stop
+    this.start = start
+    this.stop = stop
     this.params = params
   }
   
-  def inRange(time:DateTime):Boolean = {
-    if(time.getDayOfWeek() == startTime.getDayOfWeek()){
-      if(startTime.getMinuteOfDay() < time.getMinuteOfDay()
-          && time.getMinuteOfDay() < stopTime.getMinuteOfDay()){
+  def inRange(time:Time):Boolean = {
+    if(time.day == start.day){
+      if(time.getTotalTime >= start.getTotalTime
+          && time.getTotalTime <= stop.getTotalTime){
         return true
       }
     }
