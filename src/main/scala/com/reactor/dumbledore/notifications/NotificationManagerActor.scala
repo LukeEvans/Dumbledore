@@ -1,10 +1,15 @@
 package com.reactor.dumbledore.notifications
 
 import java.util.ArrayList
+
+import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Map
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
+import scala.util.Failure
+import scala.util.Success
+
 import com.reactor.dumbledore.messaging.DataContainer
 import com.reactor.dumbledore.messaging.NotificationRequest
 import com.reactor.dumbledore.messaging.NotificationRequestContainer
@@ -14,14 +19,12 @@ import com.reactor.dumbledore.services.ServiceActor
 import com.reactor.patterns.pull.FlowControlActor
 import com.reactor.patterns.pull.FlowControlArgs
 import com.reactor.prime.user.UserCredentials
+
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
-import scala.util.Failure
-import scala.util.Success
-import scala.collection.mutable.ArrayBuffer
-import com.reactor.dumbledore.messaging.Test
 import scala.util.Random
+
 
 class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(args) {
   var id = 0
@@ -30,19 +33,14 @@ class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(a
 		  				  "fb_birthdays" -> "/social/facebook/birthdays",
 		  				  "nearby_photos" -> "/instagram/location",
 		  				  "nearby_places" -> "/yelp",
-		  				  "stocks" -> "/stocks")
-  
-  val serviceActor = args.serviceActor	  				  
+		  				  "stocks" -> "/stocks")	  				  
+
   ready
   override def preStart() = {id = Random.nextInt; println("Creating NotificationManagerActor - " + id)}
   override def postStop() = println("Stopping NotificationManagerActor")
 	
   override def receive = {
     case reqContainer:NotificationRequestContainer => manage(reqContainer.request, sender)
-    case test:Test => 
-      println("received: " + id)
-      Thread.sleep(3000)
-      complete()
     case a:Any => println("Unknown Message: " + a.toString)
   }
 	
@@ -57,7 +55,7 @@ class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(a
 	noteServices.map {
 	  service => 
 	    println("Send service request")
-	    results += (serviceActor ? ServiceRequest(service._2, Some(params))).mapTo[SingleDataContainer]
+	    results += (args.serviceActor ? ServiceRequest(service._2, Some(params))).mapTo[SingleDataContainer]
 	}
 		
 	Future.sequence(results) onComplete{
