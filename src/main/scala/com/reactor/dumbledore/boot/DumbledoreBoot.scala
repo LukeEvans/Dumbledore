@@ -22,6 +22,7 @@ import com.reactor.dumbledore.legacy.WinstonAPIActor
 import akka.routing.RoundRobinRouter
 import com.reactor.patterns.pull.FlowControlConfig
 import com.reactor.patterns.pull.FlowControlFactory
+import com.reactor.dumbledore.notifications.NotificationArgs
 
 class DumbledoreBoot extends Bootable {
   val ip = IPTools.getPrivateIp(); 
@@ -38,7 +39,13 @@ class DumbledoreBoot extends Bootable {
     val winstonAPIFlowConfig = FlowControlConfig(name="winstonAPIActor", actorType="com.reactor.dumbledore.legacy.WinstonAPIActor")    
     val winstonAPIActor = FlowControlFactory.flowControlledActorForSystem(system, winstonAPIFlowConfig)
     
-	val service = system.actorOf(Props(classOf[ApiActor], winstonAPIActor).withRouter(	
+    val serviceFlowConfig = FlowControlConfig(name="serviceActor", actorType="com.reactor.dumbledore.services.ServiceActor", parallel=6)    
+    val serviceActor = FlowControlFactory.flowControlledActorForSystem(system, serviceFlowConfig)
+    
+    val notificationFlowConfig = FlowControlConfig(name="notificationActor", actorType="com.reactor.dumbledore.notifications.NotificationManagerActor", parallel =3)    
+    val notificationActor = FlowControlFactory.flowControlledActorForSystem(system, notificationFlowConfig, NotificationArgs(serviceActor))
+    
+	val service = system.actorOf(Props(classOf[ApiActor], winstonAPIActor, notificationActor).withRouter(	
 	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	  ClusterRouterSettings(
    	  totalInstances = 100, maxInstancesPerNode = 1,

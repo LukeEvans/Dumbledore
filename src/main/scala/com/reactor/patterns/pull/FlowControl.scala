@@ -29,6 +29,11 @@ class FlowControlArgs() {
     flowConfig = conf
   }
   
+  def workerArgs(): FlowControlArgs = {
+  	val newArgs = new FlowControlArgs()
+  	newArgs.addMaster(master)
+  	return newArgs
+  } 
 }
 
 case class FlowControlConfig(name:String, actorType:String, parallel:Int=1, role:String="dumbledore-frontend")
@@ -54,10 +59,13 @@ class FlowControlMaster(config:FlowControlConfig, args:FlowControlArgs) extends 
 	  allowLocalRoutees = true, useRole = Some(config.role)))))
 }
 
-class FlowControlWorker(config:FlowControlConfig, args:FlowControlArgs) extends Worker(args.master) {
+class FlowControlWorker(config:FlowControlConfig, masterArgs:FlowControlArgs) extends Worker(masterArgs.master) {
   implicit val ec = context.dispatcher
  
   log.info("{} Worker staring", config.name)
+  
+  // Get the worker version of these args
+  val args = masterArgs.workerArgs() 
   
   args.addManager(self)
   args.addFlowConfig(config)
@@ -81,5 +89,10 @@ abstract class FlowControlActor(args:FlowControlArgs) extends Actor with ActorLo
     // Complete work
 	def complete() {
 	  args.manager ! WorkComplete()
+	}
+	
+	// Return to sender from proper actor
+	def reply(origin:ActorRef, msg:Any) {
+	  origin.tell(msg, origin)
 	}
 }
