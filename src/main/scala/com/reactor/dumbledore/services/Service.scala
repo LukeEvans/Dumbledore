@@ -21,7 +21,6 @@ object Service {
     }
   }
   
-  
   private def getData(url:String):ArrayList[Object] = {
     val response = Tools.fetchURL(url)
     
@@ -30,7 +29,6 @@ object Service {
       
     extractData(response.get("data"))
   }
-  
   
   private def extractData(jsonData:JsonNode):ArrayList[Object] = {
     if(jsonData == null)
@@ -43,7 +41,6 @@ object Service {
     
     data
   }
-  
   
   private def constructParams(parameters:Map[String, String]):String = {
     var paramString = ""    

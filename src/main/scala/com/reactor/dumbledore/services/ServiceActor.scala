@@ -9,20 +9,17 @@ import com.reactor.dumbledore.messaging.SingleDataContainer
 import scala.util.Random
 
 class ServiceActor(args:FlowControlArgs) extends FlowControlActor(args){
-  var s = 0
-  override def preStart() = {
-    s = Random.nextInt
-    println("Service Actor Starting + " + s)
-  }
-  
+
   ready()
+  override def preStart() = println("Service Actor Starting")  
   
   def receive = {
     case service:ServiceRequest => 
-      println("received service request - " + s)
       handleServiceRequest(service, sender)
       complete()
-    case a:Any => println("ServiceActor:Unknown message received - " + a)
+    case a:Any => 
+      println("ServiceActor:Unknown message received - " + a)
+      complete()
   }
   
   def handleServiceRequest(request:ServiceRequest, origin:ActorRef){

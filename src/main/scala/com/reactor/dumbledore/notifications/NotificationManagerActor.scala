@@ -27,7 +27,6 @@ import scala.util.Random
 
 
 class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(args) {
-  var id = 0
   val noteServices = Map("fb_messages" -> "/social/facebook/inbox",
 		  				  "fb_notifications" -> "/social/facebook/notifications",
 		  				  "fb_birthdays" -> "/social/facebook/birthdays",
@@ -36,12 +35,16 @@ class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(a
 		  				  "stocks" -> "/stocks")	  				  
 
   ready
-  override def preStart() = {id = Random.nextInt; println("Creating NotificationManagerActor - " + id)}
+  override def preStart() = println("Creating NotificationManagerActor")
   override def postStop() = println("Stopping NotificationManagerActor")
 	
   override def receive = {
-    case reqContainer:NotificationRequestContainer => manage(reqContainer.request, sender)
-    case a:Any => println("Unknown Message: " + a.toString)
+    case reqContainer:NotificationRequestContainer => 
+      manage(reqContainer.request, sender)
+      complete()
+    case a:Any => 
+      println("Unknown Message: " + a.toString)
+      complete()
   }
 	
   def manage(request:NotificationRequest, origin:ActorRef){ 
@@ -54,21 +57,18 @@ class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(a
 	
 	noteServices.map {
 	  service => 
-	    println("Send service request")
 	    results += (args.serviceActor ? ServiceRequest(service._2, Some(params))).mapTo[SingleDataContainer]
 	}
 		
 	Future.sequence(results) onComplete{
 	  case Success(dataList) => 
-	    println("futureData complete")
+
 	    dataList map {
 	    	dataContainer => data.add(dataContainer.data)
 	    }
 	    reply(origin, DataContainer(data))
-	    complete()
-	  case Failure(failure) => 
-	    println(failure)
-	    complete()
+	    
+	  case Failure(failure) => println(failure)
 	}
   }
   
