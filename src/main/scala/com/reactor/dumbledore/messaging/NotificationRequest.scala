@@ -1,8 +1,11 @@
 package com.reactor.dumbledore.messaging
 
-import com.fasterxml.jackson.databind.JsonNode
 import spray.http.HttpRequest
-import com.fasterxml.jackson.databind.ObjectMapper
+import scala.collection.mutable.ListBuffer
+import org.codehaus.jackson.map.ObjectMapper
+import org.codehaus.jackson.JsonNode
+import scala.collection.JavaConversions._
+import com.reactor.dumbledore.notifications.request.Request
 
 class NotificationRequest extends Message {
   @transient
@@ -12,6 +15,8 @@ class NotificationRequest extends Message {
   var lat:Double = 0.0
   var long:Double = 0.0
   var time:RequestTime = null
+  var dev:Boolean = false
+  var serviceRequest:ListBuffer[Request] = null
   
   def this(request:HttpRequest){
     this()
@@ -22,6 +27,8 @@ class NotificationRequest extends Message {
       long = request.uri.query.get("long").get.toDouble
     if(request.uri.query.get("timezone_offset") != None)
       time = new RequestTime(request.uri.query.get("timezone_offset").get)
+    if(request.uri.query.get("dev") != None)
+      dev = request.uri.query.get("dev").get.toBoolean
   }
   
   def this(request:String){
@@ -37,5 +44,18 @@ class NotificationRequest extends Message {
       long = reqJson.get("long").asDouble()
     if(reqJson.has("timezone_offset"))
       time = new RequestTime(reqJson.get("timezone_offset").asText())
+    if(reqJson.has("dev"))
+      dev = reqJson.get("dev").asBoolean()
+    if(reqJson.has("service_request"))
+      serviceRequest = getServiceRequest(reqJson.get("service_request"))
+    println(serviceRequest)
+  }
+  
+  def getServiceRequest(nodeList:JsonNode):ListBuffer[Request] = {
+    val serviceRequests = ListBuffer[Request]()
+    
+    for(node <- nodeList)
+    	serviceRequests.add(new Request(node))
+    serviceRequests
   }
 }

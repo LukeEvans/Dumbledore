@@ -5,32 +5,46 @@ import scala.collection.mutable.Map
 import com.github.nscala_time.time.Imports._
 
 case class NotificationConfig(notifEndpoint:String) {
-  val times:ArrayBuffer[TimeRange] = new ArrayBuffer[TimeRange]
+  val timeRanges:ArrayBuffer[TimeRange] = new ArrayBuffer[TimeRange]
   
-  def addTimeRange(start:Time, stop:Time, params:Option[Map[String, String]]):NotificationConfig ={
-    times += new TimeRange(start, stop, params) 
+  def addTimeRange(start:Date, stop:Date, params:Option[Map[String, String]]):NotificationConfig ={
+    timeRanges += new TimeRange(start, stop, params) 
     this
   }
   
   def add247(params:Option[Map[String, String]]):NotificationConfig = {
-    addTimeRange(Time(0,0,0), Time(23,59,0), params)
-    addTimeRange(Time(0,0,1), Time(23,59,1), params)
-    addTimeRange(Time(0,0,2), Time(23,59,2), params)
-    addTimeRange(Time(0,0,3), Time(23,59,3), params)
-    addTimeRange(Time(0,0,4), Time(23,59,4), params)
-    addTimeRange(Time(0,0,5), Time(23,59,5), params)
-    addTimeRange(Time(0,0,6), Time(23,59,6), params)
+    addRange(Time(0,0), Time(23,59), 0, 6, params)
     this
   }
   
-  def isValidTime(nowTime:Time):Boolean ={
-    times.map{
-      time =>{
-    	if(time.inRange(nowTime)){
+  def addRange(startTime:Time, stopTime:Time, start:Int, 
+      stop:Int, params:Option[Map[String, String]]):NotificationConfig ={
+    
+    for(i <- start to stop){
+     addTimeRange(Date(startTime, i), Date(stopTime, i), params) 
+    }
+    this
+  }
+  
+  def isValidTime(nowDate:Date):Boolean ={
+    timeRanges.map{
+      timeRange =>{
+    	if(nowDate.isInRange(timeRange)){
     	  return true
     	}
       }
     }
     false
+  }
+  
+  def getRangeAction(nowDate:Date):Option[TimeRange] = {
+    timeRanges.map{
+      timeRange =>{
+        if(nowDate.isInRange(timeRange)){
+          return Some(timeRange)
+        }
+      }
+    }
+    None
   }
 }

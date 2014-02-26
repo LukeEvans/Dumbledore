@@ -5,6 +5,7 @@ import spray.http.HttpResponse
 import com.reactor.dumbledore.utilities.Location
 import java.util.ArrayList
 import scala.collection.mutable.Map
+import scala.collection.mutable.ListBuffer
 
 class Message extends Serializable
 
@@ -17,7 +18,7 @@ case class ResponseContainer(response:HttpResponse) extends request
 
 case class ForwardRequest(request:HttpRequest, path:String) extends request
 
-case class ServiceRequest(endpoint:String, params:Option[Map[String, String]]) extends request
+case class ServiceRequest(endpoint:String, ids:ListBuffer[String], params:Option[Map[String, String]]) extends request
 
 case class DataContainer(data:ArrayList[ArrayList[Object]]) extends response
 
