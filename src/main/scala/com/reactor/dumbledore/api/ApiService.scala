@@ -10,7 +10,6 @@ import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import akka.actor.Actor
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
-import akka.actor.RepointableActorRef
 import akka.io.IO
 import spray.can.Http
 import akka.pattern.AskTimeoutException
