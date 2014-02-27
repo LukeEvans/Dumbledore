@@ -48,7 +48,6 @@ class NotificationRequest extends Message {
       dev = reqJson.get("dev").asBoolean()
     if(reqJson.has("service_request"))
       serviceRequest = getServiceRequest(reqJson.get("service_request"))
-    println(serviceRequest)
   }
   
   def getServiceRequest(nodeList:JsonNode):ListBuffer[Request] = {

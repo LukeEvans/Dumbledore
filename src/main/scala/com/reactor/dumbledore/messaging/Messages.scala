@@ -12,7 +12,7 @@ class Message extends Serializable
 trait request
 trait response
 
-case class RequestContainer(request:HttpRequest) extends request
+case class RequestContainer(request:HttpRequest, urlBase:String) extends request
 
 case class ResponseContainer(response:HttpResponse) extends request
 

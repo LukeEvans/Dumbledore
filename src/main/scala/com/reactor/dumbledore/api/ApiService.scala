@@ -31,6 +31,7 @@ import scala.util.Failure
 import com.reactor.dumbledore.messaging.request
 import com.reactor.dumbledore.messaging.NotificationRequest
 import scala.reflect.ClassTag
+import com.reactor.dumbledore.prime.requests.ChannelRequest
 
 trait ApiService extends HttpService{
 
@@ -86,11 +87,35 @@ trait ApiService extends HttpService{
            }
          }
         }~
+        path("channel"){
+          entity(as[HttpRequest]){
+            obj =>{
+              complete{
+            	winstonAPIActor.ask(RequestContainer(obj, "dev.winstonapi.com"))(30.seconds).mapTo[ResponseContainer] map{
+            	  container =>
+                    container.response
+                }
+              }
+            }
+          }  
+        }~
+        path("channel"/"sources"){
+          entity(as[HttpRequest]){
+            obj =>{
+              complete{
+            	winstonAPIActor.ask(RequestContainer(obj, "dev.winstonapi.com"))(30.seconds).mapTo[ResponseContainer] map{
+            	  container =>
+                    container.response
+                }
+              }
+            }
+          }      
+        }~
         path(Rest ){ restPath =>
           entity(as[HttpRequest]){
             obj =>{
             	complete{
-                  winstonAPIActor.ask(RequestContainer(obj))(30.seconds).mapTo[ResponseContainer] map{
+                  winstonAPIActor.ask(RequestContainer(obj, "v036.winstonapi.com"))(30.seconds).mapTo[ResponseContainer] map{
                     container =>
                       container.response
                   }
