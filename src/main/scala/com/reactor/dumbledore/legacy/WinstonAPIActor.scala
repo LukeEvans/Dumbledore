@@ -27,17 +27,17 @@ class WinstonAPIActor(args:FlowControlArgs) extends FlowControlActor(args){//ext
   
   def receive ={
     case req:RequestContainer => 
-      processRequest(req.request, sender)
+      processRequest(req.request, req.urlBase, sender)
       complete
     case a:Any =>
       println("Unsupported message received: " + a.toString)
       complete
   }
   
-  def processRequest(request:HttpRequest, origin:ActorRef){
+  def processRequest(request:HttpRequest, url:String, origin:ActorRef){
     request.method.value match{
       case "POST" =>{
-    	var requestObj = new HttpRequest(HttpMethods.POST, request.uri.withAuthority("v036.winstonapi.com", 0), Nil, request.entity)
+    	var requestObj = new HttpRequest(HttpMethods.POST, request.uri.withAuthority(url, 0), Nil, request.entity)
     	val response = (IO(Http) ? requestObj).mapTo[HttpResponse]
     	response onComplete{
     	  case Success(json) => 
@@ -47,7 +47,7 @@ class WinstonAPIActor(args:FlowControlArgs) extends FlowControlActor(args){//ext
     	}
       }
       case "PUT" =>{
-    	var requestObj = new HttpRequest(HttpMethods.PUT, request.uri.withAuthority("v036.winstonapi.com", 0), Nil, request.entity)
+    	var requestObj = new HttpRequest(HttpMethods.PUT, request.uri.withAuthority(url, 0), Nil, request.entity)
     	val response = (IO(Http) ? requestObj).mapTo[HttpResponse]
     	response onComplete{
     	  case Success(json) => 
@@ -57,7 +57,7 @@ class WinstonAPIActor(args:FlowControlArgs) extends FlowControlActor(args){//ext
     	}
       }
       case "GET" =>{
-    	var requestObj = new HttpRequest(HttpMethods.GET, request.uri.withAuthority("v036.winstonapi.com", 0))
+    	var requestObj = new HttpRequest(HttpMethods.GET, request.uri.withAuthority(url, 0))
     	val response = (IO(Http) ? requestObj).mapTo[HttpResponse]
     	response onComplete{
     	  case Success(json) => 
