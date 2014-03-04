@@ -16,8 +16,8 @@ import com.mongodb.casbah.Imports._
 import com.reactor.dumbledore.prime.data.story.KCStory
 
 class ChannelsActor(args:FlowControlArgs) extends FlowControlActor(args){
-  val NEWS_DB = "reactor-news"
-  val mongo = new MongoDB
+  private val NEWS_DB = "reactor-news"
+  private val mongo = new MongoDB
   ready
   
   
@@ -29,7 +29,7 @@ class ChannelsActor(args:FlowControlArgs) extends FlowControlActor(args){
     case a:Any => println("Unknown request - " + a)
   }
   
-  
+  /** Get list of channel feeds available from mongo */
   def getChannelFeeds(origin:ActorRef){
     val list = mongo.findAll("reactor-news-feeds")
     val jsonList = ListBuffer[JsonNode]()
@@ -43,6 +43,7 @@ class ChannelsActor(args:FlowControlArgs) extends FlowControlActor(args){
     complete()
   }
   
+  /** Get Nested array story sets */
   def getChannelData(channelData:ListBuffer[ChannelRequestData], origin:ActorRef){
     val dataArray = ListBuffer[ListBuffer[Object]]()
     
@@ -63,8 +64,11 @@ class ChannelsActor(args:FlowControlArgs) extends FlowControlActor(args){
     
     reply(origin, dataArray)
   }
-
-  def queryMongo(data:ChannelRequestData):ListBuffer[JsonNode] = {
+  
+  
+  
+  /** Query mongo for list of stories */
+  private def queryMongo(data:ChannelRequestData):ListBuffer[JsonNode] = {
     val query = buildQuery(data.feed_id, data.sources)
     val dataObjects = mongo.find(query, NEWS_DB, 10)
     
@@ -75,7 +79,8 @@ class ChannelsActor(args:FlowControlArgs) extends FlowControlActor(args){
     dataNodes
   }
   
-  def buildQuery(feedID:String, excluded:ListBuffer[String]):DBObject = {
+  /** Build News Set mongo query */
+  private def buildQuery(feedID:String, excluded:ListBuffer[String]):DBObject = {
 	("source_category" $eq feedID) ++ ("source_id" $ne excluded) ++ ("valid" $eq true)
   }
 }
