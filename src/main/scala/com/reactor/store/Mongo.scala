@@ -1,11 +1,10 @@
 package com.reactor.store
 
 import scala.collection.mutable.ListBuffer
+
 import com.mongodb.BasicDBObject
-import com.mongodb.DBObject
-import com.mongodb.casbah.MongoURI
-import com.mongodb.casbah.query.dsl.QueryExpressionObject
 import com.mongodb.casbah.Imports._
+import com.mongodb.casbah.MongoURI
 
 
 class MongoDB {
@@ -14,7 +13,7 @@ class MongoDB {
 	
 	def find(queryObj:DBObject, coll:String, limit:Int):ListBuffer[Object] = {
 	  val collect = db.right.get.getCollection(coll)
-	  val cursor = collect.find(queryObj).limit(limit)  
+	  val cursor = collect.find(queryObj).limit(limit).sort(MongoDBObject("date" -> -1))
 	  
 	  val dataList = ListBuffer[Object]()
 	  while(cursor.hasNext()){
