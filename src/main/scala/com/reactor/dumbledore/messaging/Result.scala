@@ -16,10 +16,3 @@ class Result {
 	  mapper.writeValueAsString(this)
 	}
 }
-
-//class BasicResult{
-//  var status = "OK"
-//  var response_type:String = null
-//  var response_time:Double = 0
-//  var data
-//}

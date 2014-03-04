@@ -6,6 +6,9 @@ import com.reactor.dumbledore.messaging.Feeds
 import akka.actor.ActorRef
 import com.reactor.store.MongoDB
 import scala.collection.mutable.ListBuffer
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.concurrent.duration._
 import com.fasterxml.jackson.databind.JsonNode
 import com.reactor.dumbledore.utilities.Tools
 import com.reactor.dumbledore.messaging.FeedData
@@ -14,18 +17,25 @@ import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.DBObject
 import com.mongodb.casbah.Imports._
 import com.reactor.dumbledore.prime.data.story.KCStory
+import com.reactor.dumbledore.messaging.SingleDataContainer
+import com.reactor.patterns.pull.FlowControlArgs
+import akka.pattern.ask
+import akka.util.Timeout
+import scala.util.Failure
+import scala.util.Success
+import scala.concurrent.Await
+import com.reactor.dumbledore.utilities.Timer
 
-class ChannelsActor(args:FlowControlArgs) extends FlowControlActor(args){
+class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
   private val NEWS_DB = "reactor-news"
   private val mongo = new MongoDB
+  val singleActor = args.singleActor//new SingleChannelActor(new FlowControlArgs())
   ready
-  
-  
   override def preStart() = println("channels actor starting")
   
   override def receive = {
     case Feeds() => getChannelFeeds(sender)
-    case FeedData(data) => getChannelData(data, sender)
+    case FeedData(data) => getChannelData(data, singleActor, sender)
     case a:Any => println("Unknown request - " + a)
   }
   
@@ -44,43 +54,29 @@ class ChannelsActor(args:FlowControlArgs) extends FlowControlActor(args){
   }
   
   /** Get Nested array story sets */
-  def getChannelData(channelData:ListBuffer[ChannelRequestData], origin:ActorRef){
+  def getChannelData(channelData:ListBuffer[ChannelRequestData], singleActor:ActorRef, origin:ActorRef){
+    implicit val timeout = Timeout(30 seconds)
     val dataArray = ListBuffer[ListBuffer[Object]]()
     
+    val dataList = ListBuffer[Future[ListBuffer[JsonNode]]]()
     channelData.map{
-      data => 
-        val dataList = ListBuffer[Object]()
-        // build query
-        queryMongo(data) map{
-          obj =>{
-            // get stories and populate set
-            val story = new KCStory(obj)
-            // add story set to List
-            dataList += story
-          }
-        }
-        dataArray += dataList
+      data => dataList += (singleActor ? data).mapTo[ListBuffer[JsonNode]]
     }
     
+    val list = ListBuffer[Object]()
+    val data = Await.result(Future.sequence(dataList), atMost = 3 seconds)
+    data map{
+      d => 
+        list.clear     
+        d map{
+          node =>
+            val story = new KCStory(node)
+            list += story
+      }
+      dataArray += list
+    }
+
     reply(origin, dataArray)
-  }
-  
-  
-  
-  /** Query mongo for list of stories */
-  private def queryMongo(data:ChannelRequestData):ListBuffer[JsonNode] = {
-    val query = buildQuery(data.feed_id, data.sources)
-    val dataObjects = mongo.find(query, NEWS_DB, 10)
-    
-    val dataNodes = ListBuffer[JsonNode]()
-    dataObjects map{
-      data => dataNodes += Tools.objectToJsonNode(data)
-    }
-    dataNodes
-  }
-  
-  /** Build News Set mongo query */
-  private def buildQuery(feedID:String, excluded:ListBuffer[String]):DBObject = {
-	("source_category" $eq feedID) ++ ("source_id" $ne excluded) ++ ("valid" $eq true)
+    complete()
   }
 }
