@@ -31,12 +31,14 @@ import scala.util.Failure
 import com.reactor.dumbledore.messaging.request
 import com.reactor.dumbledore.messaging.NotificationRequest
 import scala.reflect.ClassTag
-import com.reactor.dumbledore.prime.requests.ChannelRequest
+import scala.collection.mutable.ListBuffer
+import com.fasterxml.jackson.databind.JsonNode
 
 trait ApiService extends HttpService{
 
   val winstonAPIActor:ActorRef
   val notificationActor:ActorRef
+  val channelsActor:ActorRef
   
   private implicit val timeout = Timeout(5 seconds);
   private implicit val system = ActorSystem("DumbledoreClusterSystem-0-1")
@@ -99,6 +101,34 @@ trait ApiService extends HttpService{
             }
           }  
         }~
+        path("channel"/"feeds"){
+           respondWithMediaType(MediaTypes.`application/json`){
+             val response = new Result()
+
+             complete{
+            	channelsActor.ask(Feeds())(10.seconds).mapTo[ListBuffer[JsonNode]] map{
+            	  data =>
+            	    response.finish(data, mapper)
+            	}
+             }
+           }
+        }~
+        path("channel"/"feed"){
+           respondWithMediaType(MediaTypes.`application/json`){
+             entity(as[String]){
+               obj =>
+                 val response = new Result()
+                 val request = new ChannelRequest(obj)
+                 
+                 complete{
+                   channelsActor.ask(FeedData(request.channelList))(10.seconds).mapTo[ListBuffer[ListBuffer[Object]]] map{
+            	     data =>
+            	       response.finish(data, mapper)
+            	   }
+                 }
+             }
+           }
+        }~
         path("channel"/"sources"){
           entity(as[HttpRequest]){
             obj =>{
@@ -137,10 +167,11 @@ trait ApiService extends HttpService{
         }
 }
 
-class ApiActor(winston:ActorRef, notifications:ActorRef) extends Actor with ApiService {
+class ApiActor(winston:ActorRef, notifications:ActorRef, channels:ActorRef) extends Actor with ApiService {
 	def actorRefFactory = context
 	val winstonAPIActor = winston
 	val notificationActor = notifications
+	val channelsActor = channels
 	println("Starting API Service actor...")
   
 implicit def ReductoExceptionHandler(implicit log: LoggingContext) =

@@ -25,3 +25,7 @@ case class DataContainer(data:ArrayList[ArrayList[Object]]) extends response
 case class SingleDataContainer(data:ArrayList[Object]) extends response
 
 case class NotificationRequestContainer(request:NotificationRequest) extends request
+
+case class FeedData(data:ListBuffer[ChannelRequestData]) extends request
+
+case class Feeds() extends request
