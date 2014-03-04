@@ -45,7 +45,10 @@ class DumbledoreBoot extends Bootable {
     val notificationFlowConfig = FlowControlConfig(name="notificationActor", actorType="com.reactor.dumbledore.notifications.NotificationManagerActor", parallel =3)    
     val notificationActor = FlowControlFactory.flowControlledActorForSystem(system, notificationFlowConfig, NotificationArgs(serviceActor))
     
-	val service = system.actorOf(Props(classOf[ApiActor], winstonAPIActor, notificationActor).withRouter(	
+    val channelsFlowConfig = FlowControlConfig(name="channelsActor", actorType="com.reactor.dumbledore.prime.channels.ChannelsActor")    
+    val channelsActor = FlowControlFactory.flowControlledActorForSystem(system, channelsFlowConfig)
+    
+	val service = system.actorOf(Props(classOf[ApiActor], winstonAPIActor, notificationActor, channelsActor).withRouter(	
 	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
 	  ClusterRouterSettings(
    	  totalInstances = 100, maxInstancesPerNode = 1,

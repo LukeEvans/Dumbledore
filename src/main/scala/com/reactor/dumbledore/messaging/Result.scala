@@ -7,12 +7,19 @@ class Result {
 	var status ="OK"
 	var response_type:String = null
 	var response_time:Double = 0
-	var data:ArrayList[ArrayList[Object]] = new ArrayList[ArrayList[Object]]
+	var data:Object = null
 	private var start = System.currentTimeMillis()
 	
-	def finish(data: ArrayList[ArrayList[Object]], mapper:ObjectMapper):String = {
+	def finish(data:Object, mapper:ObjectMapper):String = {
 	  this.data = data
 	  response_time = System.currentTimeMillis() - start
 	  mapper.writeValueAsString(this)
 	}
 }
+
+//class BasicResult{
+//  var status = "OK"
+//  var response_type:String = null
+//  var response_time:Double = 0
+//  var data
+//}
