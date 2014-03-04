@@ -8,9 +8,9 @@ Dumbledore - Prime API 2.0
 
 
 
-#####Notification Cards
+####Notification Cards
 
-######Endpoint: /notifications
+#####Endpoint: /notifications
 ######Request Type: POST
 ######Request Parameters: 
  - timezone_offset: Timezone Offset value
@@ -84,7 +84,40 @@ https://docs.google.com/a/winstonnetwork.com/spreadsheet/ccc?key=0AiBnAs7_nHDHdH
  - Traffic
    - drive times *Not yet implemented
 
-   
-#####Legacy Spring Endpoints
+#### Prime Channel Feed(s)
 
-######* All existing endpoints
+#####Endpoint: /channel/feeds
+######Description: Returns available topic feed channels
+######Request Type: GET/POST
+######Request Parameters: None
+
+
+#####Endpoint: /channel/feed
+######Description: Returns latest 10 stories from feed excluding specified source ids
+######Request Type: POST
+######Request Parameters:
+ - data: Array of feed data 
+   - feed_id: Feed ID
+   - sources: Array of source IDs to exclude from feed set
+
+######Sample Request:
+```json
+{
+ "data":[
+   {
+     "feed_id": "Politics",
+     "sources":[
+       "atlantic"
+     ]
+   },
+   {
+     "feed_id":"Technology",
+     "sources":[]
+   }
+ ]
+}
+```
+   
+####Legacy Spring Endpoints
+
+#####* All existing endpoints
