@@ -64,7 +64,10 @@ class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(a
 	  case Success(dataList) => 
 
 	    dataList map {
-	    	dataContainer => data.add(dataContainer.data)
+	    	dataContainer => 
+	    	  val dataReceived = dataContainer.data
+	    	  if(dataReceived != null)
+	    		  data.add(dataReceived)
 	    }
 	    reply(origin, DataContainer(data))
 	    
