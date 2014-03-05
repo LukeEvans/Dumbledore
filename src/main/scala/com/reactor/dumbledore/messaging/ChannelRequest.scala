@@ -7,7 +7,7 @@ import scala.collection.JavaConversions._
 
 case class ChannelRequestData(feed_id:String, sources:ListBuffer[String])
 
-class ChannelRequest {
+class FeedRequest {
   @transient
   val mapper = new ObjectMapper()
   
@@ -44,5 +44,28 @@ class ChannelRequest {
     }
     list
   }
+}
+
+class ChannelRequest{
+  @transient
+  val mapper = new ObjectMapper()
+  var channelIDs:ListBuffer[String] = null
+  
+  def this(request:String){
+	this()
+    var cleanRequest = request.replaceAll("\\r", " ").replaceAll("\\n", " ").trim
+    val reqJson = mapper.readTree(cleanRequest);
+	if(reqJson.has("data"))
+	  channelIDs = getChannelIds(reqJson.get("data"))
+  }
+  
+  private def getChannelIds(node:JsonNode):ListBuffer[String] = {
+    val idList = ListBuffer[String]()
+    
+    node map (nodeString => idList += nodeString.asText())
+
+    idList
+  }
+  
 }
 

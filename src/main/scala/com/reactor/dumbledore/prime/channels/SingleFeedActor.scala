@@ -16,8 +16,9 @@ import com.reactor.store.MongoDB
 import akka.actor.ActorRef
 import scala.util.Success
 import scala.util.Failure
+import com.reactor.dumbledore.data.ListSetNode
 
-class SingleChannelActor(args:FlowControlArgs) extends FlowControlActor(args) {
+class SingleFeedActor(args:FlowControlArgs) extends FlowControlActor(args) {
   private val NEWS_DB = "reactor-news"
   private val mongo = new MongoDB
   ready
@@ -33,7 +34,7 @@ class SingleChannelActor(args:FlowControlArgs) extends FlowControlActor(args) {
   }
   
   /** Query mongo for list of stories */
-  private def queryMongo(data:ChannelRequestData):ListBuffer[JsonNode] = {
+  private def queryMongo(data:ChannelRequestData):ListSetNode = {
     val query = buildQuery(data.feed_id, data.sources)
     val dataObjects = mongo.find(query, NEWS_DB, 10)
     val futureNodes = ListBuffer[Future[JsonNode]]()
@@ -42,7 +43,7 @@ class SingleChannelActor(args:FlowControlArgs) extends FlowControlActor(args) {
       data => futureNodes += future{ Tools.objectToJsonNode(data)}//Tools.objectToJsonNode(data)
     }
     
-    Await.result(Future.sequence(futureNodes), atMost = 1 seconds)
+    ListSetNode(data.feed_id, Await.result(Future.sequence(futureNodes), atMost = 1 seconds))
   }
   
   /** Build News Set mongo query */

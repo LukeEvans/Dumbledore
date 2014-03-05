@@ -33,6 +33,9 @@ import com.reactor.dumbledore.messaging.NotificationRequest
 import scala.reflect.ClassTag
 import scala.collection.mutable.ListBuffer
 import com.fasterxml.jackson.databind.JsonNode
+import com.reactor.dumbledore.data.ListSet
+import spray.caching.{LruCache, Cache}
+import scala.concurrent.Future
 
 trait ApiService extends HttpService{
 
@@ -47,6 +50,11 @@ trait ApiService extends HttpService{
     mapper.registerModule(DefaultScalaModule)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
   
+//  val cache: Cache[Double] = LruCache()
+//  def cachedOp[T](key: T): Future[Double] = cache(key) {
+//	 return 0.0
+//  }  
+    
   val apiRoute =
         path(""){
           get{
@@ -63,7 +71,7 @@ trait ApiService extends HttpService{
                  val response = new Result()
                  val request = new NotificationRequest(obj)
                  complete{
-                   notificationActor.ask(NotificationRequestContainer(request))(15.seconds).mapTo[DataContainer] map{
+                   notificationActor.ask(NotificationRequestContainer(request))(15.seconds).mapTo[DataSetContainer] map{
                      container =>
                        response.finish(container.data, mapper)
                    }
@@ -79,7 +87,7 @@ trait ApiService extends HttpService{
                  val response = new Result()
                  val request = new NotificationRequest(obj)
                  complete{
-                   notificationActor.ask(NotificationRequestContainer(request))(15.seconds).mapTo[DataContainer] map{
+                   notificationActor.ask(NotificationRequestContainer(request))(15.seconds).mapTo[DataSetContainer] map{
                      container =>
                        response.finish(container.data, mapper)
                    }
@@ -104,7 +112,7 @@ trait ApiService extends HttpService{
         path("channel"/"feeds"){
            respondWithMediaType(MediaTypes.`application/json`){
              val response = new Result()
-
+             
              complete{
             	channelsActor.ask(Feeds())(10.seconds).mapTo[ListBuffer[JsonNode]] map{
             	  data =>
@@ -118,10 +126,10 @@ trait ApiService extends HttpService{
              entity(as[String]){
                obj =>
                  val response = new Result()
-                 val request = new ChannelRequest(obj)
+                 val request = new FeedRequest(obj)
                  
                  complete{
-                   channelsActor.ask(FeedData(request.channelList))(10.seconds).mapTo[ListBuffer[ListBuffer[Object]]] map{
+                   channelsActor.ask(FeedData(request.channelList))(10.seconds).mapTo[ListBuffer[ListSet]] map{
             	     data =>
             	       response.finish(data, mapper)
             	   }

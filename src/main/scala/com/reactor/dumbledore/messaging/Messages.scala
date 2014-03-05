@@ -6,6 +6,7 @@ import com.reactor.dumbledore.utilities.Location
 import java.util.ArrayList
 import scala.collection.mutable.Map
 import scala.collection.mutable.ListBuffer
+import com.reactor.dumbledore.data.ListSet
 
 class Message extends Serializable
 
@@ -18,11 +19,15 @@ case class ResponseContainer(response:HttpResponse) extends request
 
 case class ForwardRequest(request:HttpRequest, path:String) extends request
 
-case class ServiceRequest(endpoint:String, ids:ListBuffer[String], params:Option[Map[String, String]]) extends request
+case class ServiceRequest(service_id:String, endpoint:String, ids:ListBuffer[String], params:Option[Map[String, String]]) extends request
 
 case class DataContainer(data:ArrayList[ArrayList[Object]]) extends response
 
+case class DataSetContainer(data:ListBuffer[ListSet]) extends response
+
 case class SingleDataContainer(data:ArrayList[Object]) extends response
+
+case class ArraySetContainer(data:ListSet) extends response
 
 case class NotificationRequestContainer(request:NotificationRequest) extends request
 

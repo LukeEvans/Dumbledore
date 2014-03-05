@@ -7,22 +7,23 @@ import com.fasterxml.jackson.databind.JsonNode
 import scala.collection.JavaConversions._
 import scala.collection.mutable.Map
 import scala.collection.mutable.ListBuffer
+import com.reactor.dumbledore.data.ListSet
 
 object Service {
   private val baseUrl = "http://v036.winstonapi.com"  
 
-  def request(endpoint:String, parameters:Option[Map[String, String]], ids:ListBuffer[String]):ArrayList[Object]= {
-
+  def request(serviceId:String, endpoint:String, parameters:Option[Map[String, String]], ids:ListBuffer[String]):ListSet= {
+		  
     parameters match{
       case Some(params) => 
         val url = baseUrl + endpoint + "?" + constructParams(params)
-        getData(url, ids)
+        ListSet(serviceId, getData(url, ids))
       case None =>
-        getData(baseUrl + endpoint, ids)
+        ListSet(serviceId, getData(baseUrl + endpoint, ids))
     }
   }
   
-  private def getData(url:String, ids:ListBuffer[String]):ArrayList[Object] = {
+  private def getData(url:String, ids:ListBuffer[String]):ListBuffer[Object] = {
     val response = Tools.fetchURL(url)
     
     if(!response.has("data"))
@@ -31,23 +32,11 @@ object Service {
     extractData(response.get("data"), ids)
   }
   
-  private def extractData(jsonData:JsonNode):ArrayList[Object] = {
+  private def extractData(jsonData:JsonNode, ids:ListBuffer[String]):ListBuffer[Object] = {
     if(jsonData == null)
       return null;
     
-    val data = new ArrayList[Object]  
-
-    for(node <- jsonData)
-      data.add(node)
-    
-    data
-  }
-  
-  private def extractData(jsonData:JsonNode, ids:ListBuffer[String]):ArrayList[Object] = {
-    if(jsonData == null)
-      return null;
-    
-    val data = new ArrayList[Object]  
+    val data = new ListBuffer[Object]  
 
     for(node <- jsonData){
       if(node.has("id") && ids != null){
