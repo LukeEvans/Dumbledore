@@ -7,7 +7,7 @@
   vars: 
     keypair: dumbledore
     security_group: Akka
-    instance_name: Dumbledore-Frontend
+    instance_name: Dumbledore-Frontend-Dev
     instance_type: m1.large
     image: ami-a73264ce
     instance_count: 1
@@ -16,7 +16,7 @@
   user: ubuntu
   tasks:
     - name: Launch frontend instances
-      local_action: ec2 keypair={{keypair}} group={{security_group}} instance_type={{instance_type}} image={{image}} wait=true count={{instance_count}} region={{region}} instance_tags='{"Name":"Dumbledore-Frontend"}'
+      local_action: ec2 keypair={{keypair}} group={{security_group}} instance_type={{instance_type}} image={{image}} wait=true count={{instance_count}} region={{region}} instance_tags='{"Name":"Dumbledore-Frontend-Dev"}'
       register: ec2
      
     - name: Add all worker instance public IPs to host group

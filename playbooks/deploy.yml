@@ -1,6 +1,6 @@
 - name: Deploy and run 
   hosts: 
-  - tag_Name_Dumbledore-Frontend
+  - tag_Name_Dumbledore-Frontend-Dev
   user: ubuntu
   sudo: true
   gather_facts: false
