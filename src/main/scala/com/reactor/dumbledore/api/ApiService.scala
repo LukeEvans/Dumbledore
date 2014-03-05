@@ -51,7 +51,7 @@ trait ApiService extends HttpService{
   val mapper = new ObjectMapper() with ScalaObjectMapper
     mapper.registerModule(DefaultScalaModule)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    
+
     
   val apiRoute =
         path(""){
