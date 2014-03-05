@@ -92,7 +92,7 @@ class NotificationManager {
          case Some(service) =>
            service.getRangeAction(date) match{
              case Some(range) =>
-               validServices.put(service.notifEndpoint, ServiceData(service.notifEndpoint, range.params, request.cards))
+               validServices.put(request.id, ServiceData(service.notifEndpoint, range.params, request.cards))
              case None => println("Not a valid time - " + request.id)
            }
          case None => println("Service not found")
@@ -109,7 +109,7 @@ class NotificationManager {
       service =>
         service._2.getRangeAction(date) match{
           case Some(range) => 
-            validServices.put(service._2.notifEndpoint, ServiceData(service._2.notifEndpoint, range.params, ListBuffer[String]()))
+            validServices.put(service._1, ServiceData(service._2.notifEndpoint, range.params, ListBuffer[String]()))
           case None => println("Not a valid time")
         }
     }

@@ -31,7 +31,6 @@ object Tools {
   @transient
   private val mapper = new ObjectMapper();
   
-  
   def objectToJsonNode(mongoObj:Object):JsonNode = {
     val cleanObject = mongoObj.toString().replaceAll("\\r", " ").replaceAll("\\n", " ").trim
     mapper.readTree(cleanObject)	

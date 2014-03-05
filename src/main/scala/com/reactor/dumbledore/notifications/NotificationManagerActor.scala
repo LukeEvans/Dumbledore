@@ -23,6 +23,11 @@ import scala.util.Random
 import com.github.nscala_time.time.Imports.DateTime
 import com.reactor.dumbledore.services.ServiceData
 import com.reactor.dumbledore.messaging.ServiceRequest
+import com.reactor.dumbledore.messaging.ArraySetContainer
+import com.reactor.dumbledore.data.ListSet
+import com.reactor.dumbledore.messaging.DataSetContainer
+import scala.collection.mutable.ListBuffer
+import com.reactor.dumbledore.utilities.Tools
 
 
 class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(args) {
@@ -46,9 +51,9 @@ class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(a
   def manage(request:NotificationRequest, origin:ActorRef){ 
     implicit val timeout = Timeout(30 seconds);
 	val params = getUserParams(getUserCreds(request))
-    val data:ArrayList[ArrayList[Object]] = new ArrayList[ArrayList[Object]]
+    val data:ListBuffer[ListSet] = new ListBuffer[ListSet]
 
-	val time = DateTime.now
+	val time = request.time.offsetTime
 	var services:Map[String, ServiceData] = null
 	
     request.dev match{
@@ -64,12 +69,12 @@ class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(a
 	  case Success(dataList) => 
 
 	    dataList map {
-	    	dataContainer => 
-	    	  val dataReceived = dataContainer.data
-	    	  if(dataReceived != null)
-	    		  data.add(dataReceived)
+	    	arraySetContainer => 
+	    	  val dataReceived = arraySetContainer.data
+	    	  if(dataReceived.set_data != null && !dataReceived.set_data.isEmpty)
+	    		  data += dataReceived
 	    }
-	    reply(origin, DataContainer(data))
+	    reply(origin, DataSetContainer(data))
 	    
 	  case Failure(failure) => println(failure)
 	}
@@ -77,20 +82,20 @@ class NotificationManagerActor(args:NotificationArgs) extends FlowControlActor(a
   
   // request future results from service actor
   def requestResults(services:Map[String, ServiceData], 
-		  serviceActor:ActorRef, params:Map[String, String]):ArrayBuffer[Future[SingleDataContainer]] = {
+		  serviceActor:ActorRef, params:Map[String, String]):ArrayBuffer[Future[ArraySetContainer]] = {
     implicit val timeout = Timeout(30 seconds)
-    val results = new ArrayBuffer[Future[SingleDataContainer]]
+    val results = new ArrayBuffer[Future[ArraySetContainer]]
     
     services.map{
       service =>
     	var allParams = Map[String, String]()
-	        service._2.params match{
-	          case Some(serviceParams) =>
-	            allParams  = params ++ serviceParams
-	          case None => allParams = params
-	        }	        
-	        println(allParams)
-	        results += (serviceActor ? ServiceRequest(service._1, service._2.ids, Some(allParams))).mapTo[SingleDataContainer]
+    	service._2.params match{
+    	  case Some(serviceParams) =>
+    	  	allParams  = params ++ serviceParams
+    	  case None => allParams = params
+    	}	        
+    	println(allParams)
+    	results += (serviceActor ? ServiceRequest(service._1, service._2.endpoint, service._2.ids, Some(allParams))).mapTo[ArraySetContainer]
     }    
     results
   }

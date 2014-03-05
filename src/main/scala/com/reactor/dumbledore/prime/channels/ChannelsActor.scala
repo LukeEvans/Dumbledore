@@ -25,12 +25,16 @@ import scala.util.Failure
 import scala.util.Success
 import scala.concurrent.Await
 import com.reactor.dumbledore.utilities.Timer
+import com.reactor.dumbledore.data.ListSet
+import com.reactor.dumbledore.data.ListSetNode
+import com.reactor.dumbledore.prime.channels.feeds.Feed
 
 class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
   private val NEWS_DB = "reactor-news"
   private val mongo = new MongoDB
-  val singleActor = args.singleActor//new SingleChannelActor(new FlowControlArgs())
+  val singleActor = args.singleActor
   ready
+  
   override def preStart() = println("channels actor starting")
   
   override def receive = {
@@ -41,26 +45,28 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
   
   /** Get list of channel feeds available from mongo */
   def getChannelFeeds(origin:ActorRef){
-    val list = mongo.findAll("reactor-news-feeds")
-    val jsonList = ListBuffer[JsonNode]()
+	val list = mongo.findAll("reactor-news-feeds")
+    val feedList = ListBuffer[Feed]()
     
     list.map{
       channelObj =>
-        jsonList += Tools.objectToJsonNode(channelObj)
+        var json  = Tools.objectToJsonNode(channelObj)
+        val feed = new Feed(json, mongo)
+        feedList += feed
     }
-    
-    reply(origin, jsonList)
+	
+    reply(origin, feedList)
     complete()
   }
   
   /** Get Nested array story sets */
   def getChannelData(channelData:ListBuffer[ChannelRequestData], singleActor:ActorRef, origin:ActorRef){
     implicit val timeout = Timeout(30 seconds)
-    val dataArray = ListBuffer[ListBuffer[Object]]()
+    val dataArray = ListBuffer[ListSet]()
     
-    val dataList = ListBuffer[Future[ListBuffer[JsonNode]]]()
+    val dataList = ListBuffer[Future[ListSetNode]]()
     channelData.map{
-      data => dataList += (singleActor ? data).mapTo[ListBuffer[JsonNode]]
+      data => dataList += (singleActor ? data).mapTo[ListSetNode]
     }
     
     val list = ListBuffer[Object]()
@@ -68,12 +74,12 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
     data map{
       d => 
         list.clear     
-        d map{
+        d.list map{
           node =>
             val story = new KCStory(node)
             list += story
       }
-      dataArray += list
+      dataArray += ListSet(d.card_id, list)
     }
 
     reply(origin, dataArray)
