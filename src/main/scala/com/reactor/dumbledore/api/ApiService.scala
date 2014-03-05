@@ -36,6 +36,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.reactor.dumbledore.data.ListSet
 import spray.caching.{LruCache, Cache}
 import scala.concurrent.Future
+import edu.stanford.nlp.util.ArraySet
+import scala.concurrent.Await
 
 trait ApiService extends HttpService{
 
@@ -49,11 +51,7 @@ trait ApiService extends HttpService{
   val mapper = new ObjectMapper() with ScalaObjectMapper
     mapper.registerModule(DefaultScalaModule)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-  
-//  val cache: Cache[Double] = LruCache()
-//  def cachedOp[T](key: T): Future[Double] = cache(key) {
-//	 return 0.0
-//  }  
+    
     
   val apiRoute =
         path(""){
