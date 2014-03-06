@@ -34,9 +34,6 @@ import scala.reflect.ClassTag
 import scala.collection.mutable.ListBuffer
 import com.fasterxml.jackson.databind.JsonNode
 import com.reactor.dumbledore.data.ListSet
-import spray.caching.{LruCache, Cache}
-import scala.concurrent.Future
-import edu.stanford.nlp.util.ArraySet
 import scala.concurrent.Await
 
 trait ApiService extends HttpService{
