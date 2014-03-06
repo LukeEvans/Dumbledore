@@ -28,11 +28,12 @@ import com.reactor.dumbledore.utilities.Timer
 import com.reactor.dumbledore.data.ListSet
 import com.reactor.dumbledore.data.ListSetNode
 import com.reactor.dumbledore.prime.channels.feeds.Feed
-import spray.caching.{LruCache, Cache}
+import spray.caching.{LruCache, Cache, ExpiringLruCache, SimpleLruCache}
 
 class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
   private val NEWS_DB = "reactor-news"
   private val mongo = new MongoDB
+  private val cache:Cache[ListBuffer[Feed]] = LruCache()
   val singleActor = args.singleActor
   ready
   
@@ -47,8 +48,8 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
   /** Get list of channel feeds available from mongo */
   def getChannelFeeds(origin:ActorRef){
 
-    val cache: Cache[ListBuffer[Feed]] = LruCache()
-    def cachedOp():Future[ListBuffer[Feed]] = cache(ListBuffer[Feed]()){
+    val key = "some key"
+    def cachedOp():Future[ListBuffer[Feed]] = cache(key){
       getFeeds()
     }
     val futureList = cachedOp()
