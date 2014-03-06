@@ -45,6 +45,14 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
   
   /** Get list of channel feeds available from mongo */
   def getChannelFeeds(origin:ActorRef){
+
+    val feedList = getFeeds()
+	
+    reply(origin, feedList)
+    complete()
+  }
+  
+  def getFeeds():ListBuffer[Feed] = {
 	val list = mongo.findAll("reactor-news-feeds")
     val feedList = ListBuffer[Feed]()
     
@@ -54,9 +62,7 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
         val feed = new Feed(json, mongo)
         feedList += feed
     }
-	
-    reply(origin, feedList)
-    complete()
+	feedList
   }
   
   /** Get Nested array story sets */
