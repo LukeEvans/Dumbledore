@@ -1,8 +1,8 @@
 dist_name:
-  - dumbledore-dist
+  - dumbledore-dist-dev
   
 upstart_daemons:
-  - dumbledore-frontend
+  - dumbledore-frontend-dev
 
 local:
   - localhost
