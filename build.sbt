@@ -54,7 +54,7 @@ libraryDependencies += "org.apache.opennlp" % "opennlp-tools" % "1.5.3"
 
 libraryDependencies += "com.indeed" % "java-dogstatsd-client" % "2.0.7"
 
-libraryDependencies +=  "redis.clients" % "jedis" % "2.2.1"
+libraryDependencies +=  "redis.clients" % "jedis" % "2.4.1"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.0.13"
 

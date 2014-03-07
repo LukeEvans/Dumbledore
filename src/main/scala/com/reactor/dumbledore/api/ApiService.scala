@@ -1,20 +1,29 @@
 package com.reactor.dumbledore.api
 
+import java.net.InetSocketAddress
+import java.util.HashSet
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
+import scala.reflect.ClassTag
+import scala.collection.mutable.ListBuffer
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
+import com.reactor.dumbledore.messaging._
+import com.reactor.dumbledore.messaging.ChannelRequest
+import com.reactor.dumbledore.messaging.NotificationRequest
+import com.reactor.dumbledore.messaging.request
 import akka.actor.Actor
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
-import akka.io.IO
-import spray.can.Http
 import akka.pattern.AskTimeoutException
 import akka.pattern.ask
 import akka.util.Timeout
+import net.spy.memcached.MemcachedClient
+import redis.clients.jedis.JedisSentinelPool
+import redis.clients.jedis.HostAndPort
 import spray.http._
 import spray.http.HttpMethods._
 import spray.http.HttpRequest
@@ -24,20 +33,9 @@ import spray.http.StatusCodes.RequestTimeout
 import spray.routing.ExceptionHandler
 import spray.routing.HttpService
 import spray.util.LoggingContext
-import spray.http.Uri.Host
-import com.reactor.dumbledore.messaging._
-import scala.util.Success
-import scala.util.Failure
-import com.reactor.dumbledore.messaging.request
-import com.reactor.dumbledore.messaging.NotificationRequest
-import com.reactor.dumbledore.messaging.ChannelRequest
-import scala.reflect.ClassTag
-import scala.collection.mutable.ListBuffer
+import redis.clients.jedis.JedisCluster
 import com.fasterxml.jackson.databind.JsonNode
-import com.reactor.dumbledore.data.ListSet
-import scala.concurrent.Await
-import net.spy.memcached.MemcachedClient
-import java.net.InetSocketAddress
+import scala.collection.immutable.ListSet
 
 trait ApiService extends HttpService{
 
@@ -62,11 +60,17 @@ trait ApiService extends HttpService{
           }
         }~
         path("cacheTest"){
-          val c = new MemcachedClient(
-                new InetSocketAddress("freebasecachecluster.1hm814.0001.use1.cache.amazonaws.com", 11211));
+//          val c = new MemcachedClient(
+//                new InetSocketAddress("freebasecachecluster.1hm814.0001.use1.cache.amazonaws.com", 11211));
+          
+          val jedisClusterNodes = new HashSet[HostAndPort]()
+          jedisClusterNodes.add(new HostAndPort("freebase-redis-cache.1hm814.0001.use1.cache.amazonaws.com", 6379))
+          val jc = new JedisCluster(jedisClusterNodes);
           complete{
-            c.set("test_key", 3600, "test_value")
-            c.get("test_key").toString()
+//            c.set("test_key", 3600, "test_value")
+//            c.get("test_key").toString()
+            jc.set("test_key", "redis value")
+            jc.get("test_key")
           }
         }~
         path("notifications"){
