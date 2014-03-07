@@ -63,14 +63,15 @@ trait ApiService extends HttpService{
 //          val c = new MemcachedClient(
 //                new InetSocketAddress("freebasecachecluster.1hm814.0001.use1.cache.amazonaws.com", 11211));
           
-          val jedisClusterNodes = new HashSet[HostAndPort]()
-          jedisClusterNodes.add(new HostAndPort("freebase-redis-cache.1hm814.0001.use1.cache.amazonaws.com", 6379))
-          val jc = new JedisCluster(jedisClusterNodes);
+//          val jedisClusterNodes = new HashSet[HostAndPort]()
+//          jedisClusterNodes.add(new HostAndPort("freebase-redis-cache.1hm814.0001.use1.cache.amazonaws.com", 6379))
+//          val jc = new JedisCluster(jedisClusterNodes);
           complete{
 //            c.set("test_key", 3600, "test_value")
 //            c.get("test_key").toString()
-            jc.set("test_key", "redis value")
-            jc.get("test_key")
+//            jc.set("test_key", "redis value")
+//            jc.get("test_key")
+            "not working"
           }
         }~
         path("notifications"){
