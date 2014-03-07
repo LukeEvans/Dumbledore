@@ -6,6 +6,7 @@ import org.codehaus.jackson.map.ObjectMapper
 import org.codehaus.jackson.JsonNode
 import scala.collection.JavaConversions._
 import com.reactor.dumbledore.notifications.request.Request
+import com.reactor.prime.user.UserCredentials
 
 class NotificationRequest extends Message {
   @transient
@@ -50,7 +51,16 @@ class NotificationRequest extends Message {
       serviceRequest = getServiceRequest(reqJson.get("service_request"))
   }
   
-  def getServiceRequest(nodeList:JsonNode):ListBuffer[Request] = {
+  /** Create UserCredentials from request parameters
+   */
+  def getUserCredentials():UserCredentials = {
+        return new UserCredentials(udid)
+    			.setLocation(lat, long)
+  }
+  
+  /** Grab List of Services in json and ids of stories to ignore
+  */
+  private def getServiceRequest(nodeList:JsonNode):ListBuffer[Request] = {
     val serviceRequests = ListBuffer[Request]()
     
     for(node <- nodeList)

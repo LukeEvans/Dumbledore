@@ -12,7 +12,7 @@ import com.reactor.dumbledore.data.ListSet
 object Service {
   private val baseUrl = "http://v036.winstonapi.com"  
 
-  def request(serviceId:String, endpoint:String, parameters:Option[Map[String, String]], ids:ListBuffer[String]):ListSet= {
+  def request(serviceId:String, endpoint:String, parameters:Option[Map[String, String]], ids:ListBuffer[String]):ListSet[Object] = {
 		  
     parameters match{
       case Some(params) => 

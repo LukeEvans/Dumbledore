@@ -12,12 +12,11 @@ import scala.concurrent.duration._
 import com.fasterxml.jackson.databind.JsonNode
 import com.reactor.dumbledore.utilities.Tools
 import com.reactor.dumbledore.messaging.FeedData
-import com.reactor.dumbledore.messaging.ChannelRequestData
+import com.reactor.dumbledore.messaging.FeedRequestData
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.DBObject
 import com.mongodb.casbah.Imports._
 import com.reactor.dumbledore.prime.data.story.KCStory
-import com.reactor.dumbledore.messaging.SingleDataContainer
 import com.reactor.patterns.pull.FlowControlArgs
 import akka.pattern.ask
 import akka.util.Timeout
@@ -26,26 +25,39 @@ import scala.util.Success
 import scala.concurrent.Await
 import com.reactor.dumbledore.utilities.Timer
 import com.reactor.dumbledore.data.ListSet
-import com.reactor.dumbledore.data.ListSetNode
 import com.reactor.dumbledore.prime.channels.feeds.Feed
 import spray.caching.{LruCache, Cache, ExpiringLruCache, SimpleLruCache}
+import com.reactor.dumbledore.messaging.SourceData
+import com.reactor.dumbledore.messaging.ListSetContainer
+
+case class ChannelArgs(feedActor:ActorRef, sourceActor:ActorRef) extends FlowControlArgs {
+  
+  override def workerArgs(): FlowControlArgs ={
+    val newArgs = new ChannelArgs(feedActor, sourceActor)
+    newArgs.addMaster(master)
+    return newArgs
+  }
+}
 
 class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
   private val NEWS_DB = "reactor-news"
   private val mongo = new MongoDB
   private val cache:Cache[ListBuffer[Feed]] = LruCache()
-  val singleActor = args.singleActor
+  private val feedActor = args.feedActor
+  private val sourceActor = args.sourceActor
   ready
   
   override def preStart() = println("channels actor starting")
   
   override def receive = {
     case Feeds() => getChannelFeeds(sender)
-    case FeedData(data) => getChannelData(data, singleActor, sender)
+    case FeedData(data) => getChannelData(data, sender)
+    case SourceData(data) => getSourceData(data, sender)
     case a:Any => println("Unknown request - " + a)
   }
   
-  /** Get list of channel feeds available from mongo */
+  /** Get list of channel feeds available from mongo 
+   */
   def getChannelFeeds(origin:ActorRef){
 
     val key = "some key"
@@ -74,13 +86,13 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
   }
   
   /** Get Nested array story sets */
-  def getChannelData(channelData:ListBuffer[ChannelRequestData], singleActor:ActorRef, origin:ActorRef){
+  def getChannelData(channelData:ListBuffer[FeedRequestData], origin:ActorRef){
     implicit val timeout = Timeout(30 seconds)
-    val dataArray = ListBuffer[ListSet]()
+    val dataArray = ListBuffer[ListSet[Object]]()
     
-    val dataList = ListBuffer[Future[ListSetNode]]()
+    val dataList = ListBuffer[Future[ListSet[JsonNode]]]()
     channelData.map{
-      data => dataList += (singleActor ? data).mapTo[ListSetNode]
+      data => dataList += (feedActor ? data).mapTo[ListSet[JsonNode]]
     }
     
     val list = ListBuffer[Object]()
@@ -88,7 +100,7 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
     data map{
       d => 
         list.clear     
-        d.list map{
+        d.set_data map{
           node =>
             val story = new KCStory(node)
             list += story
@@ -98,5 +110,31 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
 
     reply(origin, dataArray)
     complete()
+  }
+  
+  def getSourceData(sources:ListBuffer[String], origin:ActorRef){
+    implicit val timeout = Timeout(10 seconds)
+    
+    val dataArray = ListBuffer[ListSet[Object]]()
+    val dataList = ListBuffer[Future[ListSet[Object]]]()
+    
+    sources.map{
+      source_id =>
+        dataList += (sourceActor ? source_id).mapTo[ListSet[Object]]
+    }
+    
+    Future.sequence(dataList) onComplete{
+      case Success(list) =>
+        
+        list.map{
+          data => dataArray += data
+        }
+        reply(origin, dataArray)
+        complete()
+        
+      case Failure(error) => 
+        println("Failure - " + error)
+        complete()
+    }    
   }
 }

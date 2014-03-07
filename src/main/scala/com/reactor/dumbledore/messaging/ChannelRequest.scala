@@ -5,13 +5,15 @@ import scala.collection.mutable.ListBuffer
 import com.fasterxml.jackson.databind.JsonNode
 import scala.collection.JavaConversions._
 
-case class ChannelRequestData(feed_id:String, sources:ListBuffer[String])
+case class FeedRequestData(feed_id:String, sources:ListBuffer[String])
 
+/** Feed Request 
+ */
 class FeedRequest {
   @transient
   val mapper = new ObjectMapper()
   
-  var channelList:ListBuffer[ChannelRequestData] = null
+  var channelList:ListBuffer[FeedRequestData] = null
   
   def this(request:String){
     this()
@@ -21,20 +23,20 @@ class FeedRequest {
     channelList = getList(reqJson.get("data"))
   }
   
-  def getList(dataNode:JsonNode):ListBuffer[ChannelRequestData] = {
+  private def getList(dataNode:JsonNode):ListBuffer[FeedRequestData] = {
     if(dataNode == null)
       return null
     
-    val dataList = ListBuffer[ChannelRequestData]()
+    val dataList = ListBuffer[FeedRequestData]()
     dataNode.map{
       data => 
         if(data.has("feed_id") && data.has("sources"))
-          dataList += ChannelRequestData(data.get("feed_id").asText(), nodeToList(data.get("sources")))
+          dataList += FeedRequestData(data.get("feed_id").asText(), nodeToList(data.get("sources")))
     }
     return dataList
   }
   
-  def nodeToList(nodeList:JsonNode):ListBuffer[String] = {
+  private def nodeToList(nodeList:JsonNode):ListBuffer[String] = {
     if(nodeList == null)
       return null
       
@@ -46,6 +48,8 @@ class FeedRequest {
   }
 }
 
+/** Channel Request
+ */
 class ChannelRequest{
   @transient
   val mapper = new ObjectMapper()

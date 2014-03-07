@@ -13,24 +13,29 @@ class Message extends Serializable
 trait request
 trait response
 
+// HTTP Request Forwarding Containers 
 case class RequestContainer(request:HttpRequest, urlBase:String) extends request
-
 case class ResponseContainer(response:HttpResponse) extends request
 
-case class ForwardRequest(request:HttpRequest, path:String) extends request
 
+// Service Request Container
 case class ServiceRequest(service_id:String, endpoint:String, ids:ListBuffer[String], params:Option[Map[String, String]]) extends request
 
-case class DataContainer(data:ArrayList[ArrayList[Object]]) extends response
 
-case class DataSetContainer(data:ListBuffer[ListSet]) extends response
+// Data Containers
+case class DataSetContainer(data:ListBuffer[ListSet[Object]]) extends response
+case class ListSetContainer(data:ListSet[Object]) extends response
 
-case class SingleDataContainer(data:ArrayList[Object]) extends response
 
-case class ArraySetContainer(data:ListSet) extends response
-
+// Notification Request
 case class NotificationRequestContainer(request:NotificationRequest) extends request
 
-case class FeedData(data:ListBuffer[ChannelRequestData]) extends request
 
+// Feed Request Containers
+case class FeedData(data:ListBuffer[FeedRequestData]) extends request
 case class Feeds() extends request
+
+// Channel Request Containers
+case class Sources() extends request
+case class SourceData(data:ListBuffer[String]) extends request
+

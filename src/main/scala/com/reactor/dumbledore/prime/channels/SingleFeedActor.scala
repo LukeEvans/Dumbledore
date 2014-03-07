@@ -8,7 +8,7 @@ import scala.concurrent.duration._
 import com.fasterxml.jackson.databind.JsonNode
 import com.mongodb.DBObject
 import com.mongodb.casbah.Imports._
-import com.reactor.dumbledore.messaging.ChannelRequestData
+import com.reactor.dumbledore.messaging.FeedRequestData
 import com.reactor.dumbledore.utilities.Tools
 import com.reactor.patterns.pull.FlowControlActor
 import com.reactor.patterns.pull.FlowControlArgs
@@ -16,7 +16,7 @@ import com.reactor.store.MongoDB
 import akka.actor.ActorRef
 import scala.util.Success
 import scala.util.Failure
-import com.reactor.dumbledore.data.ListSetNode
+import com.reactor.dumbledore.data.ListSet
 
 class SingleFeedActor(args:FlowControlArgs) extends FlowControlActor(args) {
   private val NEWS_DB = "reactor-news"
@@ -24,17 +24,17 @@ class SingleFeedActor(args:FlowControlArgs) extends FlowControlActor(args) {
   ready
   
   def receive() = {
-    case data:ChannelRequestData => println("received data - " + data.feed_id); processChannel(data, sender)
+    case data:FeedRequestData => println("received data - " + data.feed_id); processChannel(data, sender)
     case a:Any => println("Unknown message - " + a)
   }
   
-  def processChannel(data:ChannelRequestData, origin:ActorRef){
+  def processChannel(data:FeedRequestData, origin:ActorRef){
     reply(origin, queryMongo(data))
     complete()
   }
   
   /** Query mongo for list of stories */
-  private def queryMongo(data:ChannelRequestData):ListSetNode = {
+  private def queryMongo(data:FeedRequestData):ListSet[JsonNode] = {
     val query = buildQuery(data.feed_id, data.sources)
     val dataObjects = mongo.find(query, NEWS_DB, 10)
     val futureNodes = ListBuffer[Future[JsonNode]]()
@@ -43,7 +43,7 @@ class SingleFeedActor(args:FlowControlArgs) extends FlowControlActor(args) {
       data => futureNodes += future{ Tools.objectToJsonNode(data)}//Tools.objectToJsonNode(data)
     }
     
-    ListSetNode(data.feed_id, Await.result(Future.sequence(futureNodes), atMost = 1 seconds))
+    ListSet(data.feed_id, Await.result(Future.sequence(futureNodes), atMost = 1 seconds))
   }
   
   /** Build News Set mongo query */
