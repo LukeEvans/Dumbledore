@@ -82,6 +82,8 @@ libraryDependencies += "com.googlecode.batchfb" % "batchfb" % "2.1.3"
 
 libraryDependencies += "com.github.nscala-time" %% "nscala-time" % "0.8.0"
 
+libraryDependencies += "com.amazonaws" % "elasticache-java-cluster-client" % "1.0.61.0"
+
 libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-extra" % "0.3" excludeAll(
         ExclusionRule(organization = "javax.jms"),
         ExclusionRule(organization = "com.sun.jdmk"),

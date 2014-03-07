@@ -9,13 +9,52 @@ import com.reactor.dumbledore.notifications.time.Date
 import com.reactor.dumbledore.notifications.time.NotificationConfig
 import com.reactor.dumbledore.notifications.time.StaticNotificationConfig
 import com.reactor.dumbledore.notifications.time.Time
-import com.reactor.dumbledore.services.ServiceData
+import com.reactor.dumbledore.services.WebRequestData
 
 class NotificationManager {
   val services = Map[String, NotificationConfig]()
   val devServices = Map[String, NotificationConfig]()
-  init()
-  devInit()
+  init() // Initialize Web Services
+  devInit() // Initialize Dev Web Services
+  
+  /** Get WebService Map from config
+   */
+  def getWebServices(requests:ListBuffer[Request], now:DateTime):Map[String, WebRequestData] = {
+    val date = new Date(now)
+    val validServices = Map[String, WebRequestData]()
+    
+    requests.map{
+     request =>
+       services.get(request.id) match{
+         case Some(service) =>
+           service.getRangeAction(date) match{
+             case Some(range) =>
+               validServices.put(request.id, WebRequestData(service.notifEndpoint, range.params, request.cards))
+             case None => println("Not a valid time - " + request.id)
+           }
+         case None => println("Service not found")
+       }
+    }   
+    validServices
+  }
+  
+  
+  /** Get Developer Web Services from config
+   */
+  def getDevWebServices(now:DateTime):Map[String, WebRequestData] = {
+    val date = new Date(now)
+    val validServices = Map[String, WebRequestData]()
+    
+    devServices.map{
+      service =>
+        service._2.getRangeAction(date) match{
+          case Some(range) => 
+            validServices.put(service._1, WebRequestData(service._2.notifEndpoint, range.params, ListBuffer[String]()))
+          case None => println("Not a valid time")
+        }
+    }
+    validServices
+  }
   
   def init():Unit = {
     
@@ -57,7 +96,6 @@ class NotificationManager {
     
     // Traffic Service
     
-    // Weather Service
     val weather = new NotificationConfig("/weather").add247(None)
     devServices put ("weather", weather)
     
@@ -80,39 +118,5 @@ class NotificationManager {
     
     val nearbyPhotos = new NotificationConfig("/instagram/location").add247(None)
     devServices put ("nearby_photos", nearbyPhotos)
-  }
-  
-  def getServices(requests:ListBuffer[Request], now:DateTime):Map[String, ServiceData] = {
-    val date = new Date(now)
-    val validServices = Map[String, ServiceData]()
-    
-    requests.map{
-     request =>
-       services.get(request.id) match{
-         case Some(service) =>
-           service.getRangeAction(date) match{
-             case Some(range) =>
-               validServices.put(request.id, ServiceData(service.notifEndpoint, range.params, request.cards))
-             case None => println("Not a valid time - " + request.id)
-           }
-         case None => println("Service not found")
-       }
-    }   
-    validServices
-  }
-  
-  def getDevServices(now:DateTime):Map[String, ServiceData] = {
-    val date = new Date(now)
-    val validServices = Map[String, ServiceData]()
-    
-    devServices.map{
-      service =>
-        service._2.getRangeAction(date) match{
-          case Some(range) => 
-            validServices.put(service._1, ServiceData(service._2.notifEndpoint, range.params, ListBuffer[String]()))
-          case None => println("Not a valid time")
-        }
-    }
-    validServices
   }
 }

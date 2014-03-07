@@ -30,11 +30,14 @@ import scala.util.Success
 import scala.util.Failure
 import com.reactor.dumbledore.messaging.request
 import com.reactor.dumbledore.messaging.NotificationRequest
+import com.reactor.dumbledore.messaging.ChannelRequest
 import scala.reflect.ClassTag
 import scala.collection.mutable.ListBuffer
 import com.fasterxml.jackson.databind.JsonNode
 import com.reactor.dumbledore.data.ListSet
 import scala.concurrent.Await
+import net.spy.memcached.MemcachedClient
+import java.net.InetSocketAddress
 
 trait ApiService extends HttpService{
 
@@ -56,6 +59,14 @@ trait ApiService extends HttpService{
             complete{
               "Dumbledore API 1.0"
             }
+          }
+        }~
+        path("cacheTest"){
+          val c = new MemcachedClient(
+                new InetSocketAddress("freebasecachecluster.1hm814.0001.use1.cache.amazonaws.com", 11211));
+          complete{
+            c.set("test_key", 3600, "test_value")
+            c.get("test_key").toString()
           }
         }~
         path("notifications"){
@@ -124,7 +135,7 @@ trait ApiService extends HttpService{
                  val request = new FeedRequest(obj)
                  
                  complete{
-                   channelsActor.ask(FeedData(request.channelList))(10.seconds).mapTo[ListBuffer[ListSet]] map{
+                   channelsActor.ask(FeedData(request.channelList))(10.seconds).mapTo[ListBuffer[ListSet[Object]]] map{
             	     data =>
             	       response.finish(data, mapper)
             	   }
@@ -132,6 +143,22 @@ trait ApiService extends HttpService{
              }
            }
         }~
+        path("channel"/"source"){
+          respondWithMediaType(MediaTypes.`application/json`){
+             entity(as[String]){
+               obj =>
+                 val response = new Result()
+                 val request = new ChannelRequest(obj)
+                 
+                 complete{
+                   channelsActor.ask(SourceData(request.channelIDs))(10.seconds).mapTo[ListBuffer[ListSet[Object]]] map{
+            	     data =>
+            	       response.finish(data, mapper)
+            	   }
+                 }
+             }
+          }
+        }
         path("channel"/"sources"){
           entity(as[HttpRequest]){
             obj =>{
