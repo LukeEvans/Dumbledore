@@ -36,6 +36,7 @@ import spray.util.LoggingContext
 import redis.clients.jedis.JedisCluster
 import com.fasterxml.jackson.databind.JsonNode
 import scala.collection.immutable.ListSet
+import com.redis._
 
 trait ApiService extends HttpService{
 
@@ -66,12 +67,18 @@ trait ApiService extends HttpService{
 //          val jedisClusterNodes = new HashSet[HostAndPort]()
 //          jedisClusterNodes.add(new HostAndPort("freebase-redis-cache.1hm814.0001.use1.cache.amazonaws.com", 6379))
 //          val jc = new JedisCluster(jedisClusterNodes);
+          
+          val r = new RedisClient("freebase-redis-cache.1hm814.0001.use1.cache.amazonaws.com", 6379)
           complete{
 //            c.set("test_key", 3600, "test_value")
 //            c.get("test_key").toString()
 //            jc.set("test_key", "redis value")
 //            jc.get("test_key")
-            "not working"
+            r.set("test_key", "Scala-Redis value")
+            r.get("test_key") match{
+              case Some(value) => value
+              case None => "NO VALUE"
+            }
           }
         }~
         path("notifications"){
