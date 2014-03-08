@@ -33,7 +33,7 @@ case class NotificationRequestContainer(request:NotificationRequest) extends req
 
 // Feed Request Containers
 case class FeedData(data:ListBuffer[FeedRequestData]) extends request
-case class Feeds() extends request
+case class Feeds(clear:Boolean) extends request
 
 // Channel Request Containers
 case class Sources() extends request

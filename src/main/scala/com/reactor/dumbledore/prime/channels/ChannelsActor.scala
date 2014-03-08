@@ -50,7 +50,7 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
   override def preStart() = println("channels actor starting")
   
   override def receive = {
-    case Feeds() => getChannelFeeds(sender)
+    case Feeds(clear) => getChannelFeeds(clear, sender)
     case FeedData(data) => getChannelData(data, sender)
     case SourceData(data) => getSourceData(data, sender)
     case a:Any => println("Unknown request - " + a)
@@ -58,8 +58,10 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
   
   /** Get list of channel feeds available from mongo 
    */
-  def getChannelFeeds(origin:ActorRef){
-
+  def getChannelFeeds(clearCache:Boolean, origin:ActorRef){
+	if(clearCache)
+	  cache.clear
+	  
     val key = "some key"
     def cachedOp():Future[ListBuffer[Feed]] = cache(key){
       getFeeds()
