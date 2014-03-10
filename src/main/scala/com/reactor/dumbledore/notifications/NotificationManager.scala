@@ -11,6 +11,9 @@ import com.reactor.dumbledore.notifications.time.StaticNotificationConfig
 import com.reactor.dumbledore.notifications.time.Time
 import com.reactor.dumbledore.services.WebRequestData
 
+/**  Handle web service configurations and give notification actor a list of 
+ *   Service Data to send WebServiceActor
+ */
 class NotificationManager {
   val services = Map[String, NotificationConfig]()
   val devServices = Map[String, NotificationConfig]()
@@ -29,7 +32,7 @@ class NotificationManager {
          case Some(service) =>
            service.getRangeAction(date) match{
              case Some(range) =>
-               validServices.put(request.id, WebRequestData(service.notifEndpoint, range.params, request.cards))
+               validServices.put(request.id, WebRequestData(service.notifEndpoint, service.rank, range.params, request.cards))
              case None => println("Not a valid time - " + request.id)
            }
          case None => println("Service not found")
@@ -49,7 +52,7 @@ class NotificationManager {
       service =>
         service._2.getRangeAction(date) match{
           case Some(range) => 
-            validServices.put(service._1, WebRequestData(service._2.notifEndpoint, range.params, ListBuffer[String]()))
+            validServices.put(service._1, WebRequestData(service._2.notifEndpoint, service._2.rank, range.params, ListBuffer[String]()))
           case None => println("Not a valid time")
         }
     }
@@ -60,35 +63,35 @@ class NotificationManager {
     
     // Traffic Service
     
-    val weather = new NotificationConfig("/weather")
+    val weather = new NotificationConfig("/weather", 1)
     					.addRange(Time(5, 0), Time(13, 59), 0, 6, None)
     services put ("weather", weather)
     
     // Topic Alerts
     
-	val nearbyPlaces = new NotificationConfig("/yelp")
+	val nearbyPlaces = new NotificationConfig("/yelp", 2)
 							.addRange(Time(7, 0), Time(9, 59), 0, 6, Some(Map("type" -> "coffee")))
 							.addRange(Time(11, 0), Time(12, 59), 0, 6, Some(Map("type" -> "lunch")))
 							.addRange(Time(15, 0), Time(16, 59), 0, 6, Some(Map("type" -> "coffee")))
 							.addRange(Time(17, 0), Time(19, 59), 0, 6, Some(Map("type" -> "dinner")))
     services put ("nearby_places", nearbyPlaces)
     
-    val stocks = new StaticNotificationConfig("/stocks")
+    val stocks = new StaticNotificationConfig("/stocks", 3)
 						.addRange(Time(9, 30), Time(16, 30), 1, 5, None)
     services put ("stocks", stocks)
     
-    val fbBdays = new NotificationConfig("/social/facebook/birthdays")
+    val fbBdays = new NotificationConfig("/social/facebook/birthdays", 4)
 						.addRange(Time(5, 0), Time(10,59), 0, 6, None)
 						.addRange(Time(20, 0), Time(23,59), 0, 6, Some(Map("tomorrow" -> "true")))
     services put ("facebook_birthdays", fbBdays)
     
-    val fbMessages = new NotificationConfig("/social/facebook/inbox").add247(None)
+    val fbMessages = new NotificationConfig("/social/facebook/inbox", 5).add247(None)
     services put ("facebook_messages", fbMessages)
     
-    val fbNotifications = new NotificationConfig("/social/facebook/notifications").add247(None)
+    val fbNotifications = new NotificationConfig("/social/facebook/notifications", 6).add247(None)
     services put ("facebook_notifications", fbNotifications)
     
-    val nearbyPhotos = new NotificationConfig("/instagram/location").add247(None)
+    val nearbyPhotos = new NotificationConfig("/instagram/location", 7).add247(None)
     services put ("nearby_photos", nearbyPhotos)
   }
   
@@ -96,27 +99,27 @@ class NotificationManager {
     
     // Traffic Service
     
-    val weather = new NotificationConfig("/weather").add247(None)
+    val weather = new NotificationConfig("/weather", 1).add247(None)
     devServices put ("weather", weather)
     
     // Topic Alerts
     
-    val nearbyPlaces = new NotificationConfig("/yelp").add247(None)
+    val nearbyPlaces = new NotificationConfig("/yelp", 2).add247(None)
     devServices put ("nearby_places", nearbyPlaces)
     
-    val stocks = new StaticNotificationConfig("/stocks").add247(None)
+    val stocks = new StaticNotificationConfig("/stocks", 3).add247(None)
     devServices put ("stocks", stocks)
     
-    val fbBdays = new NotificationConfig("/social/facebook/birthdays").add247(None)  
+    val fbBdays = new NotificationConfig("/social/facebook/birthdays", 4).add247(None)  
     devServices put ("facebook_birthdays", fbBdays)
     
-    val fbMessages = new NotificationConfig("/social/facebook/inbox").add247(None)
+    val fbMessages = new NotificationConfig("/social/facebook/inbox", 5).add247(None)
     devServices put ("facebook_messages", fbMessages)
     
-    val fbNotifications = new NotificationConfig("/social/facebook/notifications").add247(None)
+    val fbNotifications = new NotificationConfig("/social/facebook/notifications", 6).add247(None)
     devServices put ("facebook_notifications", fbNotifications)
     
-    val nearbyPhotos = new NotificationConfig("/instagram/location").add247(None)
+    val nearbyPhotos = new NotificationConfig("/instagram/location", 7).add247(None)
     devServices put ("nearby_photos", nearbyPhotos)
   }
 }

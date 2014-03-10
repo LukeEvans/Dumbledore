@@ -151,7 +151,7 @@ object Tools {
     def fetchURL(url:String):JsonNode = {
         try {
                 var httpClient = new DefaultHttpClient();
-                httpClient.getParams().setParameter("http.socket.timeout", new Integer(20000));
+                httpClient.getParams().setParameter("http.socket.timeout", new Integer(5000));
                         var getRequest = new HttpGet(parseUrl(url).toString());
                         getRequest.addHeader("accept", "application/json");
 

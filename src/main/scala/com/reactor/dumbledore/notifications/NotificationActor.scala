@@ -63,7 +63,7 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
     implicit val timeout = Timeout(30 seconds);
     
 	val params = new Parameters(request.getUserCredentials)
-    val responseData:ListBuffer[ListSet[Object]] = ListBuffer[ListSet[Object]]()
+    var responseData:ListBuffer[ListSet[Object]] = ListBuffer[ListSet[Object]]()
 
 	val time = request.time.offsetTime
 	var webServices:Map[String, WebRequestData] = null
@@ -86,8 +86,9 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
 	    dataList map {
 	    	listSetContainer => // Single Data Set Container
 	    	  val serviceData = listSetContainer.data
+	    	  
 	    	  if(serviceData.set_data != null && !serviceData.set_data.isEmpty)
-	    		  responseData += serviceData
+	    		  responseData = constructDataSet(serviceData, responseData)//+= serviceData
 	    }
 	    
 	    reply(origin, DataSetContainer(responseData)) // Return Data to API Service
@@ -101,11 +102,11 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
   
   /*** Create list of future results ***
    */
-  def requestResults(services:Map[String, WebRequestData], 
-      params:Map[String, String]):ListBuffer[Future[ListSetContainer]] = {
+  private def requestResults(services:Map[String, WebRequestData], 
+      params:Map[String, String]):ListBuffer[Future[ListSetContainer[Object]]] = {
     
-    implicit val timeout = Timeout(30 seconds) //Request timeout
-    val results = new ListBuffer[Future[ListSetContainer]]
+    implicit val timeout = Timeout(8 seconds) //Request timeout
+    val results = new ListBuffer[Future[ListSetContainer[Object]]]
     
     services.map{
       service =>
@@ -116,9 +117,22 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
     	  case None => allParams = params
     	}	        
     	println(allParams)
-    	results += (webServiceActor ? ServiceRequest(service._1, service._2.endpoint, service._2.ids, Some(allParams))).mapTo[ListSetContainer]
+    	results += (webServiceActor ? ServiceRequest(service._1, service._2, Some(allParams))).mapTo[ListSetContainer[Object]]
     }    
     results
+  }
+  
+  /** Sort results based on rank - Make recursive with pattern matching eventually
+   */
+  private def constructDataSet(set:ListSet[Object], dataSet:ListBuffer[ListSet[Object]]):ListBuffer[ListSet[Object]] = { 
+    if(dataSet.isEmpty)
+      return dataSet += set
+    else{
+      if(set.rank > dataSet.last.rank)
+   	    return (dataSet += set)
+      else
+        return (dataSet.+=:(set))  
+    }
   }
   
 }

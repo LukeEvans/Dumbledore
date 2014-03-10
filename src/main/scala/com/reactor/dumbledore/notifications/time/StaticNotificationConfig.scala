@@ -1,6 +1,6 @@
 package com.reactor.dumbledore.notifications.time
 
-class StaticNotificationConfig(notifEndpoint:String) extends NotificationConfig(notifEndpoint) {
+class StaticNotificationConfig(notifEndpoint:String, rank:Int) extends NotificationConfig(notifEndpoint, rank) {
   
   override def isValidTime(nowDate:Date):Boolean = {
     timeRanges.map{

@@ -107,7 +107,7 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
             val story = new KCStory(node)
             list += story
       }
-      dataArray += ListSet(d.card_id, list)
+      dataArray += ListSet(d.card_id, 0, list)
     }
 
     reply(origin, dataArray)

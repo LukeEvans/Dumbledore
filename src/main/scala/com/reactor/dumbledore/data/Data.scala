@@ -8,7 +8,7 @@ import scala.collection.JavaConversions._
 import com.reactor.prime.user.UserCredentials
 
 /** String mapped to ListBuffer */
-case class ListSet[T](card_id:String, set_data:ListBuffer[T])
+case class ListSet[T](card_id:String, rank:Int, set_data:ListBuffer[T])
 
 
 /** Parameters Map[String,String] */
@@ -23,15 +23,5 @@ case class Parameters(map:Map[String, String]){
       map.put("long", creds.location.long.toString)     
       map.put("loc", creds.location.lat.toString+","+creds.location.long.toString)
     }
-  }
-}
-
-//implicit def other(self:ListBuffer[String]) = new Other(self)
-
-object Test{
-  def main(args: Array[String]) {
-    
-
-    
   }
 }
