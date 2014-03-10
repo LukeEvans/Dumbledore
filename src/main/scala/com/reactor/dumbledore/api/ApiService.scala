@@ -165,7 +165,7 @@ trait ApiService extends HttpService{
                  }
              }
           }
-        }
+        }~
         path("channel"/"sources"){
           entity(as[HttpRequest]){
             obj =>{
