@@ -4,7 +4,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Map
 import com.github.nscala_time.time.Imports._
 
-case class NotificationConfig(notifEndpoint:String) {
+case class NotificationConfig(notifEndpoint:String, rank:Int) {
   val timeRanges:ArrayBuffer[TimeRange] = new ArrayBuffer[TimeRange]
   
   def addTimeRange(start:Date, stop:Date, params:Option[Map[String, String]]):NotificationConfig ={

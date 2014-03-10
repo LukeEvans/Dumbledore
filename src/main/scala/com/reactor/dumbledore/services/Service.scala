@@ -9,24 +9,39 @@ import scala.collection.mutable.Map
 import scala.collection.mutable.ListBuffer
 import com.reactor.dumbledore.data.ListSet
 
-object Service {
+/**
+ * 
+ */
+object WebService {
   private val baseUrl = "http://v036.winstonapi.com"  
 
-  def request(serviceId:String, endpoint:String, parameters:Option[Map[String, String]], ids:ListBuffer[String]):ListSet[Object] = {
+//  def request(serviceId:String, endpoint:String, parameters:Option[Map[String, String]], ids:ListBuffer[String]):ListSet[Object] = {
+//		  
+//    parameters match{
+//      case Some(params) => 
+//        val url = baseUrl + endpoint + "?" + constructParams(params)
+//        ListSet(serviceId,  getData(url, ids))
+//      case None =>
+//        ListSet(serviceId, getData(baseUrl + endpoint, ids))
+//    }
+//  }
+  
+  def request(serviceId:String, data:WebRequestData, parameters:Option[Map[String, String]]):ListSet[Object] = {
 		  
     parameters match{
       case Some(params) => 
-        val url = baseUrl + endpoint + "?" + constructParams(params)
-        ListSet(serviceId, getData(url, ids))
+        val url = baseUrl + data.endpoint + "?" + constructParams(params)
+        ListSet(serviceId, data.rank, getData(url, data.ids))
       case None =>
-        ListSet(serviceId, getData(baseUrl + endpoint, ids))
+        ListSet(serviceId, data.rank, getData(baseUrl + data.endpoint, data.ids))
     }
   }
   
   private def getData(url:String, ids:ListBuffer[String]):ListBuffer[Object] = {
+    
     val response = Tools.fetchURL(url)
     
-    if(!response.has("data"))
+    if(response == null || !response.has("data"))
       return null
       
     extractData(response.get("data"), ids)
