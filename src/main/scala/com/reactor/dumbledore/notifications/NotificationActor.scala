@@ -88,7 +88,7 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
 	    	  val serviceData = listSetContainer.data
 	    	  
 	    	  if(serviceData.set_data != null && !serviceData.set_data.isEmpty)
-	    		  responseData = constructDataSet(serviceData, responseData)//+= serviceData
+	    		  responseData = orderDataSet(serviceData, responseData)//+= serviceData
 	    }
 	    
 	    reply(origin, DataSetContainer(responseData)) // Return Data to API Service
@@ -122,17 +122,17 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
     results
   }
   
-  /** Sort results based on rank - Make recursive with pattern matching eventually
-   */
-  private def constructDataSet(set:ListSet[Object], dataSet:ListBuffer[ListSet[Object]]):ListBuffer[ListSet[Object]] = { 
-    if(dataSet.isEmpty)
-      return dataSet += set
-    else{
-      if(set.rank > dataSet.last.rank)
-   	    return (dataSet += set)
-      else
-        return (dataSet.+=:(set))  
-    }
+  /** Order the dataset based on rank */
+  private def orderDataSet(set:ListSet[Object], dataSet:ListBuffer[ListSet[Object]]):ListBuffer[ListSet[Object]] = {
+    if(dataSet.isEmpty) return dataSet += set
+    
+    val newList = dataSet.clone
+    
+    var index = 0   
+    dataSet.takeWhile(data => data.rank < set.rank ).foreach(_ => index += 1)  
+    newList.insert(index, set)
+    
+    newList
   }
   
 }
