@@ -76,4 +76,8 @@ class KCStory {
   	  }
   	  list
   	}
+  	
+  	override def toString() = {
+  	  headline + " - " + author 
+  	}
 }
