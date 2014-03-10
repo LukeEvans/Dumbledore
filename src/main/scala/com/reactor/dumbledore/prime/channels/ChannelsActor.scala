@@ -105,7 +105,6 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
         d.set_data map{
           node =>
             val story = new KCStory(node)
-            println(story)
             list += story
       }
         
