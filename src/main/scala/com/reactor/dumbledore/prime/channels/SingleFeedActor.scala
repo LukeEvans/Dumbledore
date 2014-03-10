@@ -47,7 +47,21 @@ class SingleFeedActor(args:FlowControlArgs) extends FlowControlActor(args) {
   }
   
   /** Build News Set mongo query */
-  private def buildQuery(feedID:String, excluded:ListBuffer[String]):DBObject = {
-	("source_category" $eq feedID) ++ ("source_id" $ne excluded) ++ ("valid" $eq true)
+//  private def buildQuery(feedID:String, excluded:ListBuffer[String]):DBObject = {
+//	("source_category" $eq feedID) ++ $and(("source_id" $ne excluded(0)):: ("source_id" $ne "engadget")) ++ ("valid" $eq true)
+//  }
+  
+  private def buildQuery(feedID:String, excludedSources:ListBuffer[String]):DBObject = {
+    ("source_category" $eq feedID) ++ ("valid" $eq true) ++ exclusionQuery(excludedSources)
+  }
+  
+  private def exclusionQuery(sources:ListBuffer[String]):DBObject  = {
+    if(sources == null) return new BasicDBObject
+    
+    sources.size match{
+      case 0 => return new BasicDBObject
+      case 1 => return "source_id" $ne sources(0) 
+      case s:Int => return $and("source_id" $ne sources(0), exclusionQuery(sources.tail) )
+    }
   }
 }
