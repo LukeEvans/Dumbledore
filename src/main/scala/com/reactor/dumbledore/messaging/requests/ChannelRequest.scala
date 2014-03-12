@@ -10,17 +10,9 @@ case class FeedRequestData(feed_id:String, sources:ListBuffer[String])
 
 /** Feed Request 
  */
-class FeedRequest extends APIRequest {
+class FeedRequest(obj:Object) extends APIRequest(obj) {
   
-  var channelList:ListBuffer[FeedRequestData] = null
-  
- def this(obj:Object){
-    this()
-    obj match{
-      case s:String => create(s)
-      case r:HttpRequest => create(r)
-    }
-  }
+  var channelList:ListBuffer[FeedRequestData] = _
   
   def create(request:HttpRequest){
     // Get requests not supported
@@ -60,17 +52,9 @@ class FeedRequest extends APIRequest {
 /** Channel Request
  *  
  */
-class ChannelRequest extends APIRequest{
+class ChannelRequest(obj:Object) extends APIRequest(obj){
 
-  var channelIDs:ListBuffer[String] = null
-  
-  def this(obj:Object){
-    this()
-    obj match{
-      case s:String => create(s)
-      case r:HttpRequest => create(r)
-    }
-  }
+  var channelIDs:ListBuffer[String] = _
   
   override def create(request:HttpRequest){
     // Get Requests not supported

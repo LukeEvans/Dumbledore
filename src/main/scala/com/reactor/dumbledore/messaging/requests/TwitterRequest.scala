@@ -3,20 +3,11 @@ package com.reactor.dumbledore.messaging.requests
 import com.fasterxml.jackson.databind.ObjectMapper
 import spray.http.HttpRequest
 
-class TwitterRequest extends APIRequest {
+class TwitterRequest(obj:Object) extends APIRequest(obj) {
   
-  final var twitterToken:String = null
-  final var twitterSecret:String = null
-  final var numberStories:Int = 0
-  final var clearCache:Boolean = false
-  
-  def this(obj:Object){
-    this()
-    obj match{
-      case s:String => create(s)
-      case r:HttpRequest => create(r)
-    }
-  }
+  final var twitterToken:String = _
+  final var twitterSecret:String = _
+  final var numberStories:Int = _
   
   def create(request:String){
     val reqJson = getJson(request)

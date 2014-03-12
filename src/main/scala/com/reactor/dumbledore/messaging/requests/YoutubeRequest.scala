@@ -4,8 +4,8 @@ import spray.http.HttpRequest
 
 class YoutubeRequest extends APIRequest {
 
-  var channelID:Option[String] = null
-  var number:Int = 10
+  var channelID:Option[String] = _
+  var number:Int = _
   
   def this(obj:Object){
     this()

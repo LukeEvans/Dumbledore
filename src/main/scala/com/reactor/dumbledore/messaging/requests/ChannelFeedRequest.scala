@@ -2,17 +2,9 @@ package com.reactor.dumbledore.messaging.requests
 
 import spray.http.HttpRequest
 
-class ChannelFeedRequest extends APIRequest {
+class ChannelFeedRequest(obj:Object) extends APIRequest(obj) {
   
-  var clearCache:Boolean = false
-  
-  def this(obj:Object){
-    this()
-    obj match{
-      case s:String => create(s)
-      case r:HttpRequest => create(r)
-    }
-  }
+  var clearCache:Boolean = _
   
   override def create(request:HttpRequest){
     clearCache = getBoolR(request, "clearCache")
