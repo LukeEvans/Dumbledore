@@ -8,7 +8,7 @@ import scala.concurrent.duration._
 import com.fasterxml.jackson.databind.JsonNode
 import com.mongodb.DBObject
 import com.mongodb.casbah.Imports._
-import com.reactor.dumbledore.messaging.FeedRequestData
+import com.reactor.dumbledore.messaging.requests.FeedRequestData
 import com.reactor.dumbledore.utilities.Tools
 import com.reactor.patterns.pull.FlowControlActor
 import com.reactor.patterns.pull.FlowControlArgs

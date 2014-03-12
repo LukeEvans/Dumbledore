@@ -10,9 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.reactor.dumbledore.messaging._
-import com.reactor.dumbledore.messaging.ChannelRequest
-import com.reactor.dumbledore.messaging.NotificationRequest
-import com.reactor.dumbledore.messaging.request
+import com.reactor.dumbledore.messaging.requests._
 import com.redis._
 import akka.actor.Actor
 import akka.actor.ActorRef
@@ -31,12 +29,17 @@ import spray.routing.HttpService
 import spray.util.LoggingContext
 import scala.collection.mutable.ListBuffer
 import com.reactor.dumbledore.data.ListSet
+import spray.routing.RequestContext
+import spray.routing.StandardRoute
+import com.reactor.dumbledore.messaging.requests.ChannelFeedRequest
 
 trait ApiService extends HttpService{
 
   val winstonAPIActor:ActorRef
   val notificationActor:ActorRef
   val channelsActor:ActorRef
+  val twitterActor:ActorRef
+  val primeActor:ActorRef
   
   private implicit val timeout = Timeout(5 seconds);
   private implicit val system = ActorSystem("DumbledoreClusterSystem-0-1")
@@ -44,171 +47,166 @@ trait ApiService extends HttpService{
   val mapper = new ObjectMapper() with ScalaObjectMapper
     mapper.registerModule(DefaultScalaModule)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-
-    
-  val apiRoute =
-        path(""){
-          get{
-            complete{
-              "Dumbledore API 1.0"
+     
+  val apiRoute = 
+    path(""){
+      getOrPost{
+        obj =>
+          complete{
+            "Dumbledore API 1.0"
+          }
+      }
+    }~
+    path("notifications"){
+      getOrPost{
+        obj =>
+          val response = new Result()
+          val request = new NotificationRequest(obj)
+          complete{
+        	notificationActor.ask(NotificationRequestContainer(request))(15.seconds).mapTo[DataSetContainer] map{
+              container => response.finish(container.data, mapper)
+        	}
+          }
+      }
+    }~
+    path("channel"/"feeds"){
+      getOrPost{
+        obj =>
+          val response = new Result()
+          val request = new ChannelFeedRequest(obj)
+          complete{
+        	channelsActor.ask(Feeds(request.clearCache))(10.seconds).mapTo[ListBuffer[JsonNode]] map{
+        	  data => response.finish(data, mapper)
+        	}
+          }
+      }
+    }~
+    path("channel"/"feed"){
+      getOrPost{
+    	obj =>
+    	  val response = new Result()
+    	  val request = new FeedRequest(obj)
+    	  complete{
+    	    channelsActor.ask(FeedData(request.channelList))(10.seconds).mapTo[ListBuffer[ListSet[Object]]] map{
+    	      data => response.finish(data, mapper)
+    	    }
+    	  }
+      }
+    }~
+    path("channel"/"source"){
+      getOrPost{
+        obj =>
+          val response = new Result()
+          val request = new ChannelRequest(obj)
+          complete{
+        	channelsActor.ask(SourceData(request.channelIDs))(10.seconds).mapTo[ListBuffer[ListSet[Object]]] map{
+        	  data => response.finish(data, mapper)
+        	}
+          }
+      }
+    }~
+    path("social"/"twitter"){
+      getOrPost{
+        obj =>
+          val response = new Result()
+          val request = new TwitterRequest(obj)
+          complete{
+            twitterActor.ask(request)(30.seconds).mapTo[ListBuffer[JsonNode]] map{
+              data => response.finish(data, mapper)
             }
           }
-        }~
-        path("notifications"){
-         get{
-           respondWithMediaType(MediaTypes.`application/json`){
-             entity(as[HttpRequest]){
-               obj =>{
-                 val response = new Result()
-                 val request = new NotificationRequest(obj)
-                 complete{
-                   notificationActor.ask(NotificationRequestContainer(request))(15.seconds).mapTo[DataSetContainer] map{
-                     container =>
-                       response.finish(container.data, mapper)
-                   }
-                 }
-               }
-             }
-           }
-         }~
-         post{
-           respondWithMediaType(MediaTypes.`application/json`){
-             entity(as[String]){
-               obj =>{
-                 val response = new Result()
-                 val request = new NotificationRequest(obj)
-                 complete{
-                   notificationActor.ask(NotificationRequestContainer(request))(15.seconds).mapTo[DataSetContainer] map{
-                     container =>
-                       response.finish(container.data, mapper)
-                   }
-                 }
-               }
-             }
-           }
-         }
-         }~
-         path("channel"){
-           entity(as[HttpRequest]){
-             obj =>{
-               complete{
-            	 winstonAPIActor.ask(RequestContainer(obj, "dev.winstonapi.com"))(30.seconds).mapTo[ResponseContainer] map{
-            	   container =>
-                     container.response
-                 }
-               }
-             }
-           }  
-        }~
-        path("channel"/"feeds"){
-         get{
-           respondWithMediaType(MediaTypes.`application/json`){
-             entity(as[HttpRequest]){
-               obj =>{
-                 val response = new Result()
-                 val request = new ChannelFeedRequest(obj)
-                 complete{
-                   channelsActor.ask(Feeds(request.clearCache))(10.seconds).mapTo[ListBuffer[JsonNode]] map{
-                	 data =>
-            	       response.finish(data, mapper)
-            	   }
-                 }
-               }
-             }
-           }
-         }~
-         post{
-           respondWithMediaType(MediaTypes.`application/json`){
-             entity(as[String]){
-               obj =>{
-                 val response = new Result()
-                 val request = new ChannelFeedRequest(obj)
-                 complete{
-                   channelsActor.ask(Feeds(request.clearCache))(10.seconds).mapTo[ListBuffer[JsonNode]] map{
-            	     data =>
-            	       response.finish(data, mapper)
-            	   }
-                 }
-               }
-             }
-           }
-         }
-        }~
-        path("channel"/"feed"){
-           respondWithMediaType(MediaTypes.`application/json`){
-             entity(as[String]){
-               obj =>
-                 val response = new Result()
-                 val request = new FeedRequest(obj)
-                 
-                 complete{
-                   channelsActor.ask(FeedData(request.channelList))(10.seconds).mapTo[ListBuffer[ListSet[Object]]] map{
-            	     data =>
-            	       response.finish(data, mapper)
-            	   }
-                 }
-             }
-           }
-        }~
-        path("channel"/"source"){
-          respondWithMediaType(MediaTypes.`application/json`){
-             entity(as[String]){
-               obj =>
-                 val response = new Result()
-                 val request = new ChannelRequest(obj)
-                 
-                 complete{
-                   channelsActor.ask(SourceData(request.channelIDs))(10.seconds).mapTo[ListBuffer[ListSet[Object]]] map{
-            	     data =>
-            	       response.finish(data, mapper)
-            	   }
-                 }
-             }
-          }
-        }~
-        path("channel"/"sources"){
-          entity(as[HttpRequest]){
-            obj =>{
-              complete{
-            	winstonAPIActor.ask(RequestContainer(obj, "dev.winstonapi.com"))(30.seconds).mapTo[ResponseContainer] map{
-            	  container =>
-                    container.response
-                }
-              }
-            }
-          }      
-        }~
-        path(Rest ){ restPath =>
-          entity(as[HttpRequest]){
-            obj =>{
-            	complete{
-                  winstonAPIActor.ask(RequestContainer(obj, "v036.winstonapi.com"))(30.seconds).mapTo[ResponseContainer] map{
-                    container =>
-                      container.response
-                  }
-                } 
+      }
+    }~
+    path("youtube"){
+      getOrPost{
+    	obj =>
+    	  val response = new Result()
+    	  val request = new YoutubeRequest(obj)
+    	  complete{
+    		primeActor.ask(request)(30.seconds).mapTo[ListBuffer[Object]] map{
+    		  data => response.finish(data, mapper)
+    		}
+    	  }
+      }
+    }~
+    path("channel"){
+      entity(as[HttpRequest]){
+        obj =>{
+          complete{
+            winstonAPIActor.ask(RequestContainer(obj, "dev.winstonapi.com"))(30.seconds).mapTo[ResponseContainer] map{
+              container => container.response
             }
           }
-        }~
-        path("health"){
-        	complete{"OK."}
-        }~
-        pathPrefix("css" / Segment) { file =>
-          get {
-            getFromResource("web/css/" + file)
-          }
-        }~
-        path(RestPath) { path =>
-          val resourcePath = "/usr/local/reducto-dist" + "/config/loader/" + path
-          getFromFile(resourcePath)
         }
+      }  
+    }~
+    path("channel"/"sources"){
+      entity(as[HttpRequest]){
+    	obj =>{
+          complete{
+        	winstonAPIActor.ask(RequestContainer(obj, "dev.winstonapi.com"))(30.seconds).mapTo[ResponseContainer] map{
+           	  container => container.response
+            }
+          }
+    	}
+      }      
+    }~
+    path(Rest ){ restPath =>
+      entity(as[HttpRequest]){
+        obj =>{
+          complete{
+            winstonAPIActor.ask(RequestContainer(obj, "v036.winstonapi.com"))(30.seconds).mapTo[ResponseContainer] map{
+              container => container.response
+            }
+          } 
+        }
+      }
+    }~
+    path("health"){
+      complete{"OK."}
+    }~
+    pathPrefix("css" / Segment) { file =>
+      get {
+        getFromResource("web/css/" + file)
+      }
+    }~
+    path(RestPath) { path =>
+      val resourcePath = "/usr/local/reducto-dist" + "/config/loader/" + path
+      getFromFile(resourcePath)
+    }
+ 
+   /** Handle Get or Post Requests
+    * 
+    */
+   def getOrPost(comp:(Object) => StandardRoute):RequestContext => Unit = {
+     get{
+       respondWithMediaType(MediaTypes.`application/json`){
+         entity(as[HttpRequest]){
+           obj =>{
+             comp(obj)
+           }
+         }
+       }
+     }~
+     post{
+       respondWithMediaType(MediaTypes.`application/json`){
+         entity(as[String]){
+           obj =>{
+             comp(obj)
+           }
+         }
+       }	
+     }
+   }
 }
 
-class ApiActor(winston:ActorRef, notifications:ActorRef, channels:ActorRef) extends Actor with ApiService {
+class ApiActor(winston:ActorRef, notifications:ActorRef, channels:ActorRef, twitter:ActorRef, prime:ActorRef) extends Actor with ApiService {
 	def actorRefFactory = context
 	val winstonAPIActor = winston
 	val notificationActor = notifications
 	val channelsActor = channels
+	val twitterActor = twitter
+	val primeActor = prime
 	println("Starting API Service actor...")
   
 implicit def ReductoExceptionHandler(implicit log: LoggingContext) =

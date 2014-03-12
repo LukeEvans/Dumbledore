@@ -14,17 +14,6 @@ import com.reactor.dumbledore.data.ListSet
  */
 object WebService {
   private val baseUrl = "http://v036.winstonapi.com"  
-
-//  def request(serviceId:String, endpoint:String, parameters:Option[Map[String, String]], ids:ListBuffer[String]):ListSet[Object] = {
-//		  
-//    parameters match{
-//      case Some(params) => 
-//        val url = baseUrl + endpoint + "?" + constructParams(params)
-//        ListSet(serviceId,  getData(url, ids))
-//      case None =>
-//        ListSet(serviceId, getData(baseUrl + endpoint, ids))
-//    }
-//  }
   
   def request(serviceId:String, data:WebRequestData, parameters:Option[Map[String, String]]):ListSet[Object] = {
 		  
