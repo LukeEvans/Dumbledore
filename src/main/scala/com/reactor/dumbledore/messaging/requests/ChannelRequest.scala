@@ -1,24 +1,33 @@
-package com.reactor.dumbledore.messaging
+package com.reactor.dumbledore.messaging.requests
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import scala.collection.mutable.ListBuffer
 import com.fasterxml.jackson.databind.JsonNode
 import scala.collection.JavaConversions._
+import spray.http.HttpRequest
 
 case class FeedRequestData(feed_id:String, sources:ListBuffer[String])
 
 /** Feed Request 
  */
-class FeedRequest {
-  @transient
-  val mapper = new ObjectMapper()
+class FeedRequest extends APIRequest {
   
   var channelList:ListBuffer[FeedRequestData] = null
   
-  def this(request:String){
+ def this(obj:Object){
     this()
-    var cleanRequest = request.replaceAll("\\r", " ").replaceAll("\\n", " ").trim
-    val reqJson = mapper.readTree(cleanRequest);
+    obj match{
+      case s:String => create(s)
+      case r:HttpRequest => create(r)
+    }
+  }
+  
+  def create(request:HttpRequest){
+    // Get requests not supported
+  }
+  
+  def create(string:String){
+    val reqJson = getJson(string)
     
     channelList = getList(reqJson.get("data"))
   }
@@ -49,16 +58,28 @@ class FeedRequest {
 }
 
 /** Channel Request
+ *  
  */
-class ChannelRequest{
-  @transient
-  val mapper = new ObjectMapper()
+class ChannelRequest extends APIRequest{
+
   var channelIDs:ListBuffer[String] = null
   
-  def this(request:String){
-	this()
-    var cleanRequest = request.replaceAll("\\r", " ").replaceAll("\\n", " ").trim
-    val reqJson = mapper.readTree(cleanRequest);
+  def this(obj:Object){
+    this()
+    obj match{
+      case s:String => create(s)
+      case r:HttpRequest => create(r)
+    }
+  }
+  
+  override def create(request:HttpRequest){
+    // Get Requests not supported
+  }
+  
+  override def create(string:String){
+
+    val reqJson = getJson(string)
+    
 	if(reqJson.has("data"))
 	  channelIDs = getChannelIds(reqJson.get("data"))
   }

@@ -8,6 +8,8 @@ import scala.collection.mutable.Map
 import scala.collection.mutable.ListBuffer
 import com.reactor.dumbledore.data.ListSet
 import com.reactor.dumbledore.services.WebRequestData
+import twitter4j.Status
+import com.reactor.dumbledore.messaging.requests._
 
 class Message extends Serializable
 
@@ -41,4 +43,14 @@ case class Feeds(clear:Boolean) extends request
 // Channel Request Containers
 case class Sources() extends request
 case class SourceData(data:ListBuffer[String]) extends request
+
+// Twitter Containers
+case class TwitterStoryData(status:Status, me:Long) extends request
+
+//==========================
+// Prime Request Containers 
+//==========================
+
+// Youtube Containers
+case class YoutubeData(request:YoutubeRequest)
 

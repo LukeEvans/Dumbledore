@@ -12,7 +12,7 @@ import scala.concurrent.duration._
 import com.fasterxml.jackson.databind.JsonNode
 import com.reactor.dumbledore.utilities.Tools
 import com.reactor.dumbledore.messaging.FeedData
-import com.reactor.dumbledore.messaging.FeedRequestData
+import com.reactor.dumbledore.messaging.requests.FeedRequestData
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.DBObject
 import com.mongodb.casbah.Imports._

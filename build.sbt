@@ -86,6 +86,8 @@ libraryDependencies += "com.amazonaws" % "elasticache-java-cluster-client" % "1.
 
 libraryDependencies += "net.debasishg" % "redisclient_2.10" % "2.11"
 
+libraryDependencies += "org.twitter4j" % "twitter4j-core" % "3.0.5"
+
 libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-extra" % "0.3" excludeAll(
         ExclusionRule(organization = "javax.jms"),
         ExclusionRule(organization = "com.sun.jdmk"),

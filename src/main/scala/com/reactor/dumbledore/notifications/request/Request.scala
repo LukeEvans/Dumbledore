@@ -2,7 +2,8 @@ package com.reactor.dumbledore.notifications.request
 
 import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConversions._
-import org.codehaus.jackson.JsonNode
+import com.fasterxml.jackson.databind.JsonNode
+
 
 class Request {
   var id:String = null

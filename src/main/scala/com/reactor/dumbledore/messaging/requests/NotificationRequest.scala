@@ -1,16 +1,14 @@
-package com.reactor.dumbledore.messaging
+package com.reactor.dumbledore.messaging.requests
 
 import spray.http.HttpRequest
 import scala.collection.mutable.ListBuffer
 import org.codehaus.jackson.map.ObjectMapper
-import org.codehaus.jackson.JsonNode
 import scala.collection.JavaConversions._
 import com.reactor.dumbledore.notifications.request.Request
 import com.reactor.prime.user.UserCredentials
+import com.fasterxml.jackson.databind.JsonNode
 
-class NotificationRequest extends Message {
-  @transient
-  val mapper = new ObjectMapper()
+class NotificationRequest extends APIRequest {
   
   var udid:String = ""
   var lat:Double = 0.0
@@ -19,8 +17,16 @@ class NotificationRequest extends Message {
   var dev:Boolean = false
   var serviceRequest:ListBuffer[Request] = null
   
-  def this(request:HttpRequest){
+  def this(obj:Object){
     this()
+    obj match{
+      case s:String => create(s)
+      case r:HttpRequest => create(r)
+    }
+  }
+  
+  def create(request:HttpRequest){
+    
     udid = if(request.uri.query.get("udid") != None) request.uri.query.get("udid").get else null
     if(request.uri.query.get("lat") != None) 
       lat = request.uri.query.get("lat").get.toDouble
@@ -32,10 +38,9 @@ class NotificationRequest extends Message {
       dev = request.uri.query.get("dev").get.toBoolean
   }
   
-  def this(request:String){
-    this()
-    var cleanRequest = request.replaceAll("\\r", " ").replaceAll("\\n", " ").trim
-    val reqJson = mapper.readTree(cleanRequest);	
+  def create(string:String){
+
+    val reqJson = getJson(string)
     
     if(reqJson.has("udid"))
       udid = reqJson.get("udid").asText

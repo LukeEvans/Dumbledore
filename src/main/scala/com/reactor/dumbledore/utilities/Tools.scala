@@ -26,6 +26,8 @@ import org.joda.time.DateTime
 import com.mongodb.casbah.commons.MongoDBObject
 import org.apache.http.entity.StringEntity
 import org.apache.http.client.methods.HttpPost
+import javax.swing.ImageIcon
+import java.awt.Image
 
 object Tools {
   @transient
@@ -228,5 +230,10 @@ object Tools {
 	      null
 	    }
 	  }
+  	}
+  	
+  	def getImageFromURL(url:String):Image = {
+  	  var image = new ImageIcon(parseUrl(url)).getImage();
+  	  return image;
   	}
 }

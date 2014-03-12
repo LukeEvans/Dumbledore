@@ -8,7 +8,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.Failure
 import scala.util.Success
-import com.reactor.dumbledore.messaging.NotificationRequest
+import com.reactor.dumbledore.messaging.requests.NotificationRequest
 import com.reactor.dumbledore.messaging.NotificationRequestContainer
 import com.reactor.dumbledore.services.ServiceActor
 import com.reactor.patterns.pull.FlowControlActor

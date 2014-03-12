@@ -1,4 +1,4 @@
-package com.reactor.dumbledore.messaging
+package com.reactor.dumbledore.messaging.requests
 
 import com.github.nscala_time.time.Imports._
 
