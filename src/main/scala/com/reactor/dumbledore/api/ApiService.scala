@@ -43,8 +43,6 @@ trait ApiService extends HttpService{
   val twitterActor:ActorRef
   val primeActor:ActorRef
   
-  val goose = new Goose(new Configuration)
-  
   private implicit val timeout = Timeout(5 seconds);
   private implicit val system = ActorSystem("DumbledoreClusterSystem-0-1")
   
