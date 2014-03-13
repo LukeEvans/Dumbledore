@@ -110,7 +110,7 @@ trait ApiService extends HttpService{
           }
       }
     }~
-    path("social"/"twitter"){
+    path("social"/"twitter2"){
       getOrPost{
         obj =>
           val response = new Result()
