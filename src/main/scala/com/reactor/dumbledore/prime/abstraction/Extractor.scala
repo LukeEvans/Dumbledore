@@ -8,11 +8,12 @@ import com.gravity.goose._
 class Extractor {
   var sentiment = new SentimentService
   var configuration = new Configuration
-  //configuration.setImagemagickConvertPath("/usr/bin/convert") // Remote Settings
-  configuration.setImagemagickConvertPath("/usr/local/Cellar/imagemagick/6.8.7-0/bin/convert") // Local Settings
   
-  //configuration.setImagemagickIdentifyPath("/usr/bin/identify") // Remote Settings
-  configuration.setImagemagickIdentifyPath("/usr/local/Cellar/imagemagick/6.8.7-0/bin/identify") // Local Settings
+  configuration.setImagemagickConvertPath("/usr/bin/convert") // Remote Settings
+  //configuration.setImagemagickConvertPath("/usr/local/Cellar/imagemagick/6.8.7-0/bin/convert") // Local Settings
+  
+  configuration.setImagemagickIdentifyPath("/usr/bin/identify") // Remote Settings
+  //configuration.setImagemagickIdentifyPath("/usr/local/Cellar/imagemagick/6.8.7-0/bin/identify") // Local Settings
 
   val goose = new Goose(configuration)
   
