@@ -27,7 +27,6 @@ case class TwitterBuilderArgs(extractorActor:ActorRef) extends FlowControlArgs{
 class TwitterStoryBuilderActor(args:TwitterBuilderArgs) extends FlowControlActor(args) {
 
   val extrActor = args.extractorActor
-  val extractor = new Extractor
   ready()
   
   override def preStart() = println("Starting TwitterStoryBuilder")
@@ -40,7 +39,7 @@ class TwitterStoryBuilderActor(args:TwitterBuilderArgs) extends FlowControlActor
   def handleStoryRequest(status:Status, meID:Long, origin:ActorRef){
     implicit val timeout = Timeout(2 seconds)
     
-    val story = new TwitterStory(status, meID, extractor)
+    val story = new TwitterStory(status, meID)
     
     if(story.header.equalsIgnoreCase("link")){
       val linkAbstract = (extrActor ? story.url ).mapTo[Abstraction]
