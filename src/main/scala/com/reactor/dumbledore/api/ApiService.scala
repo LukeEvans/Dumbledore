@@ -32,6 +32,8 @@ import com.reactor.dumbledore.data.ListSet
 import spray.routing.RequestContext
 import spray.routing.StandardRoute
 import com.reactor.dumbledore.messaging.requests.ChannelFeedRequest
+import com.gravity.goose._
+import com.fasterxml.jackson.databind.SerializationFeature
 
 trait ApiService extends HttpService{
 
@@ -41,12 +43,15 @@ trait ApiService extends HttpService{
   val twitterActor:ActorRef
   val primeActor:ActorRef
   
+  val goose = new Goose(new Configuration)
+  
   private implicit val timeout = Timeout(5 seconds);
   private implicit val system = ActorSystem("DumbledoreClusterSystem-0-1")
   
   val mapper = new ObjectMapper() with ScalaObjectMapper
     mapper.registerModule(DefaultScalaModule)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    //mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
      
   val apiRoute = 
     path(""){
@@ -111,7 +116,7 @@ trait ApiService extends HttpService{
           val response = new Result()
           val request = new TwitterRequest(obj)
           complete{
-            twitterActor.ask(request)(30.seconds).mapTo[ListBuffer[JsonNode]] map{
+            twitterActor.ask(request)(30.seconds).mapTo[ListBuffer[Object]] map{
               data => response.finish(data, mapper)
             }
           }

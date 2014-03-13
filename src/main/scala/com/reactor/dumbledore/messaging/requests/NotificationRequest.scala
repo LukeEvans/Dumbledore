@@ -8,52 +8,36 @@ import com.reactor.dumbledore.notifications.request.Request
 import com.reactor.prime.user.UserCredentials
 import com.fasterxml.jackson.databind.JsonNode
 
-class NotificationRequest extends APIRequest {
+class NotificationRequest(obj:Object) extends APIRequest(obj) {
   
-  var udid:String = ""
-  var lat:Double = 0.0
-  var long:Double = 0.0
-  var time:RequestTime = null
-  var dev:Boolean = false
-  var serviceRequest:ListBuffer[Request] = null
-  
-  def this(obj:Object){
-    this()
-    obj match{
-      case s:String => create(s)
-      case r:HttpRequest => create(r)
-    }
-  }
+  var udid:String = _
+  var lat:Double = _
+  var long:Double = _
+  var time:RequestTime = _
+  var dev:Boolean = _
+  var serviceRequest:ListBuffer[Request] = _
   
   def create(request:HttpRequest){
     
-    udid = if(request.uri.query.get("udid") != None) request.uri.query.get("udid").get else null
-    if(request.uri.query.get("lat") != None) 
-      lat = request.uri.query.get("lat").get.toDouble
-    if(request.uri.query.get("long") != None) 
-      long = request.uri.query.get("long").get.toDouble
-    if(request.uri.query.get("timezone_offset") != None)
-      time = new RequestTime(request.uri.query.get("timezone_offset").get)
-    if(request.uri.query.get("dev") != None)
-      dev = request.uri.query.get("dev").get.toBoolean
+    udid = getStringR(request, "udid")
+    lat = getDoubleR(request, "lat")
+    long = getDoubleR(request, "long")
+    time = new RequestTime(getStringR(request, "timezone_offset"))
+    dev = getBoolR(request, "dev")
   }
   
   def create(string:String){
 
-    val reqJson = getJson(string)
+    val json = getJson(string)
     
-    if(reqJson.has("udid"))
-      udid = reqJson.get("udid").asText
-    if(reqJson.has("lat"))
-      lat = reqJson.get("lat").asDouble()
-    if(reqJson.has("long"))
-      long = reqJson.get("long").asDouble()
-    if(reqJson.has("timezone_offset"))
-      time = new RequestTime(reqJson.get("timezone_offset").asText())
-    if(reqJson.has("dev"))
-      dev = reqJson.get("dev").asBoolean()
-    if(reqJson.has("service_request"))
-      serviceRequest = getServiceRequest(reqJson.get("service_request"))
+    udid = getString(json, "udid")
+    lat = getDouble(json, "lat")
+    long = getDouble(json, "long")
+    time = new RequestTime(getString(json, "timezone_offset"))
+    dev = getBool(json, "dev")
+    
+    if(json.has("service_request"))
+      serviceRequest = getServiceRequest(json.get("service_request"))
   }
   
   /** Create UserCredentials from request parameters

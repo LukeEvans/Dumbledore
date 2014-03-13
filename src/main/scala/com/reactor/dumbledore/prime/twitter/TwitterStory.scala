@@ -34,15 +34,19 @@ class TwitterStory {
   var images = ListBuffer[String]();
   var url:String = null;
 
+  var favorite_count:Int = 0
   var retweet_count:Int = 0;
   var user_retweeted:Boolean = false;
   var user_favorited:Boolean = false;
   var handle:String = null;
   var timeScore:Double = 0;
+  
+  var score:Int = 0
         
   var date:Date = null;
   
-  var extractor:Extractor = null
+  private var extractor:Extractor = null
+  private var linkScore = 0
   
   def this(status:Status, me:Long, ex:Extractor){
     this()
@@ -73,6 +77,7 @@ class TwitterStory {
       cover_pic = status.getUser().getProfileBannerRetinaURL();
       
       retweet_count = status.getRetweetCount();
+      favorite_count = status.getFavoriteCount()
       user_retweeted = status.isRetweetedByMe();
       user_favorited = status.isFavorited();
       
@@ -81,10 +86,9 @@ class TwitterStory {
       val urls = status.getURLEntities()
       
       if (urls != null && urls.length > 0) {
-        handleLink(urls(0).getExpandedURL());
+        url = urls(0).getExpandedURL();
+        header = "Link";
       }
-      
-      //relatedStory = sentimentService.findStoryForEntityList(getEntities());
     }
   }
   
@@ -191,20 +195,27 @@ class TwitterStory {
       return true
   }
   
-  def handleLink(url:String){
-    this.url = url;
-    header = "Link";
-            
-    val t = new Timer
-    var abstraction = extractor.getAbstraction(url);
-    t.stopAndPrint("abstration done - " + url)
-    if (abstraction != null && abstraction.images != null) {
-      if (abstraction.images.size() > 0) {
+  
+  def setLinkData(abs:Abstraction){
+    if (abs != null && abs.images != null) {
+      if (abs.images.size() > 0) {
         images.clear();
-        images.add(abstraction.images.get(0));
+        images.add(abs.images.get(0));
+        linkScore += 4000
       }
+      description = abs.title;
+      tweet = name + " shared a link titled, " + description + ".";
     }
-    description = abstraction.title;
-    tweet = name + " shared a link titled, " + description + ".";
+  }
+  
+  def calcScore():Int = {
+    val now = new Date()
+    val dateScore = Math.abs(date.getTime() - now.getTime())/60000
+    
+    val rtScore = retweet_count
+    val favScore = favorite_count
+    
+    score = (rtScore + favScore + dateScore.toInt)
+    score
   }
 }

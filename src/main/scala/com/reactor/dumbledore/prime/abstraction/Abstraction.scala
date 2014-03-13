@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import scala.collection.JavaConversions._
 import com.reactor.dumbledore.utilities.Tools
 import com.reactor.dumbledore.prime.entities.SentimentService
+import com.gravity.goose.Article
 
 class Abstraction {
   var title:String = null;
@@ -23,6 +24,15 @@ class Abstraction {
 
         getImages(node.path("media"));
       }
+    }
+  }
+  
+  def this(article:Article){
+    this()
+    if(article != null){
+      title = article.title
+      text = article.cleanedArticleText
+      images += article.topImage.getImageSrc
     }
   }
   

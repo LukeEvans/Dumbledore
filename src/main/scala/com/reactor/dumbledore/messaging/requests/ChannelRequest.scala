@@ -9,28 +9,27 @@ import spray.http.HttpRequest
 case class FeedRequestData(feed_id:String, sources:ListBuffer[String])
 
 /** Feed Request 
+ *  
  */
-class FeedRequest extends APIRequest {
+class FeedRequest(obj:Object) extends APIRequest(obj) {
   
-  var channelList:ListBuffer[FeedRequestData] = null
+  var channelList:ListBuffer[FeedRequestData] = _
   
- def this(obj:Object){
-    this()
-    obj match{
-      case s:String => create(s)
-      case r:HttpRequest => create(r)
-    }
-  }
-  
-  def create(request:HttpRequest){
+  /** Get parameters from json
+   */
+  override def create(request:HttpRequest){
     // Get requests not supported
   }
   
-  def create(string:String){
+  /** Get parameters from httprequest
+   */
+  override def create(string:String){
     val reqJson = getJson(string)
     
     channelList = getList(reqJson.get("data"))
   }
+  
+  
   
   private def getList(dataNode:JsonNode):ListBuffer[FeedRequestData] = {
     if(dataNode == null)
@@ -45,6 +44,7 @@ class FeedRequest extends APIRequest {
     return dataList
   }
   
+  
   private def nodeToList(nodeList:JsonNode):ListBuffer[String] = {
     if(nodeList == null)
       return null
@@ -53,24 +53,18 @@ class FeedRequest extends APIRequest {
     nodeList.map{
       node => list += node.asText()
     }
-    list
+    return list
   }
 }
+
+
 
 /** Channel Request
  *  
  */
-class ChannelRequest extends APIRequest{
+class ChannelRequest(obj:Object) extends APIRequest(obj){
 
-  var channelIDs:ListBuffer[String] = null
-  
-  def this(obj:Object){
-    this()
-    obj match{
-      case s:String => create(s)
-      case r:HttpRequest => create(r)
-    }
-  }
+  var channelIDs:ListBuffer[String] = _
   
   override def create(request:HttpRequest){
     // Get Requests not supported

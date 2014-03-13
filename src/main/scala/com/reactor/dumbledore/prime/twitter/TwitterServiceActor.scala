@@ -42,18 +42,40 @@ class TwitterServiceActor(args:TwitterArgs) extends FlowControlActor(args) {
     
     statuses.map(status => requests += (twitterStoryBuilder ? TwitterStoryData(status, 0)).mapTo[TwitterStory])
     
-    val stories = ListBuffer[Object]()
+    val stories = ListBuffer[TwitterStory]()
     
     Future.sequence(requests).onComplete{
-      case Success(results) => results.map{
+      case Success(results) => 
+        println("tweets received")
+        results.map{
           result => stories += result
       	}
-        reply(origin, stories)
+        
+        val set = shorten(8, stories)
+        reply(origin, set)
         complete()
       
       case Failure(e) => e.printStackTrace()
         reply(origin, ListBuffer[Object]())
         complete()
     }
+  }
+  
+  def shorten(size:Int, list:ListBuffer[TwitterStory]):ListBuffer[TwitterStory] = {
+    
+    val newList = ListBuffer[TwitterStory]()
+    
+    var count = 0
+    var index = 0
+    
+    val sorted = list.sortWith((story1, story2) => story1.score > story2.score)
+    
+    while(count < size){
+      newList += sorted(index)
+      count += 1
+      index += 1
+    }
+    
+    return newList
   }
 }

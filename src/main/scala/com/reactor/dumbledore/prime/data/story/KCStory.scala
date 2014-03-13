@@ -17,7 +17,6 @@ class KCStory {
 	var source_name:String = null
 	var author:String = null
 	var summary:String = null
-	var full_text:String = null
 	var pubdate:String = null
 	var date:Long = 0
 	var link:String = null
@@ -41,8 +40,7 @@ class KCStory {
   	  source_name = if(node.has("source_name")) node.get("source_name").asText else null
   	  author = if(node.has("author")) node.get("author").asText else null
   	  summary = if(node.has("summary")) node.get("summary").asText else null
-  	  full_text = if(node.has("full_text")) node.get("full_text").asText else null
-  	  date = if(node.has("date")) node.get("full_text").asLong() else 0
+  	  date = if(node.has("date")) node.get("date").asLong() else 0
   	  pubdate = if(node.has("pubdate")) node.get("pubdate").asText else null
   	  link = if(node.has("link")) node.get("link").asText else null
   	  source_icon_link = if(node.has("source_icon_link")) node.get("source_icon_link").asText else null

@@ -31,9 +31,9 @@ class TwitterAPI {
 	  val twitter = factory.getInstance()
 	  
 	  if(lastId != 1l)
-	    twitter.getHomeTimeline(new Paging(1, 30, lastId))
+	    twitter.getHomeTimeline(new Paging(1, 20, lastId))
 	  else
-	    twitter.getHomeTimeline(new Paging(1, 30))
+	    twitter.getHomeTimeline(new Paging(1, 20))
 	}
 	
 	// Get List of Statuses with handle, ConfBuilder, and last tweet ID
