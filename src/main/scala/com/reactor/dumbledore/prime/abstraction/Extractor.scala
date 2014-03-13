@@ -6,26 +6,24 @@ import com.reactor.dumbledore.utilities.Tools
 import com.gravity.goose._
 
 class Extractor {
-  var sentiment = new SentimentService
-  var configuration = new Configuration
-  
-  configuration.setImagemagickConvertPath("/usr/bin/convert") // Remote Settings
-  //configuration.setImagemagickConvertPath("/usr/local/Cellar/imagemagick/6.8.7-0/bin/convert") // Local Settings
-  
-  configuration.setImagemagickIdentifyPath("/usr/bin/identify") // Remote Settings
-  //configuration.setImagemagickIdentifyPath("/usr/local/Cellar/imagemagick/6.8.7-0/bin/identify") // Local Settings
-
-  val goose = new Goose(configuration)
+//  var configuration = new Configuration
+//  
+//  configuration.setImagemagickConvertPath("/usr/bin/convert") // Remote Settings
+//  //configuration.setImagemagickConvertPath("/usr/local/Cellar/imagemagick/6.8.7-0/bin/convert") // Local Settings
+//  
+//  configuration.setImagemagickIdentifyPath("/usr/bin/identify") // Remote Settings
+//  //configuration.setImagemagickIdentifyPath("/usr/local/Cellar/imagemagick/6.8.7-0/bin/identify") // Local Settings
+//
+//  val goose = new Goose(configuration)
   
   def getAbstraction(url:String):Abstraction = {
 
 	try{
-	  val abs = new Abstraction(goose.extractContent(url))
+//	  val abs = new Abstraction(goose.extractContent(url))
 	  
-//	  val response = Tools.fetchURL(getURL(url));
-//	  val abs = new Abstraction(response);
+	  val response = Tools.fetchURL(getURL(url));
+	  val abs = new Abstraction(response);
 	
-	  //abs.getEntities(sentiment);
 	  return abs;  
 	} catch{
 	  case e:Exception => 
