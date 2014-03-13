@@ -9,20 +9,27 @@ import spray.http.HttpRequest
 case class FeedRequestData(feed_id:String, sources:ListBuffer[String])
 
 /** Feed Request 
+ *  
  */
 class FeedRequest(obj:Object) extends APIRequest(obj) {
   
   var channelList:ListBuffer[FeedRequestData] = _
   
-  def create(request:HttpRequest){
+  /** Get parameters from json
+   */
+  override def create(request:HttpRequest){
     // Get requests not supported
   }
   
-  def create(string:String){
+  /** Get parameters from httprequest
+   */
+  override def create(string:String){
     val reqJson = getJson(string)
     
     channelList = getList(reqJson.get("data"))
   }
+  
+  
   
   private def getList(dataNode:JsonNode):ListBuffer[FeedRequestData] = {
     if(dataNode == null)
@@ -37,6 +44,7 @@ class FeedRequest(obj:Object) extends APIRequest(obj) {
     return dataList
   }
   
+  
   private def nodeToList(nodeList:JsonNode):ListBuffer[String] = {
     if(nodeList == null)
       return null
@@ -45,9 +53,11 @@ class FeedRequest(obj:Object) extends APIRequest(obj) {
     nodeList.map{
       node => list += node.asText()
     }
-    list
+    return list
   }
 }
+
+
 
 /** Channel Request
  *  

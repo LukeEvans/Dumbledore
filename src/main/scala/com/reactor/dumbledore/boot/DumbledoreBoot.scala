@@ -25,6 +25,7 @@ import com.reactor.patterns.pull.FlowControlFactory
 import com.reactor.dumbledore.notifications.NotificationArgs
 import com.reactor.dumbledore.prime.channels.ChannelArgs
 import com.reactor.dumbledore.prime.twitter.TwitterArgs
+import com.reactor.dumbledore.prime.twitter.TwitterBuilderArgs
 
 class DumbledoreBoot extends Bootable {
   val ip = IPTools.getPrivateIp(); 
@@ -44,8 +45,11 @@ class DumbledoreBoot extends Bootable {
     val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor")
     val primeActor = FlowControlFactory.flowControlledActorForSystem(system, primeFlowConfig)
     
+    val extractorFlowConfig = FlowControlConfig(name="extractorActor", actorType="com.reactor.dumbledore.prime.abstraction.ExtractionActor", parallel = 30)
+    val extractorActor = FlowControlFactory.flowControlledActorForSystem(system, extractorFlowConfig)
+    
     val twitterStoryBuilderFlowConfig = FlowControlConfig(name="twitterStoryBuilderActor", actorType="com.reactor.dumbledore.prime.twitter.TwitterStoryBuilderActor", parallel = 30)    
-    val twitterStoryActor = FlowControlFactory.flowControlledActorForSystem(system, twitterStoryBuilderFlowConfig)
+    val twitterStoryActor = FlowControlFactory.flowControlledActorForSystem(system, twitterStoryBuilderFlowConfig, TwitterBuilderArgs(extractorActor))
     
     val twitterServiceFlowConfig = FlowControlConfig(name="twitterServiceActor", actorType="com.reactor.dumbledore.prime.twitter.TwitterServiceActor", parallel = 8)    
     val twitterServiceActor = FlowControlFactory.flowControlledActorForSystem(system, twitterServiceFlowConfig, TwitterArgs(twitterStoryActor))

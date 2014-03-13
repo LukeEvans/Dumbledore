@@ -36,7 +36,7 @@ libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" 
 
 libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.2.5"
 
-libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.0-alpha4"
+libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.3.3"
 
 libraryDependencies += "io.spray" %%  "spray-json" % "1.2.5"
 
