@@ -45,17 +45,15 @@ class TwitterStory {
         
   var date:Date = null;
   
-  private var extractor:Extractor = null
   private var linkScore = 0
   
-  def this(status:Status, me:Long, ex:Extractor){
+  def this(status:Status, me:Long){
     this()
     
     if(!storyValid(status, me)){
       id = null
     }
     else{
-      extractor = ex
       db = "Twitter"
       id = status.getId().toString()
       header = "Status"
