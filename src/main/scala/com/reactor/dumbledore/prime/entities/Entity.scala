@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 class Entity {
   var entity_name:String = null
   var entity_type:String = null
+  var entity_score:Int = 0
   var sentiment:String = null
 
   def this(node:JsonNode){
@@ -12,6 +13,9 @@ class Entity {
     this.entity_type = node.path("type").asText()
     this.sentiment = node.path("sentiment").path("type").asText()
     this.entity_name = node.path("text").asText()
+    
+    if(node.has("entity_score"))
+      this.entity_score = node.path("entity_score").asInt
     
     sanitizeEntityText()
   }
