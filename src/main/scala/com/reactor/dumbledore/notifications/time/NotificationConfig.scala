@@ -2,9 +2,10 @@ package com.reactor.dumbledore.notifications.time
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Map
+
 import com.github.nscala_time.time.Imports._
 
-case class NotificationConfig(serviceType:String, notifEndpoint:String, rank:Int) {
+case class NotificationConfig(serviceType:String, notifEndpoint:String, rank:Int, reloadMinutes:Long = 30) {
   val timeRanges:ArrayBuffer[TimeRange] = new ArrayBuffer[TimeRange]
   
   def addTimeRange(start:Date, stop:Date, params:Option[Map[String, String]]):NotificationConfig ={
@@ -46,5 +47,27 @@ case class NotificationConfig(serviceType:String, notifEndpoint:String, rank:Int
       }
     }
     None
+  }
+  
+  def isDismissed(dismissalTime:Option[Long], date:DateTime):Boolean = {
+    
+    dismissalTime match{
+      case Some(time) =>
+        //val date = new java.util.Date
+    	val now = date.getMillis
+    	
+    	println("now time: " + now/60000)
+    	println("dismissal time: " + time/60)
+    	
+    	val difference = (now/60000) - (time/60) // minutes difference between dismissal and now
+    	
+    	println("Diff: " + difference)
+    
+    	if(difference < reloadMinutes) return true else return false     
+      
+      case None => false
+    }
+    
+
   }
 }

@@ -9,7 +9,7 @@ case class Time(hour:Int, minute:Int) {
 
 case class Date(time:Time, day:Int){
   require(day >= 0 && day < 7)
-  private var utcTime = new DateTime(DateTimeZone.forOffsetHours(0))
+  var utcTime = new DateTime(DateTimeZone.forOffsetHours(0))
   var offTime:Time = Time(utcTime.getHourOfDay(), utcTime.getMinuteOfHour())
   var offDay:Int = utcTime.getDayOfWeek()
   
