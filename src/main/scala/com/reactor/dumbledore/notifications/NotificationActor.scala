@@ -62,7 +62,7 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
   private def manage(request:NotificationRequest, origin:ActorRef){ 
     implicit val timeout = Timeout(30 seconds);
     
-	val params = new Parameters(request.getUserCredentials)
+	val params = new Parameters(request.getUserCredentials) //Create parameter object from request
     var responseData:ListBuffer[ListSet[Object]] = ListBuffer[ListSet[Object]]()
 
 	val time = request.time.offsetTime

@@ -25,20 +25,29 @@ class NotificationManager {
   def getWebServices(requests:ListBuffer[Request], now:DateTime):Map[String, WebRequestData] = {
     val date = new Date(now)
     val validServices = Map[String, WebRequestData]()
+    println("get web services")
     
     requests.map{
-     request =>
-       services.get(request.id) match{
-         case Some(service) =>
+     request => services.get(request.id) match{
+         
+         case Some(service) => // Service with request.id found
+           println("Service " + service.notifEndpoint) 
            service.getRangeAction(date) match{
-             case Some(range) =>
-               validServices.put(request.id, WebRequestData(service.serviceType, service.notifEndpoint, service.rank, range.params, request.cards))
+             
+             case Some(range) =>              
+               if( !service.isDismissed(request.dismissTime, now)) // If card has not been dismissed within the regeneration time frame 
+            	   validServices.put(request.id, WebRequestData(service.serviceType, service.notifEndpoint, service.rank, range.params, request.cards))            	   
+               else 
+                 println("Card is dismissed")
+               
+               
              case None => println("Not a valid time - " + request.id)
            }
+           
          case None => println("Service not found")
        }
     }   
-    validServices
+    return validServices
   }
   
   
