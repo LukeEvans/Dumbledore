@@ -117,7 +117,13 @@ class NotificationManager {
     
     // Topic Alerts
     
-    val nearbyPlaces = new NotificationConfig("v036", "/yelp", 3).add247(None)
+    val nearbyPlaces = new NotificationConfig("v036", "/yelp", 3)
+    						.addRange(Time(7, 0), Time(9, 59), 0, 6, Some(Map("type" -> "coffee")))
+							.addRange(Time(11, 0), Time(12, 59), 0, 6, Some(Map("type" -> "lunch")))
+							.addRange(Time(15, 0), Time(16, 59), 0, 6, Some(Map("type" -> "coffee")))
+							.addRange(Time(17, 0), Time(19, 59), 0, 6, Some(Map("type" -> "dinner")))
+							.add247(None)
+    
     devServices put ("nearby_places", nearbyPlaces)
     
     val stocks = new StaticNotificationConfig("v036", "/stocks", 4).add247(None)
