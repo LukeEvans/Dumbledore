@@ -53,6 +53,7 @@ class TwitterStoryBuilderActor(args:TwitterBuilderArgs) extends FlowControlActor
           reply(origin, story)
           complete()
         case Failure(e) => 
+          println("Failure extracting link")
           e.printStackTrace()
           story.entityAnalysis
           story.calcScore

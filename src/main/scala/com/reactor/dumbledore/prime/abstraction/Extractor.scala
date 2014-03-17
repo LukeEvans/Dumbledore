@@ -19,10 +19,10 @@ class Extractor {
   def getAbstraction(url:String):Abstraction = {
 
 	try{
-//	  val abs = new Abstraction(goose.extractContent(url))
+	  val abs = new Abstraction(goose.extractContent(url))
 	  
-	  val response = Tools.fetchURL(getURL(url));
-	  val abs = new Abstraction(response);
+//	  val response = Tools.fetchURL(getURL(url));
+//	  val abs = new Abstraction(response);
 	
 	  return abs;  
 	} catch{

@@ -3,7 +3,7 @@ package com.reactor.dumbledore.messaging
 import java.util.ArrayList
 import com.fasterxml.jackson.databind.ObjectMapper
 
-class Result {
+class Response {
 	var status ="OK"
 	var response_type:String = null
 	var response_time:Double = 0
