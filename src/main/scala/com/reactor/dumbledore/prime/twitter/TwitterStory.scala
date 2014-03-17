@@ -195,14 +195,16 @@ class TwitterStory {
   
   
   def setLinkData(abs:Abstraction){
-    if (abs != null && abs.images != null) {
+    if (abs.title != null && abs.images != null) {
       if (abs.images.size() > 0) {
         images.clear();
         images.add(abs.images.get(0));
         linkScore += 4000
       }
-      description = abs.title;
-      tweet = name + " shared a link titled, " + description + ".";
+      if(!abs.title.equalsIgnoreCase("")){
+        description = abs.title;
+        tweet = name + " shared a link titled, " + description + ".";
+      }
     }
   }
   

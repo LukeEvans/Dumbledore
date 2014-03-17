@@ -45,7 +45,7 @@ class DumbledoreBoot extends Bootable {
     val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor")
     val primeActor = FlowControlFactory.flowControlledActorForSystem(system, primeFlowConfig)
     
-    val extractorFlowConfig = FlowControlConfig(name="extractorActor", actorType="com.reactor.dumbledore.prime.abstraction.ExtractionActor", parallel = 1)
+    val extractorFlowConfig = FlowControlConfig(name="extractorActor", actorType="com.reactor.dumbledore.prime.abstraction.ExtractionActor", parallel = 30)
     val extractorActor = FlowControlFactory.flowControlledActorForSystem(system, extractorFlowConfig)
     
     val twitterStoryBuilderFlowConfig = FlowControlConfig(name="twitterStoryBuilderActor", actorType="com.reactor.dumbledore.prime.twitter.TwitterStoryBuilderActor", parallel = 30)    

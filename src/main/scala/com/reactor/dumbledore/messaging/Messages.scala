@@ -14,7 +14,6 @@ import com.reactor.dumbledore.messaging.requests._
 class Message extends Serializable
 
 trait request
-trait response
 
 // HTTP Request Forwarding Containers 
 case class RequestContainer(request:HttpRequest, urlBase:String) extends request
@@ -27,9 +26,9 @@ case class ServiceRequest(service_id:String, requestData:WebRequestData, params:
 
 
 // Data Containers
-case class DataSetContainer(data:ListBuffer[ListSet[Object]]) extends response
+case class DataSetContainer(data:ListBuffer[ListSet[Object]]) extends request
 //case class ListSetContainer(data:ListSet[Object]) extends response
-case class ListSetContainer[T](data:ListSet[T]) extends response
+case class ListSetContainer[T](data:ListSet[T]) extends request
 
 
 // Notification Request

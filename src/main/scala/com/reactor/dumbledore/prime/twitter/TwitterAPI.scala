@@ -18,22 +18,22 @@ class TwitterAPI {
 	val mongo = new MongoDB
 	
 	
-	def getHomeTimeLine(userToken:String, userSecret:String):List[Status] = {
+	def getHomeTimeLine(number:Int, userToken:String, userSecret:String):List[Status] = {
 	  val builder = authBuilder(CONSUMER_KEY, CONSUMER_SECRET, token = userToken, tokenSecret = userSecret)
 	  
-	  getHomeStatuses(builder, 1l)
+	  getHomeStatuses(number:Int, builder, 1l)
 	}
 	
 	/** Get Home feed of Statuses with ConfBuilder and last tweet ID */
-	private def getHomeStatuses(builder:ConfigurationBuilder, lastId:Long):List[Status] = {
+	private def getHomeStatuses(number:Int, builder:ConfigurationBuilder, lastId:Long):List[Status] = {
 	  val configuration = builder.build()
 	  val factory = new TwitterFactory(configuration)
 	  val twitter = factory.getInstance()
 	  
 	  if(lastId != 1l)
-	    twitter.getHomeTimeline(new Paging(1, 20, lastId))
+	    twitter.getHomeTimeline(new Paging(1, number, lastId))
 	  else
-	    twitter.getHomeTimeline(new Paging(1, 20))
+	    twitter.getHomeTimeline(new Paging(1, number))
 	}
 	
 	// Get List of Statuses with handle, ConfBuilder, and last tweet ID

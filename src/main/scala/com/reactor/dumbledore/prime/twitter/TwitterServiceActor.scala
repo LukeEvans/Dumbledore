@@ -36,7 +36,7 @@ class TwitterServiceActor(args:TwitterArgs) extends FlowControlActor(args) {
   
   def handleTwitterRequest(request:TwitterRequest, origin:ActorRef){
     implicit val timeout = Timeout(20 seconds)
-    val statuses = twitterAPI.getHomeTimeLine(request.twitterToken, request.twitterSecret)
+    val statuses = twitterAPI.getHomeTimeLine(20, request.twitterToken, request.twitterSecret)
     
     val requests = ListBuffer[Future[TwitterStory]]()
     

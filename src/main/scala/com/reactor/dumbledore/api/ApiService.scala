@@ -49,7 +49,6 @@ trait ApiService extends HttpService{
   val mapper = new ObjectMapper() with ScalaObjectMapper
     mapper.registerModule(DefaultScalaModule)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    //mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
      
   val apiRoute = 
     path(""){
@@ -60,10 +59,20 @@ trait ApiService extends HttpService{
           }
       }
     }~
+    path("primetime"){
+      getOrPost{
+        obj =>
+          val response = new Response()
+          val request = null
+          complete{
+            ""
+          }
+      }
+    }~
     path("notifications"){
       getOrPost{
         obj =>
-          val response = new Result()
+          val response = new Response()
           val request = new NotificationRequest(obj)
           complete{
         	notificationActor.ask(NotificationRequestContainer(request))(15.seconds).mapTo[DataSetContainer] map{
@@ -75,7 +84,7 @@ trait ApiService extends HttpService{
     path("channel"/"feeds"){
       getOrPost{
         obj =>
-          val response = new Result()
+          val response = new Response()
           val request = new ChannelFeedRequest(obj)
           complete{
         	channelsActor.ask(Feeds(request.clearCache))(10.seconds).mapTo[ListBuffer[JsonNode]] map{
@@ -87,7 +96,7 @@ trait ApiService extends HttpService{
     path("channel"/"feed"){
       getOrPost{
     	obj =>
-    	  val response = new Result()
+    	  val response = new Response()
     	  val request = new FeedRequest(obj)
     	  complete{
     	    channelsActor.ask(FeedData(request.channelList))(10.seconds).mapTo[ListBuffer[ListSet[Object]]] map{
@@ -99,7 +108,7 @@ trait ApiService extends HttpService{
     path("channel"/"source"){
       getOrPost{
         obj =>
-          val response = new Result()
+          val response = new Response()
           val request = new ChannelRequest(obj)
           complete{
         	channelsActor.ask(SourceData(request.channelIDs))(10.seconds).mapTo[ListBuffer[ListSet[Object]]] map{
@@ -111,7 +120,7 @@ trait ApiService extends HttpService{
     path("social"/"twitter2"){
       getOrPost{
         obj =>
-          val response = new Result()
+          val response = new Response()
           val request = new TwitterRequest(obj)
           complete{
             twitterActor.ask(request)(30.seconds).mapTo[ListBuffer[Object]] map{
@@ -123,7 +132,7 @@ trait ApiService extends HttpService{
     path("youtube"){
       getOrPost{
     	obj =>
-    	  val response = new Result()
+    	  val response = new Response()
     	  val request = new YoutubeRequest(obj)
     	  complete{
     		primeActor.ask(request)(30.seconds).mapTo[ListBuffer[Object]] map{

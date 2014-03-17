@@ -1,14 +1,13 @@
 package com.reactor.dumbledore.messaging.requests
 
-import spray.http.HttpRequest
 import scala.collection.mutable.ListBuffer
-import org.codehaus.jackson.map.ObjectMapper
-import scala.collection.JavaConversions._
 import com.reactor.dumbledore.notifications.request.Request
+import spray.http.HttpRequest
 import com.reactor.prime.user.UserCredentials
 import com.fasterxml.jackson.databind.JsonNode
+import scala.collection.JavaConversions._
 
-class NotificationRequest(obj:Object) extends APIRequest(obj) {
+class PrimeRequest(obj:Object) extends APIRequest(obj) {
   
   var udid:String = _
   var lat:Double = _
@@ -16,6 +15,7 @@ class NotificationRequest(obj:Object) extends APIRequest(obj) {
   var time:RequestTime = _
   var dev:Boolean = _
   var serviceRequest:ListBuffer[Request] = _
+  var feedRequests:ListBuffer[Request] = _
   
   def create(request:HttpRequest){
     
@@ -37,23 +37,23 @@ class NotificationRequest(obj:Object) extends APIRequest(obj) {
     dev = getBool(json, "dev")
     
     if(json.has("service_request"))
-      serviceRequest = getServiceRequest(json.get("service_request"))
+      serviceRequest = getRequests(json.get("service_request"))
   }
   
   /** Create UserCredentials from request parameters
    */
   def getUserCredentials():UserCredentials = {
-    return new UserCredentials(udid)
-    	.setLocation(lat, long)
+        return new UserCredentials(udid)
+    			.setLocation(lat, long)
   }
   
   /** Grab List of Services in json and ids of stories to ignore
   */
-  private def getServiceRequest(nodeList:JsonNode):ListBuffer[Request] = {
-    val serviceRequests = ListBuffer[Request]()
+  private def getRequests(nodeList:JsonNode):ListBuffer[Request] = {
     
-    for(node <- nodeList)
-    	serviceRequests.add(new Request(node))
-    serviceRequests
+    val serviceRequests = ListBuffer[Request]()
+    nodeList.map(node => serviceRequests.add(new Request(node)))
+    
+    return serviceRequests
   }
 }
