@@ -88,6 +88,7 @@ libraryDependencies += "net.debasishg" % "redisclient_2.10" % "2.11"
 
 libraryDependencies += "org.twitter4j" % "twitter4j-core" % "3.0.5"
 
+
 libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-extra" % "0.3" excludeAll(
         ExclusionRule(organization = "javax.jms"),
         ExclusionRule(organization = "com.sun.jdmk"),
@@ -108,24 +109,17 @@ libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect" % "0.3" exclude
 
 libraryDependencies ++= {
   val akkaV = "2.2.3"
-  val sprayV = "1.2-RC4"
+  val sprayV = "1.2.1"
   Seq(
     "io.spray"            %   "spray-can"     % sprayV,
     "io.spray"            %   "spray-routing" % sprayV,
-    "io.spray"            %   "spray-testkit" % sprayV,
     "io.spray"            %   "spray-caching" % sprayV,
+    "io.spray"			  %	  "spray-testkit" % sprayV,
     "com.typesafe.akka"   %%  "akka-actor"    % akkaV,
     "com.typesafe.akka"   %%  "akka-testkit"  % akkaV,
     "org.specs2"          %%  "specs2"        % "2.2.3" % "test"
   )
 }
-
-libraryDependencies ++= Seq(
-	"org.specs2"         %% "specs2-core"       % "2.3.7",
-	"org.specs2"         %% "specs2-mock"       % "2.3.7" % "optional",
- 	"org.specs2"         %% "specs2-junit"      % "2.3.7" % "optional",
- 	"org.mockito"         % "mockito-core"      % "1.9.5" % "optional"
-)
 
 testOptions in Test += Tests.Argument("console")
 

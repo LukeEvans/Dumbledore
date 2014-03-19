@@ -39,19 +39,37 @@ class FlowControlArgs() {
 case class FlowControlConfig(name:String, actorType:String, parallel:Int=1, role:String="dumbledore-frontend")
 
 object FlowControlFactory extends {
+  
   def flowControlledActorForContext(context:ActorContext, flowConfig:FlowControlConfig, args:FlowControlArgs = new FlowControlArgs): ActorRef = {
 	  context.actorOf(Props(classOf[FlowControlMaster], flowConfig, args))
   }
+  
   def flowControlledActorForSystem(system:ActorSystem, flowConfig:FlowControlConfig, args:FlowControlArgs = new FlowControlArgs): ActorRef = {
 	  system.actorOf(Props(classOf[FlowControlMaster], flowConfig, args))
   }
+  
+  def flowControlledActorForTests(system:ActorSystem, flowConfig:FlowControlConfig, args:FlowControlArgs = new FlowControlArgs):ActorRef = {
+    system.actorOf(Props(classOf[TestFlowControlMaster], flowConfig, args))
+  }
+}
+
+class TestFlowControlMaster(config:FlowControlConfig, args:FlowControlArgs) extends Master(config.name){
+  log.info("{} master starting...", config.name)
+  
+  args.addMaster(self)
+
+  // Router to manager workers
+  val splitRouter = context.actorOf(Props(classOf[FlowControlWorker], config, args).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
+      ClusterRouterSettings(
+	  totalInstances = 1000, maxInstancesPerNode = config.parallel,
+	  allowLocalRoutees = true, None))))
 }
 
 class FlowControlMaster(config:FlowControlConfig, args:FlowControlArgs) extends Master(config.name) {
    log.info("{} master starting...", config.name)
   
   args.addMaster(self)
-  
+
   // Router to manager workers
   val splitRouter = context.actorOf(Props(classOf[FlowControlWorker], config, args).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
       ClusterRouterSettings(

@@ -13,7 +13,7 @@ object ReductoBuild extends Build {
     base = file("."),
     settings = defaultSettings ++ AkkaKernelPlugin.distSettings ++ Seq(
       libraryDependencies ++= Dependencies.dumbledoreKernel,
-      distJvmOptions in Dist := "-Xms256M -Xmx1024M",
+      distJvmOptions in Dist := "-Xms1024M -Xmx1024M",
       outputDirectory in Dist := file("target/dumbledore-dist")
       
     )

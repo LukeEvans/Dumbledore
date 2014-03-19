@@ -2,7 +2,6 @@ package com.reactor.dumbledore.api
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
-import scala.reflect.ClassTag
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
@@ -44,13 +43,13 @@ trait ApiService extends HttpService{
   val primeActor:ActorRef
   
   private implicit val timeout = Timeout(5 seconds);
-  private implicit val system = ActorSystem("DumbledoreClusterSystem-0-1")
+  private implicit val actorSystem = ActorSystem("DumbledoreClusterSystem-0-1")
   
   val mapper = new ObjectMapper() with ScalaObjectMapper
     mapper.registerModule(DefaultScalaModule)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
      
-  val apiRoute = 
+  val apiRoute =
     path(""){
       getOrPost{
         obj =>
@@ -59,13 +58,13 @@ trait ApiService extends HttpService{
           }
       }
     }~
-    path("primetime"){
+    path("primetime"/"test"){
       getOrPost{
         obj =>
           val response = new Response()
           val request = null
           complete{
-            ""
+            "ok"
           }
       }
     }~
@@ -190,7 +189,8 @@ trait ApiService extends HttpService{
    /** Handle Get or Post Requests
     * 
     */
-   def getOrPost(comp:(Object) => StandardRoute):RequestContext => Unit = {
+   def getOrPost(comp:Object => StandardRoute):RequestContext => Unit = {
+
      get{
        respondWithMediaType(MediaTypes.`application/json`){
          entity(as[HttpRequest]){
