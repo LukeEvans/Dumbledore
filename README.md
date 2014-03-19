@@ -20,6 +20,7 @@ Dumbledore - Prime API 2.0
  - dev: Development Flag (All cards included in response)
  - service_request: Array of Services to include with ids of response cards to ommit
    - id: Service ID
+   - dismiss_time: Long Int value of the epoch time of dismissal ( Depending on the services reset time the card won't       be sent down again until the reset time expires 
    - cards: Array of card IDs to remove from response
 
 ######Sample Request:
@@ -33,6 +34,7 @@ Dumbledore - Prime API 2.0
     "service_request":[
       {
         "id":"facebook_notifications",
+        "dismiss_time":1395083737,
         "cards": [
           "card-id-1",
           "card-id-2"
@@ -40,6 +42,7 @@ Dumbledore - Prime API 2.0
       },
       {
         "id":"facebook_birthdays",
+        "dismiss_time":1395083737,
         "cards": null
       },
       {
