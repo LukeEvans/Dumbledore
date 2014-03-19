@@ -18,6 +18,7 @@ class PrimeRequest(obj:Object) extends APIRequest(obj) {
   var notificationsRequests:ListBuffer[Request] = _
   var feedRequests:ListBuffer[FeedRequestData] = _
   var entertainmentRequests:ListBuffer[Request] = _
+  var socialRequests:ListBuffer[Request] = _
   
   def create(request:HttpRequest){
     
@@ -44,6 +45,8 @@ class PrimeRequest(obj:Object) extends APIRequest(obj) {
       feedRequests = getFeeds(json.get("feeds"))
     if(json.has("entertainment"))
       entertainmentRequests = getRequests(json.get("entertainment"))
+    if(json.has("social"))
+      socialRequests = getRequests(json.get("social"))
   }
   
   /** Create UserCredentials from request parameters
