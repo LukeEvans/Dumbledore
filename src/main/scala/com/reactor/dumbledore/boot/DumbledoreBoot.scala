@@ -26,6 +26,7 @@ import com.reactor.dumbledore.notifications.NotificationArgs
 import com.reactor.dumbledore.prime.channels.ChannelArgs
 import com.reactor.dumbledore.prime.twitter.TwitterArgs
 import com.reactor.dumbledore.prime.twitter.TwitterBuilderArgs
+import com.reactor.dumbledore.prime.PrimeActorArgs
 
 class DumbledoreBoot extends Bootable {
   val ip = IPTools.getPrivateIp(); 
@@ -41,9 +42,6 @@ class DumbledoreBoot extends Bootable {
     
     val winstonAPIFlowConfig = FlowControlConfig(name="winstonAPIActor", actorType="com.reactor.dumbledore.legacy.WinstonAPIActor")    
     val winstonAPIActor = FlowControlFactory.flowControlledActorForSystem(system, winstonAPIFlowConfig)
-    
-    val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor")
-    val primeActor = FlowControlFactory.flowControlledActorForSystem(system, primeFlowConfig)
     
     val extractorFlowConfig = FlowControlConfig(name="extractorActor", actorType="com.reactor.dumbledore.prime.abstraction.ExtractionActor", parallel = 30)
     val extractorActor = FlowControlFactory.flowControlledActorForSystem(system, extractorFlowConfig)
@@ -68,6 +66,12 @@ class DumbledoreBoot extends Bootable {
     
     val channelsFlowConfig = FlowControlConfig(name="channelsActor", actorType="com.reactor.dumbledore.prime.channels.ChannelsActor")    
     val channelsActor = FlowControlFactory.flowControlledActorForSystem(system, channelsFlowConfig, ChannelArgs(feedActor, sourceActor))
+    
+    val entFlowConfig = FlowControlConfig(name="entActor", actorType="com.reactor.dumbledore.prime.entertainment.EntertainmentActor", parallel=5)    
+    val entActor = FlowControlFactory.flowControlledActorForSystem(system, entFlowConfig)
+    
+    val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor")
+    val primeActor = FlowControlFactory.flowControlledActorForSystem(system, primeFlowConfig, PrimeActorArgs(channelsActor, notificationActor, entActor))   
     
 	val service = system.actorOf(Props(classOf[ApiActor], winstonAPIActor, notificationActor, channelsActor, twitterServiceActor, primeActor).withRouter(	
 	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 

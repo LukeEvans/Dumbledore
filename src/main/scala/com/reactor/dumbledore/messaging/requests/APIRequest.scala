@@ -14,6 +14,7 @@ abstract class APIRequest {
     obj match{
       case s:String => create(s)
       case r:HttpRequest => create(r)
+      case None => 
     }
   }
   

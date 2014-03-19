@@ -6,6 +6,7 @@ import spray.http.HttpRequest
 import com.reactor.prime.user.UserCredentials
 import com.fasterxml.jackson.databind.JsonNode
 import scala.collection.JavaConversions._
+import com.reactor.dumbledore.utilities.Conversions
 
 class PrimeRequest(obj:Object) extends APIRequest(obj) {
   
@@ -14,8 +15,9 @@ class PrimeRequest(obj:Object) extends APIRequest(obj) {
   var long:Double = _
   var time:RequestTime = _
   var dev:Boolean = _
-  var serviceRequest:ListBuffer[Request] = _
-  var feedRequests:ListBuffer[Request] = _
+  var notificationsRequests:ListBuffer[Request] = _
+  var feedRequests:ListBuffer[FeedRequestData] = _
+  var entertainmentRequests:ListBuffer[Request] = _
   
   def create(request:HttpRequest){
     
@@ -36,8 +38,12 @@ class PrimeRequest(obj:Object) extends APIRequest(obj) {
     time = new RequestTime(getString(json, "timezone_offset"))
     dev = getBool(json, "dev")
     
-    if(json.has("service_request"))
-      serviceRequest = getRequests(json.get("service_request"))
+    if(json.has("notifications"))
+      notificationsRequests = getRequests(json.get("notifications"))
+    if(json.has("feeds"))
+      feedRequests = getFeeds(json.get("feeds"))
+    if(json.has("entertainment"))
+      entertainmentRequests = getRequests(json.get("entertainment"))
   }
   
   /** Create UserCredentials from request parameters
@@ -56,4 +62,18 @@ class PrimeRequest(obj:Object) extends APIRequest(obj) {
     
     return serviceRequests
   }
+  
+  private def getFeeds(dataNode:JsonNode):ListBuffer[FeedRequestData] = {
+    if(dataNode == null)
+      return null
+    
+    val dataList = ListBuffer[FeedRequestData]()
+    dataNode.map{
+      data => 
+        if(data.has("feed_id") && data.has("sources"))
+          dataList += FeedRequestData(data.get("feed_id").asText(), Conversions.nodeToStringList(data.get("sources")))
+    }
+    return dataList
+  }
+
 }

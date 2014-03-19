@@ -58,13 +58,15 @@ trait ApiService extends HttpService{
           }
       }
     }~
-    path("primetime"/"test"){
+    path("primetime"){
       getOrPost{
         obj =>
           val response = new Response()
-          val request = null
+          val request = new PrimeRequest(obj)
           complete{
-            "ok"
+            primeActor.ask(request)(15.seconds).mapTo[ListBuffer[ListSet[Object]]] map{
+    	      data => response.finish(data, mapper)
+    	    }
           }
       }
     }~
@@ -74,8 +76,8 @@ trait ApiService extends HttpService{
           val response = new Response()
           val request = new NotificationRequest(obj)
           complete{
-        	notificationActor.ask(NotificationRequestContainer(request))(15.seconds).mapTo[DataSetContainer] map{
-              container => response.finish(container.data, mapper)
+        	notificationActor.ask(NotificationRequestContainer(request))(15.seconds).mapTo[ListBuffer[ListSet[Object]]] map{
+              data => response.finish(data, mapper)
         	}
           }
       }
