@@ -63,7 +63,7 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
     implicit val timeout = Timeout(30 seconds);
     
 	val params = new Parameters(request.getUserCredentials) //Create parameter object from request
-    var responseData:ListBuffer[ListSet[Object]] = ListBuffer[ListSet[Object]]()
+    var responseData = ListBuffer[ListSet[Object]]()
 
 	val time = request.time.offsetTime
 	var webServices:Map[String, WebRequestData] = null
@@ -91,7 +91,7 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
 	    		  responseData = orderDataSet(serviceData, responseData)//+= serviceData
 	    }
 	    
-	    reply(origin, DataSetContainer(responseData)) // Return Data to API Service
+	    reply(origin, responseData) // Return Data to API Service
 	    complete()
 	    
 	  case Failure(failure) => 

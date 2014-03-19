@@ -17,6 +17,16 @@ class NotificationRequest(obj:Object) extends APIRequest(obj) {
   var dev:Boolean = _
   var serviceRequest:ListBuffer[Request] = _
   
+  def this(primeReq:PrimeRequest){
+    this(None)
+    udid = primeReq.udid
+    lat = primeReq.lat
+    long = primeReq.long
+    time = primeReq.time
+    dev = primeReq.dev
+    serviceRequest = primeReq.notificationsRequests
+  }
+  
   def create(request:HttpRequest){
     
     udid = getStringR(request, "udid")

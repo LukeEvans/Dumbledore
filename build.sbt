@@ -88,6 +88,9 @@ libraryDependencies += "net.debasishg" % "redisclient_2.10" % "2.11"
 
 libraryDependencies += "org.twitter4j" % "twitter4j-core" % "3.0.5"
 
+libraryDependencies += "rome" % "rome" % "1.0"
+
+libraryDependencies += "org.jsoup" % "jsoup" % "1.7.3"
 
 libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-extra" % "0.3" excludeAll(
         ExclusionRule(organization = "javax.jms"),
