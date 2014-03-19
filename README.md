@@ -6,6 +6,72 @@ Dumbledore - Prime API 2.0
 
 # ![Screenshot](http://static.fjcdn.com/gifs/Every_d28684_2645501.gif)
 
+####Prime Cards
+#####Endpoint: /primetime
+######Request Type: POST
+######Request Parameters: 
+
+######Sample Request:
+```json
+{
+    "timezone_offset": "-25200",
+    "udid": "SAMPLE_UDID",
+    "lat": 40.016215,
+    "long": -105.269146,
+    "dev": false,
+    "notifications": [
+      {
+        "id":"facebook_notifications",
+        "dismiss_time":1395083737,
+        "cards": [
+          "card-id-1",
+          "card-id-2"
+        ]
+      },
+      {
+        "id":"facebook_birthdays",
+        "dismiss_time":1395083737,
+        "cards": null
+      },
+      {
+        "id":"facebook_messages",
+        "cards": null
+      },
+      {
+        "id":"nearby_places",
+        "cards": null
+      },
+      {
+        "id":"stocks",
+        "cards": null
+      },
+      {
+        "id":"weather",
+        "cards": null
+      },
+      {
+        "id":"nearby_photos",
+        "cards": null
+      }
+    ],
+    "feeds":[
+       {
+         "feed_id": "Politics",
+         "sources":[
+           "atlantic"
+         ]
+       },
+       { 
+         "feed_id":"Technology",
+         "sources":[]
+       }
+    ],
+    "entertainment":[
+      "comics",
+      "youtube"
+    ]
+}
+```
 
 
 ####Notification Cards
