@@ -14,6 +14,7 @@ import spray.testkit.Specs2RouteTest
 import akka.actor.ActorSystem
 import akka.actor.Props
 import com.reactor.dumbledore.prime.PrimeActor
+import com.reactor.dumbledore.prime.PrimeActorArgs
 
 
 class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService {
@@ -21,9 +22,6 @@ class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService 
   
   val winstonAPIFlowConfig = FlowControlConfig(name="winstonAPIActor", actorType="com.reactor.dumbledore.legacy.WinstonAPIActor")    
   val winstonAPIActor = FlowControlFactory.flowControlledActorForTests(system, winstonAPIFlowConfig)
-    
-  val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor")
-  val primeActor = FlowControlFactory.flowControlledActorForTests(system, primeFlowConfig)
     
   val extractorFlowConfig = FlowControlConfig(name="extractorActor", actorType="com.reactor.dumbledore.prime.abstraction.ExtractionActor", parallel = 30)
   val extractorActor = FlowControlFactory.flowControlledActorForTests(system, extractorFlowConfig)
@@ -48,6 +46,12 @@ class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService 
     
   val channelsFlowConfig = FlowControlConfig(name="channelsActor", actorType="com.reactor.dumbledore.prime.channels.ChannelsActor")    
   val channelsActor = FlowControlFactory.flowControlledActorForTests(system, channelsFlowConfig, ChannelArgs(feedActor, sourceActor))
+  
+  val entFlowConfig = FlowControlConfig(name="entActor", actorType="com.reactor.dumbledore.prime.entertainment.EntertainmentActor", parallel=5)    
+  val entActor = FlowControlFactory.flowControlledActorForSystem(system, entFlowConfig)
+  
+  val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor")
+  val primeActor = FlowControlFactory.flowControlledActorForTests(system, primeFlowConfig, PrimeActorArgs(channelsActor, notificationActor, entActor))
   
   val time = new scala.concurrent.duration.FiniteDuration(10, java.util.concurrent.TimeUnit.SECONDS)  
   implicit val routeTestTimeout = RouteTestTimeout(time) 

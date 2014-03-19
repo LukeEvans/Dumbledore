@@ -17,11 +17,13 @@ import com.reactor.dumbledore.messaging.FeedData
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
+import scala.concurrent._
 import com.reactor.dumbledore.messaging.NotificationRequestContainer
 import com.reactor.dumbledore.messaging.EntertainmentRequestContainer
 import com.reactor.dumbledore.messaging.requests.NotificationRequest
 import scala.util.Failure
 import scala.util.Success
+import com.reactor.dumbledore.notifications.request.Request
 
 case class PrimeActorArgs(channelActor:ActorRef, notificationActor:ActorRef, entertainmentActor:ActorRef) extends FlowControlArgs{  
   override def workerArgs(): FlowControlArgs ={
@@ -72,6 +74,10 @@ class PrimeActor(args:PrimeActorArgs) extends FlowControlActor(args) {
       futureSets += (entertainmentActor ? EntertainmentRequestContainer(request.entertainmentRequests)).mapTo[ListBuffer[ListSet[Object]]]
     }
     
+    if(request.socialRequests != null && !request.socialRequests.isEmpty){
+      futureSets += getSocial(request.socialRequests)
+    }
+    
     Future.sequence(futureSets) onComplete{
       
       case Success(completed) => 
@@ -85,5 +91,17 @@ class PrimeActor(args:PrimeActorArgs) extends FlowControlActor(args) {
         
       case Failure(e) => e.printStackTrace()
     }
+  }
+  
+  def getSocial(requests:ListBuffer[Request]):Future[ListBuffer[ListSet[Object]]] = {
+    val futureSocial = ListBuffer[ListSet[Object]]()
+    
+    requests.map{
+      request => 
+        if(request.id.equalsIgnoreCase("facebook") || request.id.equalsIgnoreCase("twitter")){
+          futureSocial += ListSet(request.id, 99, ListBuffer[Object]())
+        }
+    }
+    return future{futureSocial}
   }
 }
