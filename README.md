@@ -67,8 +67,14 @@ Dumbledore - Prime API 2.0
        }
     ],
     "entertainment":[
-      "comics",
-      "youtube"
+      {
+        "id":"youtube",
+        "cards": null
+      },
+      {
+        "id":"comics",
+        "cards": null
+      }
     ]
 }
 ```
