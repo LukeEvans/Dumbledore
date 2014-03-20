@@ -7,9 +7,11 @@ import com.reactor.dumbledore.api.ApiActor
 import akka.actor.ActorSystem
 import akka.actor.Props
 import akka.cluster.Cluster
-import akka.cluster.routing.AdaptiveLoadBalancingRouter
+import akka.cluster.routing.AdaptiveLoadBalancingPool
 import akka.cluster.routing.ClusterRouterConfig
+import akka.cluster.routing.ClusterRouterPool
 import akka.cluster.routing.ClusterRouterSettings
+import akka.cluster.routing.ClusterRouterPoolSettings
 import akka.io.IO
 import akka.kernel.Bootable
 import akka.cluster.ClusterEvent.ClusterDomainEvent
@@ -28,11 +30,11 @@ import com.reactor.dumbledore.prime.twitter.TwitterArgs
 import com.reactor.dumbledore.prime.twitter.TwitterBuilderArgs
 import com.reactor.dumbledore.prime.PrimeActorArgs
 
-class DumbledoreBoot extends Bootable {
+class DumbledoreBoot extends Bootable{
   val ip = IPTools.getPrivateIp(); 
   println("IP: " + ip)
   
-  val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=2551") 
+  val config = ConfigFactory.parseString("akka.remote.netty.tcp.port=2551") 
     .withFallback(ConfigFactory.parseString("akka.cluster.roles = [dumbledore-frontend]\nakka.remote.netty.tcp.hostname=\""+ip+"\""))
     .withFallback(ConfigFactory.load("dumbledore"))
 
@@ -74,13 +76,13 @@ class DumbledoreBoot extends Bootable {
     val primeActor = FlowControlFactory.flowControlledActorForSystem(system, primeFlowConfig, PrimeActorArgs(channelsActor, notificationActor, entActor))   
     
 	val service = system.actorOf(Props(classOf[ApiActor], winstonAPIActor, notificationActor, channelsActor, twitterServiceActor, primeActor).withRouter(	
-	  ClusterRouterConfig(AdaptiveLoadBalancingRouter(akka.cluster.routing.MixMetricsSelector), 
-	  ClusterRouterSettings(
+	  ClusterRouterPool(AdaptiveLoadBalancingPool(akka.cluster.routing.MixMetricsSelector), 
+	  ClusterRouterPoolSettings(
    	  totalInstances = 100, maxInstancesPerNode = 1,
    	  allowLocalRoutees = true, useRole = Some("dumbledore-frontend")))),
    	  name = "serviceRouter")
   
-   	  IO(Http) ! Http.Bind(service, interface = "0.0.0.0", port = 8080)
+   	 IO(Http) ! Http.Bind(service, interface = "0.0.0.0", port = 8080)
   }
   
   def startup = Cluster(system).subscribe(system.actorOf(Props(classOf[Listener], system), name = "clusterListener"), classOf[ClusterDomainEvent])
@@ -89,6 +91,7 @@ class DumbledoreBoot extends Bootable {
 }
 
 object DumbledoreBoot{
+  
   def main(args:Array[String]) = {
     val api = new DumbledoreBoot
     api.startup

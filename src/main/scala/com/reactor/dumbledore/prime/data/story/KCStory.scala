@@ -69,7 +69,8 @@ class KCStory {
   	      entity.entity_name = obj.get("entity_name").asText()
   	      entity.entity_type = obj.get("entity_type").asText()
   	      entity.sentiment = obj.get("sentiment").asText()
-  	      entity.entity_score = obj.get("entity_score").asInt
+  	      if(obj.has("entity_score"))
+  	        entity.entity_score = obj.get("entity_score").asInt
   	      list += entity
   	    }
   	  }

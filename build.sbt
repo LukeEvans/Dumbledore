@@ -16,14 +16,6 @@ atmosSettings
 
 traceAkka("2.2.3")
 
-libraryDependencies += "com.typesafe.akka" % "akka-actor_2.10" % "2.2.3"
-
-libraryDependencies += "com.typesafe.akka" % "akka-remote_2.10" % "2.2.3"
-
-libraryDependencies += "com.typesafe.akka" % "akka-kernel_2.10" % "2.2.3"
-
-libraryDependencies += "com.typesafe.akka" % "akka-cluster_2.10" % "2.2.3"
-
 libraryDependencies += "com.typesafe" % "config" % "1.0.2"
 
 libraryDependencies += "edu.stanford.nlp" % "stanford-corenlp" % "3.2.0" artifacts (Artifact("stanford-corenlp", "models"), Artifact("stanford-corenlp")) 
@@ -61,8 +53,6 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.0.13"
 libraryDependencies += "ch.qos.logback" % "logback-core"  % "1.0.13"
 
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.5"
-
-libraryDependencies += "com.typesafe.akka" % "akka-slf4j_2.10" % "2.2.3"
 
 libraryDependencies += "org.mongodb" %% "casbah" % "2.6.3"
 
@@ -111,8 +101,8 @@ libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect" % "0.3" exclude
 )
 
 libraryDependencies ++= {
-  val akkaV = "2.2.3"
-  val sprayV = "1.2.1"
+  val akkaV = "2.3.0"
+  val sprayV = "1.3.0"
   Seq(
     "io.spray"            %   "spray-can"     % sprayV,
     "io.spray"            %   "spray-routing" % sprayV,
@@ -120,6 +110,10 @@ libraryDependencies ++= {
     "io.spray"			  %	  "spray-testkit" % sprayV,
     "com.typesafe.akka"   %%  "akka-actor"    % akkaV,
     "com.typesafe.akka"   %%  "akka-testkit"  % akkaV,
+    "com.typesafe.akka"   %%  "akka-kernel" % akkaV,
+    "com.typesafe.akka"   %%  "akka-cluster" % akkaV,
+    "com.typesafe.akka"   %%  "akka-remote" % akkaV,
+    "com.typesafe.akka"   %%  "akka-slf4j" % akkaV,
     "org.specs2"          %%  "specs2"        % "2.2.3" % "test"
   )
 }
