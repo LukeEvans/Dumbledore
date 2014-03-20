@@ -58,28 +58,42 @@ class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService 
 
   
   "The ApiService" should {
-    "return Dumbledore API 1.0 at the root URL" in {
+    
+    "return Dumbledore API 1.0 at root" in {
       Get() ~> 
       	apiRoute ~> check{
         responseAs[String] must contain("Dumbledore API 1.0")
       }
     }
     
-    "get primetime/test" in {
-      Get("/primetime/test") ~>
+    "return ok with post" in {
+      Post("/primetime", FormData(Map("x" -> "y"))) ~>
         apiRoute ~> check{
           responseAs[String] must contain("ok")
         }
     }
     
-    "get channel feeds at /channel/feeds" in {
-      Get("/channel/feeds") ~>
+    getStatusOk("/primetime")
+    
+    getStatusOk("/channel/feeds")
+    
+    getStatusOk("/channel/feeds?clearCache=true")
+    
+    
+
+    "pass all tests" in {
+      "pass" must contain("pass")
+    }
+  }
+  
+
+  def getStatusOk(path:String){
+    "Get request at path '"+path+"' returns 'ok'" in {
+      Get(path) ~>
         apiRoute ~> check{
           responseAs[String] must contain("ok")
         }
     }
   }
-  
-
 }
 

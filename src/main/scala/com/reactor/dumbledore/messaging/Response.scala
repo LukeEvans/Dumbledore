@@ -4,7 +4,7 @@ import java.util.ArrayList
 import com.fasterxml.jackson.databind.ObjectMapper
 
 class Response {
-	var status ="OK"
+	var status ="ok"
 	var response_type:String = null
 	var response_time:Double = 0
 	var data:Object = null
