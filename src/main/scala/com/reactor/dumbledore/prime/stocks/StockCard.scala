@@ -9,7 +9,7 @@ class StockCard(company:String, symbol:String) extends Card{
 	val id = Tools.generateHash(company);
 	val `type` = "stocks";
 	val icon = "https://s3.amazonaws.com/Twitter_Source_Images/Winston-Twitter-Images/Stocks_icon.png";
-	val source = "Yahoo Finance";
+	val source = "Yahoo! Finance";
 	var value:Double = 0;
 	var change:Double = 0;
 	var percent_change:String = null;
