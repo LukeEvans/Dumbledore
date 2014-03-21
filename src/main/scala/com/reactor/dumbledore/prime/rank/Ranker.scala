@@ -81,8 +81,6 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
     					   .addRange(30, Time(14, 30), Time(16, 59), 0, 6)
     					   .addRange(25, Time(17, 0), Time(21, 59), 0, 6)
     					   .addRange(40, Time(22, 0), Time(23, 59), 0, 6)
-    					   .addRange(30, Time(0, 0), Time(1, 59), 0, 6)
-    					   .addRange(0, Time(2, 0), Time(4, 59), 0, 6)
     
     rankConfigs.put("stocks", stocksRank)
     
