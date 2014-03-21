@@ -27,7 +27,7 @@ case class NotificationConfig(serviceType:String, notifEndpoint:String, rank:Int
     this
   }
   
-  def isValidTime(nowDate:Date):Boolean ={
+  def isValidTime(nowDate:Date):Boolean = {
     timeRanges.map{
       timeRange =>{
     	if(nowDate.isInRange(timeRange)){

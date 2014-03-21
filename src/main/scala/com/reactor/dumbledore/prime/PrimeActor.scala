@@ -24,10 +24,11 @@ import com.reactor.dumbledore.messaging.requests.NotificationRequest
 import scala.util.Failure
 import scala.util.Success
 import com.reactor.dumbledore.notifications.request.Request
+import com.reactor.dumbledore.messaging.PrimeRankContainer
 
-case class PrimeActorArgs(channelActor:ActorRef, notificationActor:ActorRef, entertainmentActor:ActorRef) extends FlowControlArgs{  
+case class PrimeActorArgs(channelActor:ActorRef, notificationActor:ActorRef, entertainmentActor:ActorRef, rankActor:ActorRef) extends FlowControlArgs{  
   override def workerArgs(): FlowControlArgs ={
-    val newArgs = new PrimeActorArgs(channelActor, notificationActor, entertainmentActor)
+    val newArgs = new PrimeActorArgs(channelActor, notificationActor, entertainmentActor, rankActor)
     newArgs.addMaster(master)
     return newArgs
   }
@@ -38,6 +39,7 @@ class PrimeActor(args:PrimeActorArgs) extends FlowControlActor(args) {
   val channelActor = args.channelActor
   val notificationActor = args.notificationActor
   val entertainmentActor = args.entertainmentActor
+  val rankActor = args.rankActor
   ready()
   
   override def preStart = println("Prime Actor Starting...")
@@ -60,23 +62,7 @@ class PrimeActor(args:PrimeActorArgs) extends FlowControlActor(args) {
     
     val primeSet = new PrimeSet
     
-    val futureSets = ListBuffer[Future[ListBuffer[ListSet[Object]]]]()
-    
-    if(request.feedRequests != null && !request.feedRequests.isEmpty){
-      futureSets += (channelActor ? FeedData(request.feedRequests)).mapTo[ListBuffer[ListSet[Object]]]
-    }
-    
-    if(request.notificationsRequests != null && !request.notificationsRequests.isEmpty){
-      futureSets += (notificationActor ? NotificationRequestContainer(new NotificationRequest(request))).mapTo[ListBuffer[ListSet[Object]]]
-    }
-    
-    if(request.entertainmentRequests != null && !request.entertainmentRequests.isEmpty){
-      futureSets += (entertainmentActor ? EntertainmentRequestContainer(request.entertainmentRequests)).mapTo[ListBuffer[ListSet[Object]]]
-    }
-    
-    if(request.socialRequests != null && !request.socialRequests.isEmpty){
-      futureSets += getSocial(request.socialRequests)
-    }
+    val futureSets = getFutureSets(request)
     
     Future.sequence(futureSets) onComplete{
       
@@ -86,14 +72,60 @@ class PrimeActor(args:PrimeActorArgs) extends FlowControlActor(args) {
           set => primeSet ++= set
         }
         
-        reply(origin, primeSet.sort)
-        complete()
+        val futureRankedSet = (rankActor ? PrimeRankContainer(primeSet, request.time.offsetTime)).mapTo[PrimeSet]
+        
+        futureRankedSet.onComplete{
+          case Success(rankedSet) =>
+            
+            reply(origin, rankedSet.sort)
+            complete()
+            
+          case Failure(e) => e.printStackTrace()
+        }
         
       case Failure(e) => e.printStackTrace()
     }
   }
   
-  def getSocial(requests:ListBuffer[Request]):Future[ListBuffer[ListSet[Object]]] = {
+  private def getFutureSets(request:PrimeRequest):ListBuffer[Future[ListBuffer[ListSet[Object]]]] = {
+    
+    implicit val timeout = Timeout(30 seconds)
+    
+    val futureSets = ListBuffer[Future[ListBuffer[ListSet[Object]]]]()
+    
+    if(request.feedRequests != null && !request.feedRequests.isEmpty)
+      futureSets += (channelActor ? FeedData(request.feedRequests)).mapTo[ListBuffer[ListSet[Object]]]
+    
+    if(request.socialRequests != null && !request.socialRequests.isEmpty)
+      futureSets += getSocial(request.socialRequests)
+    
+    request.all match{
+      
+      case true =>
+        val notificationRequest = new NotificationRequest(request)
+        notificationRequest.dev = true
+        
+        futureSets += (notificationActor ? NotificationRequestContainer(notificationRequest)).mapTo[ListBuffer[ListSet[Object]]]
+        
+        futureSets += (entertainmentActor ? EntertainmentRequestContainer(request.entertainmentRequests, request.all)).mapTo[ListBuffer[ListSet[Object]]]
+        
+      case false =>{
+        
+        if(request.entertainmentRequests != null && !request.entertainmentRequests.isEmpty)
+          futureSets += (entertainmentActor ? EntertainmentRequestContainer(request.entertainmentRequests, request.all)).mapTo[ListBuffer[ListSet[Object]]]
+        
+        if(request.notificationsRequests != null && !request.notificationsRequests.isEmpty)
+          futureSets += (notificationActor ? NotificationRequestContainer(new NotificationRequest(request))).mapTo[ListBuffer[ListSet[Object]]]
+
+      }
+    }
+    
+    futureSets
+  }
+  
+  /** Grab social place holder futures if included in request
+   */
+  private def getSocial(requests:ListBuffer[Request]):Future[ListBuffer[ListSet[Object]]] = {
     val futureSocial = ListBuffer[ListSet[Object]]()
     
     requests.map{

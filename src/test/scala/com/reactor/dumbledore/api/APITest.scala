@@ -50,8 +50,11 @@ class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService 
   val entFlowConfig = FlowControlConfig(name="entActor", actorType="com.reactor.dumbledore.prime.entertainment.EntertainmentActor", parallel=5)    
   val entActor = FlowControlFactory.flowControlledActorForSystem(system, entFlowConfig)
   
+  val rankFlowConfig = FlowControlConfig(name="rankActor", actorType="com.reactor.dumbledore.prime.rank.RankActor", parallel=5)    
+  val rankActor = FlowControlFactory.flowControlledActorForTests(system, rankFlowConfig)
+  
   val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor")
-  val primeActor = FlowControlFactory.flowControlledActorForTests(system, primeFlowConfig, PrimeActorArgs(channelsActor, notificationActor, entActor))
+  val primeActor = FlowControlFactory.flowControlledActorForTests(system, primeFlowConfig, PrimeActorArgs(channelsActor, notificationActor, entActor, rankActor))
   
   val time = new scala.concurrent.duration.FiniteDuration(10, java.util.concurrent.TimeUnit.SECONDS)  
   implicit val routeTestTimeout = RouteTestTimeout(time) 

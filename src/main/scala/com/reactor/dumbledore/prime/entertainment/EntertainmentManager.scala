@@ -16,6 +16,8 @@ class EntertainmentManager {
   val entServices = Map[String, EntertainmentService]()
   init()
   
+  def getAllServices():Map[String, EntertainmentService] = entServices
+  
   def getServices(list:ListBuffer[Request]):Map[String, EntertainmentService] = {
     val services = Map[String, EntertainmentService]()
     
