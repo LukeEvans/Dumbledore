@@ -64,7 +64,10 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
     
 	val params = new Parameters(request.getUserCredentials) //Create parameter object from request
     var responseData = ListBuffer[ListSet[Object]]()
-
+    
+    println("Notif - Offset Time: " + request.time.offsetTime)
+    println("Notif - Time:        " + request.time.dateTime)
+    
 	val time = request.time.offsetTime
 	var webServices:Map[String, WebRequestData] = null
 	
