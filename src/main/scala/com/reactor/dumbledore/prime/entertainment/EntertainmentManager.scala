@@ -36,13 +36,13 @@ class EntertainmentManager {
   
   private def init(){
     
-    entServices.put("youtube", YoutubeService())
+    entServices.put("popular_videos", YoutubeService())
     
     entServices.put("comics", ComicService())
   }
 }
 
-case class YoutubeService() extends EntertainmentService("youtube"){
+case class YoutubeService() extends EntertainmentService("popular_videos"){
   def process ={
     (getId, 50, Youtube.getYoutube(None, 8))
   }

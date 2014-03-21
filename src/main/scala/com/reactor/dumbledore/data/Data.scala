@@ -22,6 +22,7 @@ case class Parameters(map:Map[String, String]){
       map.put("lat", creds.location.lat.toString)
       map.put("long", creds.location.long.toString)     
       map.put("loc", creds.location.lat.toString+","+creds.location.long.toString)
+      map.put("timezone_offset", creds.timezone_offset.toString)
     }
   }
 }

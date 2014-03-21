@@ -126,12 +126,12 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
     						
     rankConfigs.put("twitter", twitterRank)
     
-    val youtubeRank = Rank("youtube")
+    val videosRank = Rank("popular_videos")
     						.addRange(15, Time(0, 0), Time(5, 59), 0, 6)
     						.addRange(5, Time(6, 0), Time(19, 59), 0, 6)
     						.addRange(15, Time(20, 0), Time(23, 59), 0, 6)
     					   
-    rankConfigs.put("youtube", youtubeRank)
+    rankConfigs.put("popular_videos", videosRank)
     
     val comicsRank = Rank("comics")
     						.addRange(5, Time(0, 0), Time(5, 59), 0, 6)
