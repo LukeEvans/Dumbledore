@@ -70,13 +70,13 @@ class NotificationManager {
   
   def init():Unit = {
 
-    val traffic = new NotificationConfig("dumbledore", "/", 1)
-    					.addRange(Time(5,0), Time(9, 59), 1, 5, None)
-    					.addRange(Time(3,0), Time(5,59), 1, 5, None)
+    val traffic = new NotificationConfig("dumbledore", "/", 1).add247(None)
+//    					.addRange(Time(5,0), Time(9, 59), 1, 5, None)
+//    					.addRange(Time(3,0), Time(5,59), 1, 5, None)
     services put ("traffic", traffic)
     
-    val weather = new NotificationConfig("v036", "/weather", 2)
-    					.addRange(Time(5, 0), Time(13, 59), 0, 6, None)
+    val weather = new NotificationConfig("v036", "/weather", 2).add247(None)
+//    					.addRange(Time(5, 0), Time(13, 59), 0, 6, None)
     services put ("weather", weather)
     
     // Topic Alerts
@@ -86,15 +86,17 @@ class NotificationManager {
 							.addRange(Time(11, 0), Time(12, 59), 0, 6, Some(Map("type" -> "lunch")))
 							.addRange(Time(15, 0), Time(16, 59), 0, 6, Some(Map("type" -> "coffee")))
 							.addRange(Time(17, 0), Time(19, 59), 0, 6, Some(Map("type" -> "dinner")))
+							.add247(None)
     services put ("nearby_places", nearbyPlaces)
     
-    val stocks = new StaticNotificationConfig("v036", "/stocks", 4)
-						.addRange(Time(9, 30), Time(16, 30), 1, 5, None)
+    val stocks = new StaticNotificationConfig("v036", "/stocks", 4).add247(None)
+						//.addRange(Time(9, 30), Time(16, 30), 1, 5, None)
     services put ("stocks", stocks)
     
     val fbBdays = new NotificationConfig("v036", "/social/facebook/birthdays", 5)
-						.addRange(Time(5, 0), Time(10,59), 0, 6, None)
+//						.addRange(Time(5, 0), Time(10,59), 0, 6, None)
 						.addRange(Time(20, 0), Time(23,59), 0, 6, Some(Map("tomorrow" -> "true")))
+						.add247(None)
     services put ("facebook_birthdays", fbBdays)
     
     val fbMessages = new NotificationConfig("v036", "/social/facebook/inbox", 6).add247(None)
