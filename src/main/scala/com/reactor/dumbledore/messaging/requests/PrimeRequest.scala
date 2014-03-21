@@ -15,6 +15,7 @@ class PrimeRequest(obj:Object) extends APIRequest(obj) {
   var long:Double = _
   var time:RequestTime = _
   var dev:Boolean = _
+  var all:Boolean = _
   var notificationsRequests:ListBuffer[Request] = _
   var feedRequests:ListBuffer[FeedRequestData] = _
   var entertainmentRequests:ListBuffer[Request] = _
@@ -27,6 +28,7 @@ class PrimeRequest(obj:Object) extends APIRequest(obj) {
     long = getDoubleR(request, "long")
     time = new RequestTime(getStringR(request, "timezone_offset"))
     dev = getBoolR(request, "dev")
+    all = getBoolR(request, "all")
   }
   
   def create(string:String){
@@ -38,6 +40,7 @@ class PrimeRequest(obj:Object) extends APIRequest(obj) {
     long = getDouble(json, "long")
     time = new RequestTime(getString(json, "timezone_offset"))
     dev = getBool(json, "dev")
+    all = getBool(json, "all")
     
     if(json.has("notifications"))
       notificationsRequests = getRequests(json.get("notifications"))

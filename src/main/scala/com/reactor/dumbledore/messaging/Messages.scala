@@ -11,6 +11,8 @@ import com.reactor.dumbledore.services.WebRequestData
 import twitter4j.Status
 import com.reactor.dumbledore.messaging.requests._
 import com.reactor.dumbledore.notifications.request.Request
+import com.reactor.dumbledore.prime.PrimeSet
+import org.joda.time.DateTime
 
 class Message extends Serializable
 
@@ -36,7 +38,7 @@ case class ListSetContainer[T](data:ListSet[T]) extends request
 case class NotificationRequestContainer(request:NotificationRequest) extends request
 
 // Entertainment Request
-case class EntertainmentRequestContainer(request:ListBuffer[Request]) extends request
+case class EntertainmentRequestContainer(request:ListBuffer[Request], all:Boolean) extends request
 
 // Feed Request Containers
 case class FeedData(data:ListBuffer[FeedRequestData]) extends request
@@ -52,6 +54,9 @@ case class TwitterStoryData(status:Status, me:Long) extends request
 //==========================
 // Prime Request Containers 
 //==========================
+
+// Ranking Containers
+case class PrimeRankContainer(set:PrimeSet, now:DateTime)
 
 // Youtube Containers
 case class YoutubeData(request:YoutubeRequest)

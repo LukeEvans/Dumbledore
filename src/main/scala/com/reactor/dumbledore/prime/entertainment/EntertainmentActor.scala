@@ -3,6 +3,7 @@ package com.reactor.dumbledore.prime.entertainment
 import com.reactor.patterns.pull.FlowControlActor
 import com.reactor.patterns.pull.FlowControlArgs
 import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.Map
 import com.reactor.dumbledore.notifications.request.Request
 import akka.actor.ActorRef
 import com.reactor.dumbledore.data.ListSet
@@ -24,15 +25,22 @@ class EntertainmentActor(args:FlowControlArgs) extends FlowControlActor(args) {
   
   override def receive = {
     
-    case EntertainmentRequestContainer(list) => getEntertainment(list, sender)
+    case EntertainmentRequestContainer(list, all) => getEntertainment(list, all, sender)
     
     case a:Any => println("Unknown message - " + a)
   }
   
-  def getEntertainment(requests:ListBuffer[Request], origin:ActorRef){
+  def getEntertainment(requests:ListBuffer[Request], allEntertainment:Boolean, origin:ActorRef){
     
     val entertainData =  ListBuffer[ListSet[Object]]()
-    val services = entertainManager.getServices(requests)
+    
+    var services:Map[String, EntertainmentService] = null
+    
+    if(allEntertainment)
+      services = entertainManager.getAllServices()
+    else
+      services = entertainManager.getServices(requests)
+      
     val futureData = ListBuffer[Future[(String, Int, ListBuffer[Object])]]()
     
     

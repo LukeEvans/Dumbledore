@@ -72,8 +72,11 @@ class DumbledoreBoot extends Bootable{
     val entFlowConfig = FlowControlConfig(name="entActor", actorType="com.reactor.dumbledore.prime.entertainment.EntertainmentActor", parallel=5)    
     val entActor = FlowControlFactory.flowControlledActorForSystem(system, entFlowConfig)
     
+    val rankFlowConfig = FlowControlConfig(name="rankActor", actorType="com.reactor.dumbledore.prime.rank.SetRankerActor", parallel=5)    
+    val rankActor = FlowControlFactory.flowControlledActorForSystem(system, rankFlowConfig)
+    
     val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor")
-    val primeActor = FlowControlFactory.flowControlledActorForSystem(system, primeFlowConfig, PrimeActorArgs(channelsActor, notificationActor, entActor))   
+    val primeActor = FlowControlFactory.flowControlledActorForSystem(system, primeFlowConfig, PrimeActorArgs(channelsActor, notificationActor, entActor, rankActor))   
     
 	val service = system.actorOf(Props(classOf[ApiActor], winstonAPIActor, notificationActor, channelsActor, twitterServiceActor, primeActor).withRouter(	
 	  ClusterRouterPool(AdaptiveLoadBalancingPool(akka.cluster.routing.MixMetricsSelector), 
