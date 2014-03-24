@@ -25,6 +25,7 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
   override def preStart = println("SetRankerActor starting...")
   override def postStop = println("SetRankerActor terminated")
   
+  
   def receive = {
     
     case PrimeRankContainer(primeSet, time) => rankSet(primeSet, time,  sender)
@@ -32,25 +33,37 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
     case a:Any => println("SetRankerActor- Unknown message received: " + a)
   }
   
-  def rankSet(primeSet:PrimeSet, time:DateTime, origin:ActorRef){
+  
+  private def rankSet(primeSet:PrimeSet, time:DateTime, origin:ActorRef){
     
     val rankedSet = new PrimeSet
     
-    primeSet.getSet().foreach( set => rankedSet += rank(set, time) )
+    primeSet.getSet().foreach{ 
+      set =>
+        val ranked = rankListSet(set, time)
+        
+        if(ranked.score > 0)
+        	rankedSet += ranked
+    }
     
     reply(origin, rankedSet)
     complete()
   }
   
-  private def rank(set:ListSet[Object], now:DateTime):ListSet[Object] = {
+  
+  private def rankListSet(set:ListSet[Object], now:DateTime):ListSet[Object] = {
     
     val date = new Date(now)
     
     ranks.get(set.card_id) match{
    
       case Some(rank) =>
-        val score = rank.getScore(date)
-        return ListSet(set.card_id, score, set.set_data)
+
+        val newSet = ListSet(set.card_id, 0, set.set_data)
+        
+        newSet.setScore(date, rank)
+        
+        return newSet
         
       case None => 
         return set
@@ -145,6 +158,8 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
     return rankConfigs
   }
   
+  
+  /** Set News Ranking configurations */
   private def setNewsConfigs(configs:Map[String, Rank]):Map[String, Rank] = {
     
     val list = mongo.findAll("reactor-news-feeds")
@@ -157,18 +172,22 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
         
         if(json.has("feed_id"))
           sources += json.get("feed_id").asText()
-    }
+    }   
+    
+    val MONDAY = Day.MONDAY
+    val SUNDAY = Day.SUNDAY
     
     sources.foreach{
       sourceId =>
-        val sourceRank = Rank(sourceId)
-        				   .addRange(25, Time(0,0), Time(5, 59), 1, 7)
-        				   .addRange(20, Time(6,0), Time(9, 59), 1, 7)
-        				   .addRange(25, Time(10,0), Time(10, 59), 1, 7)
-        				   .addRange(35, Time(11,0), Time(14, 59), 1, 7)
-        				   .addRange(40, Time(15,0), Time(16, 59), 1, 7)
-        				   .addRange(20, Time(17,0), Time(19, 59), 1, 7)
-        				   .addRange(25, Time(20,0), Time(23, 59), 1, 7)
+        val sourceRank = new TimedRank(sourceId)
+        				   .addRange(25, Time(0,0), Time(5, 59), MONDAY, SUNDAY)
+        				   .addRange(20, Time(6,0), Time(9, 59), MONDAY, SUNDAY)
+        				   .addRange(25, Time(10,0), Time(10, 59), MONDAY, SUNDAY)
+        				   .addRange(35, Time(11,0), Time(14, 59), MONDAY, SUNDAY)
+        				   .addRange(40, Time(15,0), Time(16, 59), MONDAY, SUNDAY)
+        				   .addRange(20, Time(17,0), Time(19, 59), MONDAY, SUNDAY)
+        				   .addRange(25, Time(20,0), Time(23, 59), MONDAY, SUNDAY)
+        				   
         configs.put(sourceId, sourceRank)
     }
     

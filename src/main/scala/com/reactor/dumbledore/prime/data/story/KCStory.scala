@@ -4,6 +4,7 @@ import com.reactor.dumbledore.prime.entities.Entity
 import com.fasterxml.jackson.databind.JsonNode
 import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConversions._
+import java.util.Date
 
 class KCStory {
   	var id:String = null
@@ -76,6 +77,12 @@ class KCStory {
   	  }
   	  
   	  list
+  	}
+  	
+  	def calcRecentScore():Int = {
+  	  val nowDate = new Date
+  	  
+  	  return ((nowDate.getTime() - date)/60000).toInt
   	}
   	
   	override def toString() = {
