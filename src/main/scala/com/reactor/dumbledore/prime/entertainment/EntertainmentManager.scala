@@ -5,50 +5,81 @@ import scala.collection.mutable.ListBuffer
 import com.reactor.dumbledore.prime.youtube.Youtube
 import com.reactor.dumbledore.prime.services.comics.Comics
 import com.reactor.dumbledore.notifications.request.Request
+import com.reactor.dumbledore.prime.constants.Prime
 
+/** EntertainmentService wrapper class
+ */
 abstract class EntertainmentService(id:String){
+  
+  // Abstract method process should return a tuple containing an ID, a rank, and a ListBuffer[Object] of data
   def process:(String, Int, ListBuffer[Object])
   
   def getId:String = id
 }
 
+
+/** Entertainment Service Manager
+ */
 class EntertainmentManager {
-  val entServices = Map[String, EntertainmentService]()
-  init()
   
+  val entServices = initServices() // Entertainment Services
+  
+  
+  /** Get all entertainment services */
   def getAllServices():Map[String, EntertainmentService] = entServices
   
+  
+  /** Get all services in list of requests (ListBuffer[Request) */
   def getServices(list:ListBuffer[Request]):Map[String, EntertainmentService] = {
+    
     val services = Map[String, EntertainmentService]()
     
-    if(list == null)
+    if(list == null || list.isEmpty)
       return services
     
-    list.map{ request => 
+    list.foreach{ request => 
       entServices.get(request.id) match{
+        
         case Some(service) => services.put(request.id, service)
-        case None => // Don't add
+        
+        case None => println("Service: " +request.id + " not found")
       }
     }
     
     return services
   }
   
-  private def init(){
+  
+  /** Initialize entertainment services */
+  private def initServices():Map[String, EntertainmentService] = {
     
-    entServices.put("popular_videos", YoutubeService())
+    val services = Map[String, EntertainmentService]()
     
-    entServices.put("comics", ComicService())
+    services.put(Prime.POPULAR_VIDEOS, YoutubeService())
+    services.put(Prime.COMICS, ComicService())
+    
+    return services
   }
+  
 }
 
-case class YoutubeService() extends EntertainmentService("popular_videos"){
+
+/** Youtube Service
+ */
+case class YoutubeService() extends EntertainmentService(Prime.POPULAR_VIDEOS){
+  
+  /** get 8 most popular videos from Youtube */
   def process ={
     (getId, 50, Youtube.getYoutube(None, 8))
   }
 }
 
-case class ComicService() extends EntertainmentService("comics"){
+
+/** Comic Service 
+ */
+case class ComicService() extends EntertainmentService(Prime.COMICS){
+  
+  /** get Random comics from comic api */
   def process = {
     (getId, 50, Comics.getRandomToday)
   }

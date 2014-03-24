@@ -2,7 +2,6 @@ package com.reactor.dumbledore.notifications
 
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.Map
-
 import com.github.nscala_time.time.Imports._
 import com.reactor.dumbledore.notifications.request.Request
 import com.reactor.dumbledore.notifications.time.Date
@@ -10,6 +9,7 @@ import com.reactor.dumbledore.notifications.time.NotificationConfig
 import com.reactor.dumbledore.notifications.time.StaticNotificationConfig
 import com.reactor.dumbledore.notifications.time.Time
 import com.reactor.dumbledore.services.WebRequestData
+import com.reactor.dumbledore.prime.constants._
 
 /**  Handle web service configurations and give notification actor a list of 
  *   Service Data to send WebServiceActor
@@ -25,22 +25,21 @@ class NotificationManager {
   def getWebServices(requests:ListBuffer[Request], now:DateTime):Map[String, WebRequestData] = {
     val date = new Date(now)
     val validServices = Map[String, WebRequestData]()
-    println("get web services")
     
-    requests.map{
+    requests.foreach{
      request => services.get(request.id) match{
          
          case Some(service) => // Service with request.id found
-           println("Service " + service.notifEndpoint) 
+
            service.getRangeAction(date) match{
              
-             case Some(range) =>              
+             case Some(range) =>     
+               
                if( !service.isDismissed(request.dismissTime, now)) // If card has not been dismissed within the regeneration time frame 
             	   validServices.put(request.id, WebRequestData(service.serviceType, service.notifEndpoint, service.rank, range.params, request.cards))            	   
                else 
                  println("Card is dismissed")
-               
-               
+                             
              case None => println("Not a valid time - " + request.id)
            }
            
@@ -57,7 +56,7 @@ class NotificationManager {
     val date = new Date(now)
     val validServices = Map[String, WebRequestData]()
     
-    devServices.map{
+    devServices.foreach{
       service =>
         service._2.getRangeAction(date) match{
           case Some(range) => 
@@ -68,87 +67,108 @@ class NotificationManager {
     validServices
   }
   
+  
+  /** Initialize Services
+   */
   def init():Unit = {
 
-    val traffic = new NotificationConfig("dumbledore", "/", 1).add247(None)
-//    					.addRange(Time(5,0), Time(9, 59), 1, 5, None)
-//    					.addRange(Time(3,0), Time(5,59), 1, 5, None)
-    services put ("traffic", traffic)
+    val traffic = new NotificationConfig(Prime.DUMBLEDORE, "/", 1).add247(None)
     
-    val weather = new NotificationConfig("v036", "/weather", 2).add247(None)
-//    					.addRange(Time(5, 0), Time(13, 59), 0, 6, None)
+    services put (Prime.TRAFFIC, traffic)
+    
+    
+    val weather = new NotificationConfig(Prime.V036, "/weather", 2).add247(None)
+
     services put ("weather", weather)
+
     
-    // Topic Alerts
-    
-	val nearbyPlaces = new NotificationConfig("v036", "/yelp", 3)
-							.addRange(Time(7, 0), Time(9, 59), 1, 7, Some(Map("type" -> "coffee")))
-							.addRange(Time(11, 0), Time(12, 59), 1, 7, Some(Map("type" -> "lunch")))
-							.addRange(Time(15, 0), Time(16, 59), 1, 7, Some(Map("type" -> "coffee")))
-							.addRange(Time(17, 0), Time(19, 59), 1, 7, Some(Map("type" -> "dinner")))
+	val nearbyPlaces = new NotificationConfig(Prime.V036, "/yelp", 3)
+							.addRange(Time(7, 0), Time(9, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "coffee")))
+							.addRange(Time(11, 0), Time(12, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "lunch")))
+							.addRange(Time(15, 0), Time(16, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "coffee")))
+							.addRange(Time(17, 0), Time(19, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "dinner")))
 							.add247(None)
-    services put ("nearby_places", nearbyPlaces)
+							
+    services put (Prime.NEARBY_PLACES, nearbyPlaces)
     
-    val stocks = new StaticNotificationConfig("v036", "/stocks", 4).add247(None)
-						//.addRange(Time(9, 30), Time(16, 30), 1, 5, None)
-    services put ("stocks", stocks)
     
-    val fbBdays = new NotificationConfig("v036", "/social/facebook/birthdays", 5)
-//						.addRange(Time(5, 0), Time(10,59), 0, 6, None)
-						.addRange(Time(20, 0), Time(23,59), 1, 7, Some(Map("tomorrow" -> "true")))
+    val stocks = new StaticNotificationConfig(Prime.V036, "/stocks", 4).add247(None)
+
+    services put (Prime.STOCKS, stocks)
+    
+    
+    val fbBdays = new NotificationConfig(Prime.V036, "/social/facebook/birthdays", 5)
+						.addRange(Time(20, 0), Time(23,59), Day.MONDAY, Day.SUNDAY, Some(Map("tomorrow" -> "true")))
 						.add247(None)
-    services put ("facebook_birthdays", fbBdays)
+						
+    services put (Prime.FACEBOOK_BIRTHDAYS, fbBdays)
     
-    val fbMessages = new NotificationConfig("v036", "/social/facebook/inbox", 6).add247(None)
-    services put ("facebook_messages", fbMessages)
     
-    val fbNotifications = new NotificationConfig("v036", "/social/facebook/notifications", 7).add247(None)
-    services put ("facebook_notifications", fbNotifications)
+    val fbMessages = new NotificationConfig(Prime.V036, "/social/facebook/inbox", 6).add247(None)
     
-    val nearbyPhotos = new NotificationConfig("v036", "/instagram/location", 8).add247(None)
-    services put ("nearby_photos", nearbyPhotos)
+    services put (Prime.FACEBOOK_MESSAGES, fbMessages)
+    
+    
+    val fbNotifications = new NotificationConfig(Prime.V036, "/social/facebook/notifications", 7).add247(None)
+    
+    services put (Prime.FACEBOOK_NOTIFICATIONS, fbNotifications)
+    
+    
+    val nearbyPhotos = new NotificationConfig(Prime.V036, "/instagram/location", 8).add247(None)
+    
+    services put (Prime.NEARBY_PHOTOS, nearbyPhotos)
+    
   }
   
+  
+  /** Initialize dev services
+   */
   def devInit():Unit = {
     
-    val traffic = new NotificationConfig("dumbledore", "/", 1).add247(None)
-    devServices put ("traffic", traffic)
+    val traffic = new NotificationConfig(Prime.DUMBLEDORE, "/", 1).add247(None)
     
-    val weather = new NotificationConfig("v036", "/weather", 2).add247(None)
-    devServices put ("weather", weather)
+    devServices put (Prime.TRAFFIC, traffic)
     
-    // Topic Alerts
     
-    val nearbyPlaces = new NotificationConfig("v036", "/yelp", 3)
-    						.addRange(Time(7, 0), Time(9, 59), 1, 7, Some(Map("type" -> "coffee")))
-							.addRange(Time(11, 0), Time(12, 59), 1, 7, Some(Map("type" -> "lunch")))
-							.addRange(Time(15, 0), Time(16, 59), 1, 7, Some(Map("type" -> "coffee")))
-							.addRange(Time(17, 0), Time(19, 59), 1, 7, Some(Map("type" -> "dinner")))
+    val weather = new NotificationConfig(Prime.V036, "/weather", 2).add247(None)
+    
+    devServices put (Prime.WEATHER, weather)
+
+    
+    val nearbyPlaces = new NotificationConfig(Prime.V036, "/yelp", 3)
+    						.addRange(Time(7, 0), Time(9, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "coffee")))
+							.addRange(Time(11, 0), Time(12, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "lunch")))
+							.addRange(Time(15, 0), Time(16, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "coffee")))
+							.addRange(Time(17, 0), Time(19, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "dinner")))
 							.add247(None)
     
-    devServices put ("nearby_places", nearbyPlaces)
+    devServices put (Prime.NEARBY_PLACES, nearbyPlaces)
     
-    val stocks = new StaticNotificationConfig("v036", "/stocks", 4).add247(None)
-    devServices put ("stocks", stocks)
     
-    val fbBdays = new NotificationConfig("v036", "/social/facebook/birthdays", 5).add247(None)  
-    devServices put ("facebook_birthdays", fbBdays)
+    val stocks = new StaticNotificationConfig(Prime.V036, "/stocks", 4).add247(None)
     
-    val fbMessages = new NotificationConfig("v036", "/social/facebook/inbox", 6).add247(None)
-    devServices put ("facebook_messages", fbMessages)
+    devServices put (Prime.STOCKS, stocks)
     
-    val fbNotifications = new NotificationConfig("v036", "/social/facebook/notifications", 7).add247(None)
-    devServices put ("facebook_notifications", fbNotifications)
     
-    val nearbyPhotos = new NotificationConfig("v036", "/instagram/location", 8).add247(None)
-    devServices put ("nearby_photos", nearbyPhotos)
-  }
+    val fbBdays = new NotificationConfig(Prime.V036, "/social/facebook/birthdays", 5).add247(None) 
+    
+    devServices put (Prime.FACEBOOK_BIRTHDAYS, fbBdays)
+    
+    
+    val fbMessages = new NotificationConfig(Prime.V036, "/social/facebook/inbox", 6).add247(None)
+    
+    devServices put (Prime.FACEBOOK_MESSAGES, fbMessages)
+    
+    
+    val fbNotifications = new NotificationConfig(Prime.V036, "/social/facebook/notifications", 7).add247(None)
+    
+    devServices put (Prime.FACEBOOK_NOTIFICATIONS, fbNotifications)
+    
+    
+    val nearbyPhotos = new NotificationConfig(Prime.V036, "/instagram/location", 8).add247(None)
+    
+    devServices put (Prime.NEARBY_PHOTOS, nearbyPhotos)
   
-  object Test{
-    def main(args:Array[String]){
-      val man = new NotificationManager
-      val now = new DateTime
-      val services = man.getDevWebServices(now)
-    }
   }
+ 
 }

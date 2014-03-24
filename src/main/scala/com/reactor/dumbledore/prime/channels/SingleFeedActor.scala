@@ -24,7 +24,10 @@ class SingleFeedActor(args:FlowControlArgs) extends FlowControlActor(args) {
   ready
   
   def receive() = {
-    case data:FeedRequestData => println("received data - " + data.feed_id); processChannel(data, sender)
+    
+    case data:FeedRequestData =>  
+      processChannel(data, sender)
+      
     case a:Any => println("Unknown message - " + a)
   }
   

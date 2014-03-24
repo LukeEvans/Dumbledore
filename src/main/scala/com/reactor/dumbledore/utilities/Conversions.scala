@@ -10,25 +10,26 @@ object Conversions {
   def nodeToStringList(node:JsonNode):ListBuffer[String] = {
     
     val listBuffer = new ListBuffer[String]
-    node.map( iNode => listBuffer += iNode.asText)
+    
+    node.foreach( iNode => listBuffer += iNode.asText)
     
     return listBuffer
   }
   
   def nodeToListBuffer[T](node:JsonNode):ListBuffer[T] = {
+    
     val listBuffer = new ListBuffer[T]
     
-    node.map{
+    node.foreach{
       iNode => listBuffer += iNode.asInstanceOf[T]
     }
     
     listBuffer
   }
   
-  def listToObjectList(list:ListBuffer[ComicCard]){
+  def listToObjectList(list:ListBuffer[ComicCard]):ListBuffer[Object] = {
     val objectList = ListBuffer[Object]()
     
-    list.map(t => objectList += t)
-    
+    return list.map( t => t.asInstanceOf[Object] )
   }
 }

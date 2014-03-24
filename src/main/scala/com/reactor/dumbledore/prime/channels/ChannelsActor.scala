@@ -47,12 +47,21 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
   
   override def preStart() = println("channels actor starting")
   
+  
+  /** Message Handling
+   */
   override def receive = {
+    
     case Feeds(clear) => getChannelFeeds(clear, sender)
+    
     case FeedData(data) => getChannelData(data, sender)
+    
     case SourceData(data) => getSourceData(data, sender)
+    
     case a:Any => println("Unknown request - " + a)
+  
   }
+  
   
   /** Get list of channel feeds available from mongo 
    */
@@ -76,7 +85,7 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
 	val list = mongo.findAll("reactor-news-feeds")
     val feedList = ListBuffer[Feed]()
     
-    list.map{
+    list.foreach{
       channelObj =>
         var json  = Tools.objectToJsonNode(channelObj)
         val feed = new Feed(json, mongo)
@@ -91,7 +100,7 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
     val dataArray = ListBuffer[ListSet[Object]]()
     
     val dataList = ListBuffer[Future[ListSet[JsonNode]]]()
-    channelData.map{
+    channelData.foreach{
       data => dataList += (feedActor ? data).mapTo[ListSet[JsonNode]]
     }
     
@@ -119,7 +128,7 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
     val dataArray = ListBuffer[ListSet[Object]]()
     val dataList = ListBuffer[Future[ListSet[Object]]]()
     
-    sources.map{
+    sources.foreach{
       source_id =>
         dataList += (sourceActor ? source_id).mapTo[ListSet[Object]]
     }
@@ -127,7 +136,7 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
     Future.sequence(dataList) onComplete{
       case Success(list) =>
         
-        list.map{
+        list.foreach{
           data => dataArray += data
         }
         reply(origin, dataArray)

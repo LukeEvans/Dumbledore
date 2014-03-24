@@ -47,7 +47,8 @@ object Youtube {
   private def createVideoSet(node:JsonNode):ListBuffer[Object] ={
     
     val videoSet = new ListBuffer[Object]()
-    node.map( videoNode => videoSet += new YoutubeVideo(videoNode))
+    
+    node.foreach( videoNode => videoSet += new YoutubeVideo(videoNode))
     
     return videoSet
   }

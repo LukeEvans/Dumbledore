@@ -8,7 +8,7 @@ object Comics {
 	
     val cards = ListBuffer[Object]();
 		
-    initComics().map(comic => cards += comic.getToday)
+    initComics().foreach(comic => cards += comic.getToday)
 		
     return cards;
   }	

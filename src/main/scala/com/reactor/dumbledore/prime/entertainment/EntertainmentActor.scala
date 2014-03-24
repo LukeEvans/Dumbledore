@@ -44,14 +44,14 @@ class EntertainmentActor(args:FlowControlArgs) extends FlowControlActor(args) {
     val futureData = ListBuffer[Future[(String, Int, ListBuffer[Object])]]()
     
     
-    services.map{
+    services.foreach{
       service => futureData += future{service._2.process}
     }
     
     Future.sequence(futureData) onComplete{
       
       case Success(dataList) => 
-        dataList.map(data => entertainData += ListSet(data._1, data._2, data._3))
+        dataList.foreach(data => entertainData += ListSet(data._1, data._2, data._3))
         reply(origin, entertainData)
         
       case Failure(e) =>
