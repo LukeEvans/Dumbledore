@@ -32,27 +32,33 @@ class FeedRequest(obj:Object) extends APIRequest(obj) {
   
   
   private def getList(dataNode:JsonNode):ListBuffer[FeedRequestData] = {
+    
     if(dataNode == null)
       return null
     
     val dataList = ListBuffer[FeedRequestData]()
-    dataNode.map{
+    
+    dataNode.foreach{
       data => 
         if(data.has("feed_id") && data.has("sources"))
           dataList += FeedRequestData(data.get("feed_id").asText(), nodeToList(data.get("sources")))
     }
+    
     return dataList
   }
   
   
   private def nodeToList(nodeList:JsonNode):ListBuffer[String] = {
+    
     if(nodeList == null)
       return null
       
     val list = ListBuffer[String]()
-    nodeList.map{
+    
+    nodeList.foreach{
       node => list += node.asText()
     }
+    
     return list
   }
 }

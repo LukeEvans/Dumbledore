@@ -23,7 +23,7 @@ case class Rank(id:String) {
   }
   
   def getScore(time:Date):Int = {
-    rankedTimes.map{
+    rankedTimes.foreach{
       timeRange =>{
     	if(time.isInRange(timeRange.range)){
     	  return timeRange.score
@@ -37,7 +37,7 @@ case class Rank(id:String) {
 class StaticRank(id:String) extends Rank(id){
   
   override def getScore(time:Date):Int = {
-    rankedTimes.map{
+    rankedTimes.foreach{
       timeRange =>{
         if(time.isInOffsetRange(timeRange.range)){
           return timeRange.score

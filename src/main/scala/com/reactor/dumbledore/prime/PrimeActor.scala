@@ -68,15 +68,16 @@ class PrimeActor(args:PrimeActorArgs) extends FlowControlActor(args) {
       
       case Success(completed) => 
         
-        completed.map{
+        completed.foreach{
           set => primeSet ++= set
         }
-        println("Prime - Offset Time: " + request.time.offsetTime)
-        println("Prime - Time:        " + request.time.dateTime)
+
         val futureRankedSet = (rankActor ? PrimeRankContainer(primeSet, request.time.offsetTime)).mapTo[PrimeSet]
         
         futureRankedSet.onComplete{
           case Success(rankedSet) =>
+            
+            rankedSet.sort.foreach(set => println("Set ID: " + set.card_id + "  Set Rank: " + set.rank))
             
             reply(origin, rankedSet.sort)
             complete()
@@ -129,7 +130,7 @@ class PrimeActor(args:PrimeActorArgs) extends FlowControlActor(args) {
   private def getSocial(requests:ListBuffer[Request]):Future[ListBuffer[ListSet[Object]]] = {
     val futureSocial = ListBuffer[ListSet[Object]]()
     
-    requests.map{
+    requests.foreach{
       request => 
         if(request.id.equalsIgnoreCase("facebook") || request.id.equalsIgnoreCase("twitter")){
           futureSocial += ListSet(request.id, 99, ListBuffer[Object]())

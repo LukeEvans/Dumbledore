@@ -15,7 +15,7 @@ object ChannelFeeds {
 	val list = mongo.findAll("reactor-news-feeds")
     val feedList = ListBuffer[Feed]()
     
-    list.map{
+    list.foreach{
       channelObj =>
         var json  = Tools.objectToJsonNode(channelObj)
         val feed = new Feed(json, mongo)

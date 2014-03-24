@@ -55,7 +55,7 @@ class KCStory {
   	
   	def nodeToList(node:JsonNode):ListBuffer[String] = {
   	  val list = ListBuffer[String]()
-  	  node.map{
+  	  node.foreach{
   	    obj => list += obj.asText
   	  }
   	  list
@@ -63,7 +63,7 @@ class KCStory {
   	
   	def nodeToEntities(node:JsonNode):ListBuffer[Entity] = {
   	  val list = ListBuffer[Entity]()
-  	  node.map{
+  	  node.foreach{
   	    obj => {
   	      val entity = new Entity
   	      entity.entity_name = obj.get("entity_name").asText()

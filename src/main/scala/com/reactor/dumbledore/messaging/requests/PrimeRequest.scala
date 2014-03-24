@@ -67,7 +67,7 @@ class PrimeRequest(obj:Object) extends APIRequest(obj) {
   private def getRequests(nodeList:JsonNode):ListBuffer[Request] = {
     
     val serviceRequests = ListBuffer[Request]()
-    nodeList.map(node => serviceRequests.add(new Request(node)))
+    nodeList.foreach(node => serviceRequests.add(new Request(node)))
     
     return serviceRequests
   }
@@ -77,7 +77,7 @@ class PrimeRequest(obj:Object) extends APIRequest(obj) {
       return null
     
     val dataList = ListBuffer[FeedRequestData]()
-    dataNode.map{
+    dataNode.foreach{
       data => 
         if(data.has("feed_id") && data.has("sources"))
           dataList += FeedRequestData(data.get("feed_id").asText(), Conversions.nodeToStringList(data.get("sources")))

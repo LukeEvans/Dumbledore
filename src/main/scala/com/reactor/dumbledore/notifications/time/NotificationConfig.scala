@@ -2,33 +2,47 @@ package com.reactor.dumbledore.notifications.time
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Map
-
 import com.github.nscala_time.time.Imports._
+import com.reactor.dumbledore.prime.constants.Day
 
+
+/** Notification Configuration 
+ */
 case class NotificationConfig(serviceType:String, notifEndpoint:String, rank:Int, reloadMinutes:Long = 30) {
+  
   val timeRanges:ArrayBuffer[TimeRange] = new ArrayBuffer[TimeRange]
   
+  
+  /** Add TimeRange to timeRanges */
   def addTimeRange(start:Date, stop:Date, params:Option[Map[String, String]]):NotificationConfig ={
+    
     timeRanges += new TimeRange(start, stop, params) 
     this
   }
   
+  
+  /** Add 24/7 TimeRange */
   def add247(params:Option[Map[String, String]]):NotificationConfig = {
-    addRange(Time(0,0), Time(23,59), 1, 7, params)
+    
+    addRange(Time(0,0), Time(23,59), Day.MONDAY, Day.SUNDAY, params)
     this
   }
   
+  
+  /** Add Range from start day to stop day */
   def addRange(startTime:Time, stopTime:Time, start:Int, 
       stop:Int, params:Option[Map[String, String]]):NotificationConfig ={
     
-    for(i <- start to stop){
+    for(i <- start to stop)
      addTimeRange(Date(startTime, i), Date(stopTime, i), params) 
-    }
+    
     this
   }
   
+  
   def isValidTime(nowDate:Date):Boolean = {
-    timeRanges.map{
+    
+    timeRanges.foreach{
       timeRange =>{
     	if(nowDate.isInRange(timeRange)){
     	  return true
@@ -38,8 +52,10 @@ case class NotificationConfig(serviceType:String, notifEndpoint:String, rank:Int
     false
   }
   
+  
   def getRangeAction(nowDate:Date):Option[TimeRange] = {
-    timeRanges.map{
+    
+    timeRanges.foreach{
       timeRange =>{
         if(nowDate.isInRange(timeRange)){
           return Some(timeRange)
@@ -48,6 +64,7 @@ case class NotificationConfig(serviceType:String, notifEndpoint:String, rank:Int
     }
     None
   }
+  
   
   def isDismissed(dismissalTime:Option[Long], date:DateTime):Boolean = {
     

@@ -65,18 +65,18 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
 	val params = new Parameters(request.getUserCredentials) //Create parameter object from request
     var responseData = ListBuffer[ListSet[Object]]()
     
-    println("Notif - Offset Time: " + request.time.offsetTime)
-    println("Notif - Time:        " + request.time.dateTime)
-    
 	val time = request.time.offsetTime
 	var webServices:Map[String, WebRequestData] = null
 	
 	// Determine Dev or Non-Dev Logic
     request.dev match{
+	  
 	  case false => // Non dev notifications
 	    webServices = notifManager.getWebServices(request.serviceRequest, time)
+	    
 	  case true => // Dev Notifications
 	    webServices = notifManager.getDevWebServices(time)
+	
 	}
 	
 	// Get list of future results
@@ -88,10 +88,13 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
 
 	    dataList map {
 	    	listSetContainer => // Single Data Set Container
+	    	  
 	    	  val serviceData = listSetContainer.data
 	    	  
 	    	  if(serviceData.set_data != null && !serviceData.set_data.isEmpty)
-	    		  responseData = orderDataSet(serviceData, responseData)//+= serviceData
+	    		responseData = orderDataSet(serviceData, responseData)
+	          else
+	            log.error("Notification Actor: Error receiving data from service - " + serviceData.card_id)
 	    }
 	    
 	    reply(origin, responseData) // Return Data to API Service
@@ -111,7 +114,7 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
     implicit val timeout = Timeout(8 seconds) //Request timeout
     val results = new ListBuffer[Future[ListSetContainer[Object]]]
     
-    services.map{
+    services.foreach{
       service =>
     	var allParams = Map[String, String]()
     	service._2.params match{
@@ -119,7 +122,6 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
     	  	allParams  = params ++ serviceParams
     	  case None => allParams = params
     	}	        
-    	println(allParams)
     	results += (webServiceActor ? ServiceRequest(service._1, service._2, Some(allParams))).mapTo[ListSetContainer[Object]]
     }    
     results

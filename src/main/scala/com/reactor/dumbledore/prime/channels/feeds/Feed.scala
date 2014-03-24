@@ -30,7 +30,7 @@ class Feed {
   def getSourceInfo(sourceNode:JsonNode, mongo:MongoDB):ListBuffer[SourceInfo] = {
     val infoList = ListBuffer[SourceInfo]()
     
-    sourceNode.map{
+    sourceNode.foreach{
       source =>
         val obj = mongo.findOneSimple("source_id", source.asText(), "reactor-news-sources")
         val json = Tools.objectToJsonNode(obj)
