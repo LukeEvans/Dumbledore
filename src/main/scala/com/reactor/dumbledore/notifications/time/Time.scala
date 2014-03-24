@@ -8,6 +8,7 @@ case class Time(hour:Int, minute:Int) {
 }
 
 case class Date(time:Time, day:Int){
+  println("time: " + time.getTotalTime + "  day: " + day)
   require(day >= 1 && day < 8)
   var utcTime = new DateTime(DateTimeZone.forOffsetHours(0))
   var offTime:Time = Time(utcTime.getHourOfDay(), utcTime.getMinuteOfHour())

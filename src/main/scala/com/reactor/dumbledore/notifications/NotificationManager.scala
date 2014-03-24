@@ -143,4 +143,12 @@ class NotificationManager {
     val nearbyPhotos = new NotificationConfig("v036", "/instagram/location", 8).add247(None)
     devServices put ("nearby_photos", nearbyPhotos)
   }
+  
+  object Test{
+    def main(args:Array[String]){
+      val man = new NotificationManager
+      val now = new DateTime
+      val services = man.getDevWebServices(now)
+    }
+  }
 }
