@@ -95,7 +95,7 @@ class TimedRank(id:String) extends Rank(id){
           else{
             val fract = ((120 - recentScore).toDouble/120)
             println("fract:     " + fract)
-            val newScore = (timeRange.score - (fract * timeRange.score))
+            val newScore = (fract * timeRange.score)
             println("new score: " + newScore.toInt)
             return newScore.toInt
           }
