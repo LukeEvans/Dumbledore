@@ -77,7 +77,7 @@ class PrimeActor(args:PrimeActorArgs) extends FlowControlActor(args) {
         futureRankedSet.onComplete{
           case Success(rankedSet) =>
             
-            rankedSet.sort.foreach(set => println("Set ID: " + set.card_id + "  Set Rank: " + set.rank))
+            rankedSet.sort.foreach(set => println("Set ID: " + set.card_id + "  Set Score: " + set.score))
             
             reply(origin, rankedSet.sort)
             complete()
