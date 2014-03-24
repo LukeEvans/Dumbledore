@@ -82,10 +82,10 @@ class NotificationManager {
     // Topic Alerts
     
 	val nearbyPlaces = new NotificationConfig("v036", "/yelp", 3)
-							.addRange(Time(7, 0), Time(9, 59), 0, 6, Some(Map("type" -> "coffee")))
-							.addRange(Time(11, 0), Time(12, 59), 0, 6, Some(Map("type" -> "lunch")))
-							.addRange(Time(15, 0), Time(16, 59), 0, 6, Some(Map("type" -> "coffee")))
-							.addRange(Time(17, 0), Time(19, 59), 0, 6, Some(Map("type" -> "dinner")))
+							.addRange(Time(7, 0), Time(9, 59), 1, 7, Some(Map("type" -> "coffee")))
+							.addRange(Time(11, 0), Time(12, 59), 1, 7, Some(Map("type" -> "lunch")))
+							.addRange(Time(15, 0), Time(16, 59), 1, 7, Some(Map("type" -> "coffee")))
+							.addRange(Time(17, 0), Time(19, 59), 1, 7, Some(Map("type" -> "dinner")))
 							.add247(None)
     services put ("nearby_places", nearbyPlaces)
     
@@ -95,7 +95,7 @@ class NotificationManager {
     
     val fbBdays = new NotificationConfig("v036", "/social/facebook/birthdays", 5)
 //						.addRange(Time(5, 0), Time(10,59), 0, 6, None)
-						.addRange(Time(20, 0), Time(23,59), 0, 6, Some(Map("tomorrow" -> "true")))
+						.addRange(Time(20, 0), Time(23,59), 1, 7, Some(Map("tomorrow" -> "true")))
 						.add247(None)
     services put ("facebook_birthdays", fbBdays)
     
@@ -120,10 +120,10 @@ class NotificationManager {
     // Topic Alerts
     
     val nearbyPlaces = new NotificationConfig("v036", "/yelp", 3)
-    						.addRange(Time(7, 0), Time(9, 59), 0, 6, Some(Map("type" -> "coffee")))
-							.addRange(Time(11, 0), Time(12, 59), 0, 6, Some(Map("type" -> "lunch")))
-							.addRange(Time(15, 0), Time(16, 59), 0, 6, Some(Map("type" -> "coffee")))
-							.addRange(Time(17, 0), Time(19, 59), 0, 6, Some(Map("type" -> "dinner")))
+    						.addRange(Time(7, 0), Time(9, 59), 1, 7, Some(Map("type" -> "coffee")))
+							.addRange(Time(11, 0), Time(12, 59), 1, 7, Some(Map("type" -> "lunch")))
+							.addRange(Time(15, 0), Time(16, 59), 1, 7, Some(Map("type" -> "coffee")))
+							.addRange(Time(17, 0), Time(19, 59), 1, 7, Some(Map("type" -> "dinner")))
 							.add247(None)
     
     devServices put ("nearby_places", nearbyPlaces)
