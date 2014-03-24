@@ -75,7 +75,7 @@ class TimedRank(id:String) extends Rank(id){
     
     rankedTimes.foreach{
       timeRange =>{
-        if(time.isInOffsetRange(timeRange.range)){
+        if(time.isInRange(timeRange.range)){
           
           println("")
           val recentScore = mostRecent.calcRecentScore
