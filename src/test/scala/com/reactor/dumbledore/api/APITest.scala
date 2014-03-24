@@ -69,12 +69,12 @@ class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService 
       }
     }
     
-    "return ok with post" in {
-      Post("/primetime", FormData(Map("x" -> "y"))) ~>
-        apiRoute ~> check{
-          responseAs[String] must contain("ok")
-        }
-    }
+//    "return ok with post" in {
+//      Post("/primetime", FormData(Map("x" -> "y"))) ~>
+//        apiRoute ~> check{
+//          responseAs[String] must contain("ok")
+//        }
+//    }
     
     getStatusOk("/primetime")
     
