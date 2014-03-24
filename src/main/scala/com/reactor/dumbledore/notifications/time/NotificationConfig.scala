@@ -14,7 +14,7 @@ case class NotificationConfig(serviceType:String, notifEndpoint:String, rank:Int
   }
   
   def add247(params:Option[Map[String, String]]):NotificationConfig = {
-    addRange(Time(0,0), Time(23,59), 0, 6, params)
+    addRange(Time(0,0), Time(23,59), 1, 7, params)
     this
   }
   
