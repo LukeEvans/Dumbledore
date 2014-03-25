@@ -64,7 +64,7 @@ class TimedRank(id:String) extends Rank(id){
   override def getScore(time:Date, data:ListBuffer[Object]):Int = {
     
     if(data == null || data.isEmpty)
-      return 0
+      return super.getScore(time, data)
    
     var mostRecent:KCStory = null
       

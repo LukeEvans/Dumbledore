@@ -34,6 +34,8 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
   }
   
   
+  /** Rank each ListSet in PrimeSet and Send back to PrimeActor
+   */
   private def rankSet(primeSet:PrimeSet, time:DateTime, origin:ActorRef){
     
     val rankedSet = new PrimeSet
@@ -51,6 +53,8 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
   }
   
   
+  /** Rank ListSet base on DateTime and RankConfig
+   */
   private def rankListSet(set:ListSet[Object], now:DateTime):ListSet[Object] = {
     
     val date = new Date(now)
@@ -164,18 +168,17 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
     
     val list = mongo.findAll("reactor-news-feeds")
     val sources = ListBuffer[String]()
+    val MONDAY = Day.MONDAY
+    val SUNDAY = Day.SUNDAY
 
+    
     list.foreach{
-      obj =>
-        
+      obj =>  
         var json  = Tools.objectToJsonNode(obj)
         
         if(json.has("feed_id"))
           sources += json.get("feed_id").asText()
-    }   
-    
-    val MONDAY = Day.MONDAY
-    val SUNDAY = Day.SUNDAY
+    }       
     
     sources.foreach{
       sourceId =>

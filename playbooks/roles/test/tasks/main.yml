@@ -1,0 +1,8 @@
+---
+
+- name: Test
+  pause: seconds=20
+  
+- name: Test-only
+  command: shell cd .. && sbt test-only
+ 

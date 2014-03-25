@@ -15,6 +15,12 @@ import akka.actor.ActorSystem
 import akka.actor.Props
 import com.reactor.dumbledore.prime.PrimeActor
 import com.reactor.dumbledore.prime.PrimeActorArgs
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.reactor.dumbledore.notifications.request.Request
+import com.reactor.dumbledore.prime.constants.Prime
 
 
 class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService {
@@ -50,7 +56,7 @@ class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService 
   val entFlowConfig = FlowControlConfig(name="entActor", actorType="com.reactor.dumbledore.prime.entertainment.EntertainmentActor", parallel=5)    
   val entActor = FlowControlFactory.flowControlledActorForSystem(system, entFlowConfig)
   
-  val rankFlowConfig = FlowControlConfig(name="rankActor", actorType="com.reactor.dumbledore.prime.rank.RankActor", parallel=5)    
+  val rankFlowConfig = FlowControlConfig(name="rankActor", actorType="com.reactor.dumbledore.prime.rank.SetRankerActor", parallel=5)    
   val rankActor = FlowControlFactory.flowControlledActorForTests(system, rankFlowConfig)
   
   val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor")
@@ -69,14 +75,52 @@ class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService 
       }
     }
     
-//    "return ok with post" in {
-//      Post("/primetime", FormData(Map("x" -> "y"))) ~>
-//        apiRoute ~> check{
-//          responseAs[String] must contain("ok")
-//        }
-//    }
+    val fbRequest = new Request(Prime.FACEBOOK, None, null)
     
-    getStatusOk("/primetime")
+    val twitterRequest = new Request(Prime.TWITTER, None, null)
+    
+    val comicRequest = new Request(Prime.COMICS, None, null)
+    
+    val popVideosRequest = new Request(Prime.POPULAR_VIDEOS, None, null)
+    
+    val nearbyPlacesRequest = new Request(Prime.NEARBY_PLACES, None, null)
+    
+    val nearbyPhotosRequest = new Request(Prime.NEARBY_PHOTOS, None, null)
+    
+    val stocksRequest = new Request(Prime.STOCKS, None, null)
+    
+    val weatherRequest = new Request(Prime.WEATHER, None, null)
+    
+    val social = List(fbRequest, twitterRequest)
+    
+    val ent = List(comicRequest, popVideosRequest)
+    
+    val notif = List(nearbyPlacesRequest, nearbyPhotosRequest, stocksRequest, weatherRequest)
+    
+    val primeRequest = PrimeTimeTestRequest("9F6979AD-E0B4-4E7A-B9B7-BA6B8C6A8F60", -21600, 40.0152, -105.2762, 
+        false, false, notif, List(), ent, social)
+        
+    val failRequest = PrimeTimeTestRequest("", 0, 0, 0, false, false, List(), List(), List(), List())
+    
+    "handle post to /primetime" in {
+      Post("/primetime", mapper.writeValueAsString(primeRequest)) ~>
+        apiRoute ~> check{
+          
+          val jsonNode = mapper.readTree(responseAs[String]);
+          
+          "with data in response" in{
+        	jsonNode.has("data") must equalTo(true)
+          
+            jsonNode.get("data") must not equalTo(null)
+        	
+        	jsonNode.get("data").size() must not equalTo(0)
+          }          
+          
+          "with 'ok' in status " in{
+            jsonNode.get("status").asText() must equalTo("ok")
+          }
+        }
+    }
     
     getStatusOk("/channel/feeds")
     
@@ -99,4 +143,7 @@ class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService 
     }
   }
 }
+
+case class PrimeTimeTestRequest(udid:String, timezone_offset:Int, lat:Double, long:Double, 
+    dev:Boolean, all:Boolean, notifications:List[Request], feeds:List[Request], ent:List[Request], social:List[Request])
 
