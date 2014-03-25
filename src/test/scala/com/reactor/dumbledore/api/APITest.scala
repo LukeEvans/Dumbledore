@@ -103,7 +103,7 @@ class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService 
     val failRequest = PrimeTimeTestRequest("", 0, 0, 0, false, false, List(), List(), List(), List())
     
     "handle post to /primetime" in {
-      Post("/primetime", mapper.writeValueAsString(primeRequest)) ~>
+      Post("/primetime", mapper.writeValueAsString(failRequest)) ~>
         apiRoute ~> check{
           
           val jsonNode = mapper.readTree(responseAs[String]);
