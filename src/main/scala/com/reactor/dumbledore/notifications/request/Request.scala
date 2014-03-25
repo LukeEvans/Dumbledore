@@ -20,6 +20,13 @@ class Request {
     cards = getCardIDs(node.get("cards"))
   }
   
+  def this(id:String, dismissTime:Option[Long], cards:ListBuffer[String]){
+    this()
+    this.id = id
+    this.dismissTime = dismissTime
+    this.cards = cards
+  }
+  
   private def getCardIDs(nodeList:JsonNode):ListBuffer[String] = {
     val ids = ListBuffer[String]()
     

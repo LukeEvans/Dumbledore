@@ -22,6 +22,8 @@ class PrimeSet {
   
   def sort():ListBuffer[ListSet[Object]] = {
     
+    // ToDo: Decay social
+    
     val sortedList = dataList.sortWith((a,b) => a.score > b.score)
     
 	return sortedList
