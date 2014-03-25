@@ -1,7 +1,7 @@
 ---
 
 - name: Pause
-  pause: seconds=20
+  pause: seconds=5
   
 - name: Run Daemon
   command: "start {{ item }}"

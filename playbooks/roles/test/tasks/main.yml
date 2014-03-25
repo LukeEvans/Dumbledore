@@ -1,7 +1,7 @@
 ---
 
 - name: Test
-  pause: seconds=20
+  pause: seconds=5
   
 - name: Test-only
   local_action: shell cd .. && sbt test-only
