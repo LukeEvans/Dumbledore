@@ -4,5 +4,5 @@
   pause: seconds=20
   
 - name: Test-only
-  command: shell cd .. && sbt test-only
+  local_action: shell cd .. && sbt test-only
  
