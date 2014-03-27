@@ -1,8 +1,7 @@
 - name: Launch Frontend Server
   hosts: local
   connection: local
-  user: jenkins
-  sudo: true
+  user: root
   gather_facts: false
   
   vars: 
