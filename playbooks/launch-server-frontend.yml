@@ -2,6 +2,7 @@
   hosts: local
   connection: local
   user: root
+  sudo: true
   gather_facts: false
   
   vars: 
