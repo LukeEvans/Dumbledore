@@ -236,4 +236,8 @@ object Tools {
   	  var image = new ImageIcon(parseUrl(url)).getImage();
   	  return image;
   	}
+  	
+  	def randomIntFromRange(min:Int, max:Int):Int = {
+  	  min + (Math.random() * ((max - min) + 1)).toInt
+  	}
 }

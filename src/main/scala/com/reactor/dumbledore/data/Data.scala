@@ -16,7 +16,7 @@ case class ListSet[T](card_id:String, rank:Int, set_data:ListBuffer[T]){
   var score = 0
   
   def setScore(date:Date, rank:Rank){
-    score = rank.getScore(date, set_data.asInstanceOf[ListBuffer[Object]])
+    score = rank.getScore(date, set_data.asInstanceOf[ListBuffer[Object]], card_id)
   }
   
 }

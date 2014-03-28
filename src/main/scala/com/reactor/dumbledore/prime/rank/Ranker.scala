@@ -120,7 +120,7 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
     
     rankConfigs.put(Prime.NEARBY_PHOTOS, nearbyPhotosRank)
     
-    val facebookRank = new TimedRank(Prime.FACEBOOK)
+    val facebookRank = new DumbRank(Prime.FACEBOOK)
     						.addRange(30, Time(0, 0), Time(5, 59), Day.MONDAY, Day.SUNDAY)
     						.addRange(25, Time(6, 0), Time(9, 59), Day.MONDAY, Day.SUNDAY)
     						.addRange(20, Time(10, 0), Time(11, 59), Day.MONDAY, Day.SUNDAY)
@@ -131,7 +131,7 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
     
     rankConfigs.put(Prime.FACEBOOK, facebookRank)
     
-    val twitterRank = new TimedRank(Prime.TWITTER)
+    val twitterRank = new DumbRank(Prime.TWITTER)
     						.addRange(30, Time(0, 0), Time(5, 59), Day.MONDAY, Day.SUNDAY)
     						.addRange(25, Time(6, 0), Time(9, 59), Day.MONDAY, Day.SUNDAY)
     						.addRange(20, Time(10, 0), Time(11, 59), Day.MONDAY, Day.SUNDAY)
