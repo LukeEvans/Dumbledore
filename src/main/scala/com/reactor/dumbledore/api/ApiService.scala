@@ -54,7 +54,7 @@ trait ApiService extends HttpService{
       getOrPost{
         obj =>
           complete{
-            "Dumbledore API 1.0"
+            "Dumbledore API 1.1"
           }
       }
     }~
