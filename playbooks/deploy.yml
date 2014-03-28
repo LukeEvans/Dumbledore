@@ -4,6 +4,9 @@
   user: ubuntu
   sudo: true
   gather_facts: false
+  tasks:
+    - name: Print home dir
+      local_action: shell ls ~/
   roles:
       - undeploy
       - distribute
