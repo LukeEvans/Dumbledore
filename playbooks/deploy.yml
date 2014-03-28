@@ -1,7 +1,7 @@
 - name: Deploy and run 
   hosts: 
   - tag_Name_Dumbledore-Jenkins-Dev
-  user: jenkins
+  user: ubuntu
   sudo: true
   gather_facts: false
   roles:
