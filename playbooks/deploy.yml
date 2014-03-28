@@ -1,22 +1,9 @@
-- name: Debug 
-  hosts: 
-  - tag_Name_Dumbledore-Jenkins-Dev
-  user: ubuntu
-  sudo: true
-  gather_facts: false
-  tasks:
-    - name: Print home dir
-      local_action: shell ls ~/
-
 - name: Deploy and run 
   hosts: 
   - tag_Name_Dumbledore-Jenkins-Dev
   user: ubuntu
   sudo: true
   gather_facts: false
-  tasks:
-    - name: Print home dir
-      local_action: shell ls ~/
   roles:
       - undeploy
       - distribute
