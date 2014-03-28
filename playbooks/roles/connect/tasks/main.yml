@@ -1,0 +1,7 @@
+---
+
+- name: Pause
+  pause: seconds=3
+  
+- name: Add identity
+  command: shell eval `ssh-agent` &&  ssh-add ~/.ssh/dumbledore.pem
