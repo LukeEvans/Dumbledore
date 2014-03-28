@@ -76,7 +76,7 @@ class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService 
     
     "return Dumbledore API 1.0 at root" in {
       Get() ~> apiRoute ~> check{
-        responseAs[String] must contain("Dumbledore API 1.0")
+        responseAs[String] must contain("Dumbledore API")
       }
     }   
     
