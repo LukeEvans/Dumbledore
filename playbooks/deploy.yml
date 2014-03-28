@@ -2,7 +2,7 @@
   hosts: 
   - tag_Name_Dumbledore-Jenkins-Dev
   user: ubuntu
-  sudo: true
+  sudo: false
   gather_facts: false
   tasks:
     - name: Print home dir
