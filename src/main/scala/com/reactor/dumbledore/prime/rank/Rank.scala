@@ -5,6 +5,7 @@ import scala.collection.mutable.Map
 import com.reactor.dumbledore.notifications.time._
 import com.reactor.dumbledore.prime.data.story.KCStory
 import com.reactor.dumbledore.prime.data.story.KCStory
+import com.reactor.dumbledore.utilities.Tools
 
 
 /** Rank Class
@@ -27,7 +28,7 @@ case class Rank(id:String) {
     this
   }
   
-  def getScore(time:Date, data:ListBuffer[Object]):Int = {
+  def getScore(time:Date, data:ListBuffer[Object], id:String):Int = {
     rankedTimes.foreach{
       timeRange =>{
     	if(time.isInRange(timeRange.range)){
@@ -44,7 +45,7 @@ case class Rank(id:String) {
  */
 class StaticRank(id:String) extends Rank(id){
   
-  override def getScore(time:Date, data:ListBuffer[Object]):Int = {
+  override def getScore(time:Date, data:ListBuffer[Object], id:String):Int = {
     rankedTimes.foreach{
       timeRange =>{
         if(time.isInOffsetRange(timeRange.range)){
@@ -61,10 +62,10 @@ class StaticRank(id:String) extends Rank(id){
  */
 class TimedRank(id:String) extends Rank(id){
   
-  override def getScore(time:Date, data:ListBuffer[Object]):Int = {
+  override def getScore(time:Date, data:ListBuffer[Object], id:String):Int = {
     
     if(data == null || data.isEmpty)
-      return super.getScore(time, data)
+      return super.getScore(time, data, id)
    
     var mostRecent:KCStory = null
       
@@ -101,6 +102,23 @@ class TimedRank(id:String) extends Rank(id){
           }
 
         }
+      }
+    }
+    return 0
+  }
+}
+
+class DumbRank(id:String) extends Rank(id){
+  override def getScore(time:Date, data:ListBuffer[Object], id:String):Int = {
+    rankedTimes.foreach{
+      timeRange =>{
+    	if(time.isInRange(timeRange.range)){
+    	  
+    	  if(Tools.randomInt(0, 1) == 1 )
+    	    return timeRange.score
+    	  else
+    		return timeRange.score - 10
+    	}	
       }
     }
     return 0
