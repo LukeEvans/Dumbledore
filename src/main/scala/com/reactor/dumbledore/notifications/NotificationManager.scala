@@ -80,17 +80,18 @@ class NotificationManager {
     val weather = new NotificationConfig(Prime.V036, "/weather", 2).add247(None)
 
     services put ("weather", weather)
-
     
-	val nearbyPlaces = new NotificationConfig(Prime.V036, "/yelp", 3)
-							.addRange(Time(7, 0), Time(9, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "coffee")))
-							.addRange(Time(11, 0), Time(12, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "lunch")))
-							.addRange(Time(15, 0), Time(16, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "coffee")))
+    
+    val nearbyPlaces = new NotificationConfig(Prime.DUMBLEDORE, "/", 0)
+    						.addRange(Time(6, 0), Time(10, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "coffee")))
+							.addRange(Time(11, 0), Time(13, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "lunch")))
+							.addRange(Time(14, 0), Time(16, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "coffee")))
 							.addRange(Time(17, 0), Time(19, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "dinner")))
+							.addRange(Time(20, 0), Time(23, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "nightlife")))
 							.add247(None)
-							
-    services put (Prime.NEARBY_PLACES, nearbyPlaces)
     
+	services put (Prime.NEARBY_PLACES, nearbyPlaces)
+							
     
     val stocks = new StaticNotificationConfig(Prime.V036, "/stocks", 4).add247(None)
 
@@ -135,7 +136,7 @@ class NotificationManager {
     devServices put (Prime.WEATHER, weather)
 
     
-    val nearbyPlaces = new NotificationConfig(Prime.V036, "/yelp", 3)
+    val nearbyPlaces = new NotificationConfig(Prime.DUMBLEDORE, "/", 0)
     						.addRange(Time(7, 0), Time(9, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "coffee")))
 							.addRange(Time(11, 0), Time(12, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "lunch")))
 							.addRange(Time(15, 0), Time(16, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "coffee")))
