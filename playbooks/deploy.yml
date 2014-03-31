@@ -5,6 +5,6 @@
   sudo: true
   gather_facts: false
   roles:
-      - undeploy
       - distribute
+      - undeploy
       - deploy
