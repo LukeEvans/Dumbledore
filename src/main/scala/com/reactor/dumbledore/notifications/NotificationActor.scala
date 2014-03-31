@@ -45,6 +45,7 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
   override def preStart() = println("Creating NotificationManagerActor")
   override def postStop() = println("Stopping NotificationManagerActor")
   
+  
   /** Handle messages */
   override def receive = {
     
@@ -58,6 +59,7 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
       complete()
   }
 
+  
   /** Handle notification request and return response */
   private def manage(request:NotificationRequest, origin:ActorRef){ 
     implicit val timeout = Timeout(30 seconds);
@@ -105,6 +107,7 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
 	    complete()
 	}
   }
+  
   
   /*** Create list of future results ***
    */

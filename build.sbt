@@ -82,6 +82,8 @@ libraryDependencies += "rome" % "rome" % "1.0"
 
 libraryDependencies += "org.jsoup" % "jsoup" % "1.7.3"
 
+libraryDependencies += "org.scribe" % "scribe" % "1.3.5"
+
 libraryDependencies += "me.champeau.jlangdetect" % "jlangdetect-extra" % "0.3" excludeAll(
         ExclusionRule(organization = "javax.jms"),
         ExclusionRule(organization = "com.sun.jdmk"),

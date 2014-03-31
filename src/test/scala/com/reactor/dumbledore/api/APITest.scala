@@ -170,7 +170,7 @@ object RequestConstants{
   val fbRequest = new Request(Prime.FACEBOOK, None, null)  
   val twitterRequest = new Request(Prime.TWITTER, None, null)
   
-  /* Entertainement Requests */
+  /* Entertainment Requests */
   val comicRequest = new Request(Prime.COMICS, None, null)
   val popVideosRequest = new Request(Prime.POPULAR_VIDEOS, None, null)
    
