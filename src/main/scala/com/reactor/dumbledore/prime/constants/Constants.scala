@@ -17,6 +17,8 @@ object Prime {
   val TWITTER = "twitter"
   
   val POPULAR_VIDEOS = "popular_videos"
+    
+  val TOP_RENTALS = "top_rentals"
   
   val COMICS = "comics"
   
