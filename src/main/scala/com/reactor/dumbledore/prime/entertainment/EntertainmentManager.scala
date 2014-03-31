@@ -6,6 +6,7 @@ import com.reactor.dumbledore.prime.youtube.Youtube
 import com.reactor.dumbledore.prime.services.comics.Comics
 import com.reactor.dumbledore.notifications.request.Request
 import com.reactor.dumbledore.prime.constants.Prime
+import com.reactor.dumbledore.prime.itunes.Itunes
 
 /** EntertainmentService wrapper class
  */
@@ -57,6 +58,7 @@ class EntertainmentManager {
     
     services.put(Prime.POPULAR_VIDEOS, YoutubeService())
     services.put(Prime.COMICS, ComicService())
+    services.put(Prime.TOP_RENTALS, RentalService())
     
     return services
   }
@@ -82,5 +84,15 @@ case class ComicService() extends EntertainmentService(Prime.COMICS){
   /** get Random comics from comic api */
   def process = {
     (getId, 50, Comics.getRandomToday)
+  }
+}
+
+/** Itunes Service
+ */
+case class RentalService() extends EntertainmentService(Prime.TOP_RENTALS){
+  
+  /** get top itunes rentals */
+  def process = {
+    (getId, 0, Itunes.getTopMovies(5))
   }
 }

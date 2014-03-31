@@ -6,6 +6,7 @@ import com.reactor.dumbledore.notifications.time._
 import com.reactor.dumbledore.prime.data.story.KCStory
 import com.reactor.dumbledore.prime.data.story.KCStory
 import com.reactor.dumbledore.utilities.Tools
+import com.reactor.dumbledore.prime.constants.Day
 
 
 /** Rank Class
@@ -14,10 +15,12 @@ case class Rank(id:String) {
 
   var rankedTimes = ListBuffer[RankConfig]()
   
+  
   def addTimeRange(score:Int, start:Date, stop:Date):Rank = {
     rankedTimes += RankConfig(score, new TimeRange(start, stop, None))
     this
   }
+  
   
   def addRange(score:Int, startTime:Time, stopTime:Time, start:Int, 
       stop:Int):Rank ={
@@ -27,6 +30,15 @@ case class Rank(id:String) {
     }
     this
   }
+  
+  
+  /** Add 24/7 TimeRange */
+  def add247(score:Int):Rank = {
+    
+    addRange(score, Time(0,0), Time(23,59), Day.MONDAY, Day.SUNDAY)
+    this
+  }
+  
   
   def getScore(time:Date, data:ListBuffer[Object], id:String):Int = {
     rankedTimes.foreach{

@@ -25,6 +25,7 @@ class Extractor {
 //	  val abs = new Abstraction(response);
 	
 	  return abs;  
+	  
 	} catch{
 	  case e:Exception => 
 	    e.printStackTrace()
