@@ -16,7 +16,7 @@ import com.reactor.store.MongoDB
 import akka.actor.ActorRef
 import scala.util.Success
 import scala.util.Failure
-import com.reactor.dumbledore.data.ListSet
+import com.reactor.dumbledore.prime.data.ListSet
 
 class SingleFeedActor(args:FlowControlArgs) extends FlowControlActor(args) {
   private val NEWS_DB = "reactor-news"

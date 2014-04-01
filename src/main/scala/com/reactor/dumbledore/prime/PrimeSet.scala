@@ -1,7 +1,7 @@
 package com.reactor.dumbledore.prime
 
 import scala.collection.mutable.ListBuffer
-import com.reactor.dumbledore.data.ListSet
+import com.reactor.dumbledore.prime.data.ListSet
 
 class PrimeSet {
   private val dataList = new ListBuffer[ListSet[Object]]

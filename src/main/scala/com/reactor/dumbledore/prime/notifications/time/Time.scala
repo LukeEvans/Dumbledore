@@ -1,4 +1,4 @@
-package com.reactor.dumbledore.notifications.time
+package com.reactor.dumbledore.prime.notifications.time
 
 import com.github.nscala_time.time.Imports._
 import com.reactor.dumbledore.prime.constants.Day

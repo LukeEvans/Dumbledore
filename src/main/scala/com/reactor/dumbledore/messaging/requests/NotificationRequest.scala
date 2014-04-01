@@ -4,7 +4,7 @@ import spray.http.HttpRequest
 import scala.collection.mutable.ListBuffer
 import org.codehaus.jackson.map.ObjectMapper
 import scala.collection.JavaConversions._
-import com.reactor.dumbledore.notifications.request.Request
+import com.reactor.dumbledore.prime.notifications.request.Request
 import com.reactor.prime.user.UserCredentials
 import com.fasterxml.jackson.databind.JsonNode
 

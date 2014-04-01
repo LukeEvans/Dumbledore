@@ -1,4 +1,4 @@
-package com.reactor.dumbledore.notifications.request
+package com.reactor.dumbledore.prime.notifications.request
 
 import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConversions._

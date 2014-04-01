@@ -1,4 +1,4 @@
-package com.reactor.dumbledore.legacy
+package com.reactor.dumbledore.prime.legacy
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt

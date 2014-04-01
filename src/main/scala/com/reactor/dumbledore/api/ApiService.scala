@@ -27,7 +27,7 @@ import spray.routing.ExceptionHandler
 import spray.routing.HttpService
 import spray.util.LoggingContext
 import scala.collection.mutable.ListBuffer
-import com.reactor.dumbledore.data.ListSet
+import com.reactor.dumbledore.prime.data.ListSet
 import spray.routing.RequestContext
 import spray.routing.StandardRoute
 import com.reactor.dumbledore.messaging.requests.ChannelFeedRequest

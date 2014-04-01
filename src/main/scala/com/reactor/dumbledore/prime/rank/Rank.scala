@@ -2,7 +2,7 @@ package com.reactor.dumbledore.prime.rank
 
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.Map
-import com.reactor.dumbledore.notifications.time._
+import com.reactor.dumbledore.prime.notifications.time._
 import com.reactor.dumbledore.prime.data.story.KCStory
 import com.reactor.dumbledore.prime.data.story.KCStory
 import com.reactor.dumbledore.utilities.Tools

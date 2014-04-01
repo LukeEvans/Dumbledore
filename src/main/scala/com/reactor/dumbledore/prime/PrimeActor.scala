@@ -8,7 +8,7 @@ import com.reactor.dumbledore.messaging.requests.PrimeRequest
 import akka.actor.ActorRef
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.Await
-import com.reactor.dumbledore.data.ListSet
+import com.reactor.dumbledore.prime.data.ListSet
 import scala.concurrent.Future
 import com.fasterxml.jackson.databind.JsonNode
 import akka.pattern.ask
@@ -23,7 +23,7 @@ import com.reactor.dumbledore.messaging.EntertainmentRequestContainer
 import com.reactor.dumbledore.messaging.requests.NotificationRequest
 import scala.util.Failure
 import scala.util.Success
-import com.reactor.dumbledore.notifications.request.Request
+import com.reactor.dumbledore.prime.notifications.request.Request
 import com.reactor.dumbledore.messaging.PrimeRankContainer
 
 case class PrimeActorArgs(channelActor:ActorRef, notificationActor:ActorRef, entertainmentActor:ActorRef, rankActor:ActorRef) extends FlowControlArgs{  

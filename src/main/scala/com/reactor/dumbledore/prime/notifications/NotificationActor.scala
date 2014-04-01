@@ -1,4 +1,4 @@
-package com.reactor.dumbledore.notifications
+package com.reactor.dumbledore.prime.notifications
 
 import java.util.ArrayList
 import scala.collection.mutable.ArrayBuffer
@@ -10,7 +10,7 @@ import scala.util.Failure
 import scala.util.Success
 import com.reactor.dumbledore.messaging.requests.NotificationRequest
 import com.reactor.dumbledore.messaging.NotificationRequestContainer
-import com.reactor.dumbledore.services.ServiceActor
+import com.reactor.dumbledore.prime.services.ServiceActor
 import com.reactor.patterns.pull.FlowControlActor
 import com.reactor.patterns.pull.FlowControlArgs
 import com.reactor.prime.user.UserCredentials
@@ -19,14 +19,14 @@ import akka.pattern.ask
 import akka.util.Timeout
 import scala.util.Random
 import com.github.nscala_time.time.Imports.DateTime
-import com.reactor.dumbledore.services.WebRequestData
+import com.reactor.dumbledore.prime.services.WebRequestData
 import com.reactor.dumbledore.messaging.ServiceRequest
-import com.reactor.dumbledore.data.ListSet
+import com.reactor.dumbledore.prime.data._
 import com.reactor.dumbledore.messaging.DataSetContainer
 import scala.collection.mutable.ListBuffer
 import com.reactor.dumbledore.utilities.Tools
-import com.reactor.dumbledore.data.Parameters
 import com.reactor.dumbledore.messaging.ListSetContainer
+
 
 case class NotificationArgs(serviceActor:ActorRef) extends FlowControlArgs{  
   override def workerArgs(): FlowControlArgs ={

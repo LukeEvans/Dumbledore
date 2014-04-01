@@ -1,7 +1,8 @@
-package com.reactor.dumbledore.services.traffic
+package com.reactor.dumbledore.prime.services.traffic
 
-import com.reactor.dumbledore.data.ListSet
+import com.reactor.dumbledore.prime.data.ListSet
 import scala.collection.mutable.ListBuffer
+
 
 object Traffic {
 

@@ -6,11 +6,11 @@ import com.reactor.dumbledore.utilities.Location
 import java.util.ArrayList
 import scala.collection.mutable.Map
 import scala.collection.mutable.ListBuffer
-import com.reactor.dumbledore.data.ListSet
-import com.reactor.dumbledore.services.WebRequestData
+import com.reactor.dumbledore.prime.data.ListSet
+import com.reactor.dumbledore.prime.services.WebRequestData
 import twitter4j.Status
 import com.reactor.dumbledore.messaging.requests._
-import com.reactor.dumbledore.notifications.request.Request
+import com.reactor.dumbledore.prime.notifications.request.Request
 import com.reactor.dumbledore.prime.PrimeSet
 import org.joda.time.DateTime
 
