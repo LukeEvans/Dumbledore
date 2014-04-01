@@ -4,9 +4,9 @@ import com.reactor.patterns.pull.FlowControlActor
 import com.reactor.patterns.pull.FlowControlArgs
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.Map
-import com.reactor.dumbledore.notifications.request.Request
+import com.reactor.dumbledore.prime.notifications.request.Request
 import akka.actor.ActorRef
-import com.reactor.dumbledore.data.ListSet
+import com.reactor.dumbledore.prime.data.ListSet
 import com.reactor.dumbledore.messaging.EntertainmentRequestContainer
 import com.reactor.dumbledore.prime.youtube.Youtube
 import com.reactor.dumbledore.prime.services.comics.Comics

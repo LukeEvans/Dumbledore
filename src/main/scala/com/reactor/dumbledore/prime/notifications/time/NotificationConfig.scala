@@ -1,4 +1,4 @@
-package com.reactor.dumbledore.notifications.time
+package com.reactor.dumbledore.prime.notifications.time
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Map

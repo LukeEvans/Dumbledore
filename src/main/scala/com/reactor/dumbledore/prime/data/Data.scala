@@ -1,4 +1,4 @@
-package com.reactor.dumbledore.data
+package com.reactor.dumbledore.prime.data
 
 import java.util.ArrayList
 import scala.collection.mutable.ListBuffer
@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import scala.collection.JavaConversions._
 import com.reactor.prime.user.UserCredentials
 import com.reactor.dumbledore.prime.rank.Rank
-import com.reactor.dumbledore.notifications.time.Date
-import com.reactor.dumbledore.prime.data.story.KCStory
+import com.reactor.dumbledore.prime.notifications.time.Date
+
 
 /** String mapped to ListBuffer */
 case class ListSet[T](card_id:String, rank:Int, set_data:ListBuffer[T]){

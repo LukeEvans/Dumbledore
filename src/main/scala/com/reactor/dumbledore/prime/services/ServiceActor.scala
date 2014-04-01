@@ -1,4 +1,4 @@
-package com.reactor.dumbledore.services
+package com.reactor.dumbledore.prime.services
 
 import com.reactor.patterns.pull.FlowControlArgs
 import com.reactor.patterns.pull.FlowControlActor
@@ -8,10 +8,11 @@ import scala.util.Random
 import scala.collection.mutable.ListBuffer
 import com.reactor.dumbledore.messaging.ServiceRequest
 import com.reactor.dumbledore.messaging.ListSetContainer
-import com.reactor.dumbledore.services.traffic.Traffic
+import com.reactor.dumbledore.prime.services.traffic.Traffic
 import com.reactor.dumbledore.prime.constants.Prime
 import com.reactor.dumbledore.prime.services.yelp.Yelp
-import com.reactor.dumbledore.data.ListSet
+import com.reactor.dumbledore.prime.data.ListSet
+
 
 class ServiceActor(args:FlowControlArgs) extends FlowControlActor(args){
 

@@ -1,7 +1,7 @@
 package com.reactor.dumbledore.messaging.requests
 
 import scala.collection.mutable.ListBuffer
-import com.reactor.dumbledore.notifications.request.Request
+import com.reactor.dumbledore.prime.notifications.request.Request
 import spray.http.HttpRequest
 import com.reactor.prime.user.UserCredentials
 import com.fasterxml.jackson.databind.JsonNode

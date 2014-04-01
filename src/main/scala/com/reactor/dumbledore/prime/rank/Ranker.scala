@@ -4,12 +4,12 @@ import com.reactor.patterns.pull.FlowControlActor
 import com.reactor.patterns.pull.FlowControlArgs
 import com.reactor.dumbledore.prime.PrimeSet
 import akka.actor.ActorRef
-import com.reactor.dumbledore.data.ListSet
+import com.reactor.dumbledore.prime.data.ListSet
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.Map
-import com.reactor.dumbledore.notifications.time.Time
+import com.reactor.dumbledore.prime.notifications.time.Time
 import org.joda.time.DateTime
-import com.reactor.dumbledore.notifications.time.Date
+import com.reactor.dumbledore.prime.notifications.time.Date
 import com.reactor.dumbledore.messaging.PrimeRankContainer
 import com.reactor.store.MongoDB
 import com.reactor.dumbledore.utilities.Tools

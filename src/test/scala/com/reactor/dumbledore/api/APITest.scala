@@ -2,7 +2,7 @@ package com.reactor.dumbledore.api
 
 import org.specs2.mutable.Specification
 import org.specs2.time._
-import com.reactor.dumbledore.notifications.NotificationArgs
+import com.reactor.dumbledore.prime.notifications.NotificationArgs
 import com.reactor.dumbledore.prime.channels.ChannelArgs
 import com.reactor.dumbledore.prime.twitter.TwitterArgs
 import com.reactor.dumbledore.prime.twitter.TwitterBuilderArgs
@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.databind.DeserializationFeature
-import com.reactor.dumbledore.notifications.request.Request
+import com.reactor.dumbledore.prime.notifications.request.Request
 import com.reactor.dumbledore.prime.constants.Prime
 import scala.collection.mutable.ListBuffer
 import com.reactor.dumbledore.messaging.requests.FeedRequestData
@@ -29,7 +29,7 @@ class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService 
   def actorRefFactory = system 
   
   // Initialize Actors
-  val winstonAPIFlowConfig = FlowControlConfig(name="winstonAPIActor", actorType="com.reactor.dumbledore.legacy.WinstonAPIActor")    
+  val winstonAPIFlowConfig = FlowControlConfig(name="winstonAPIActor", actorType="com.reactor.dumbledore.prime.legacy.WinstonAPIActor")    
   val winstonAPIActor = FlowControlFactory.flowControlledActorForTests(system, winstonAPIFlowConfig)
     
   val extractorFlowConfig = FlowControlConfig(name="extractorActor", actorType="com.reactor.dumbledore.prime.abstraction.ExtractionActor", parallel = 30)
@@ -41,10 +41,10 @@ class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService 
   val twitterServiceFlowConfig = FlowControlConfig(name="twitterServiceActor", actorType="com.reactor.dumbledore.prime.twitter.TwitterServiceActor", parallel = 8)    
   val twitterActor = FlowControlFactory.flowControlledActorForTests(system, twitterServiceFlowConfig, TwitterArgs(twitterStoryActor))
     
-  val serviceFlowConfig = FlowControlConfig(name="serviceActor", actorType="com.reactor.dumbledore.services.ServiceActor", parallel=6)    
+  val serviceFlowConfig = FlowControlConfig(name="serviceActor", actorType="com.reactor.dumbledore.prime.services.ServiceActor", parallel=6)    
   val serviceActor = FlowControlFactory.flowControlledActorForTests(system, serviceFlowConfig)
     
-  val notificationFlowConfig = FlowControlConfig(name="notificationActor", actorType="com.reactor.dumbledore.notifications.NotificationActor", parallel =3)    
+  val notificationFlowConfig = FlowControlConfig(name="notificationActor", actorType="com.reactor.dumbledore.prime.notifications.NotificationActor", parallel =3)    
   val notificationActor = FlowControlFactory.flowControlledActorForTests(system, notificationFlowConfig, NotificationArgs(serviceActor))
     
   val feedFlowConfig = FlowControlConfig(name="feedActor", actorType="com.reactor.dumbledore.prime.channels.SingleFeedActor", parallel=9)    

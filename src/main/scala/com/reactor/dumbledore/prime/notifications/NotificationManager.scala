@@ -1,15 +1,16 @@
-package com.reactor.dumbledore.notifications
+package com.reactor.dumbledore.prime.notifications
 
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.Map
 import com.github.nscala_time.time.Imports._
-import com.reactor.dumbledore.notifications.request.Request
-import com.reactor.dumbledore.notifications.time.Date
-import com.reactor.dumbledore.notifications.time.NotificationConfig
-import com.reactor.dumbledore.notifications.time.StaticNotificationConfig
-import com.reactor.dumbledore.notifications.time.Time
-import com.reactor.dumbledore.services.WebRequestData
+import com.reactor.dumbledore.prime.notifications.request.Request
+import com.reactor.dumbledore.prime.notifications.time.Date
+import com.reactor.dumbledore.prime.notifications.time.NotificationConfig
+import com.reactor.dumbledore.prime.notifications.time.StaticNotificationConfig
+import com.reactor.dumbledore.prime.notifications.time.Time
+import com.reactor.dumbledore.prime.services.WebRequestData
 import com.reactor.dumbledore.prime.constants._
+
 
 /**  Handle web service configurations and give notification actor a list of 
  *   Service Data to send WebServiceActor
@@ -171,5 +172,4 @@ class NotificationManager {
     devServices put (Prime.NEARBY_PHOTOS, nearbyPhotos)
   
   }
- 
 }

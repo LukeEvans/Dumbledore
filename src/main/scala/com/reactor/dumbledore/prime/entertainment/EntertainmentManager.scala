@@ -4,7 +4,7 @@ import scala.collection.mutable.Map
 import scala.collection.mutable.ListBuffer
 import com.reactor.dumbledore.prime.youtube.Youtube
 import com.reactor.dumbledore.prime.services.comics.Comics
-import com.reactor.dumbledore.notifications.request.Request
+import com.reactor.dumbledore.prime.notifications.request.Request
 import com.reactor.dumbledore.prime.constants.Prime
 import com.reactor.dumbledore.prime.itunes.Itunes
 

@@ -11,7 +11,7 @@ import scala.concurrent.Future
 import com.fasterxml.jackson.databind.JsonNode
 import scala.concurrent._
 import com.reactor.dumbledore.utilities.Tools
-import com.reactor.dumbledore.data.ListSet
+import com.reactor.dumbledore.prime.data.ListSet
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 

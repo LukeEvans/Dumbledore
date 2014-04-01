@@ -1,4 +1,4 @@
-package com.reactor.dumbledore.services
+package com.reactor.dumbledore.prime.services
 
 import java.util.ArrayList
 import com.reactor.dumbledore.utilities.Tools
@@ -7,10 +7,10 @@ import com.fasterxml.jackson.databind.JsonNode
 import scala.collection.JavaConversions._
 import scala.collection.mutable.Map
 import scala.collection.mutable.ListBuffer
-import com.reactor.dumbledore.data.ListSet
+import com.reactor.dumbledore.prime.data.ListSet
+
 
 /**
- * 
  */
 object WebService {
   private val baseUrl = "http://v036.winstonapi.com"  

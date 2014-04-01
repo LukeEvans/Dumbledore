@@ -9,7 +9,7 @@ import scala.util.Failure
 import scala.util.Success
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.reactor.dumbledore.data.ListSet
+import com.reactor.dumbledore.prime.data.ListSet
 import com.reactor.dumbledore.messaging.FeedData
 import com.reactor.dumbledore.messaging.Feeds
 import com.reactor.dumbledore.messaging.SourceData
