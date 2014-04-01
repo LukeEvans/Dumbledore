@@ -54,15 +54,14 @@ class ServiceActor(args:FlowControlArgs) extends FlowControlActor(args){
       case "nearby_places" => 
         request.params match{
           case Some(param) =>
-            if(param.get("type").isDefined && param.get("lat").isDefined && param.get("long").isDefined){
 
-              val set = Yelp.searchNearby(param.getOrElse("type", "food"), 
-                  param.getOrElse("lat", "40.0176").toDouble, 
-                  param.getOrElse("long", "-105.2979").toDouble,
-                  3)
+            val set = Yelp.searchNearby(param.getOrElse("type", "lunch"), 
+                param.getOrElse("lat", "40.6700").toDouble, 
+                param.getOrElse("long", "-73.940").toDouble,
+                3)
                   
-              reply(origin, ListSetContainer(ListSet(Prime.NEARBY_PLACES, 0, set)))
-            }
+            reply(origin, ListSetContainer(ListSet(Prime.NEARBY_PLACES, 0, set)))
+           
             
           case None => reply(origin, null)
         }
