@@ -37,12 +37,21 @@ class YelpStory {
     else
       rating_img_url = yelpNode.get("rating_img_url").asText();
     if(yelpNode.has("categories"))
-      categories = Conversions.nodeToStringList(yelpNode.get("categories"))
+      categories = getCategories(yelpNode.get("categories"))
 	if(yelpNode.has("review_count"))
 	  review_count = yelpNode.get("review_count").asInt();
 	if(yelpNode.has("location")){
 	  if(yelpNode.get("location").has("display_address"))
 		address = yelpNode.get("location").get("display_address");
 	}
+  }
+  
+  private def getCategories(nodeList:JsonNode):ListBuffer[String] = {
+    
+    val categories = ListBuffer[String]();
+		
+    nodeList.map( node => categories += node.get(0).asText() )
+
+    return categories; 
   }
 }

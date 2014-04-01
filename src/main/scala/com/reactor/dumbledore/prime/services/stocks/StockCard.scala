@@ -1,9 +1,10 @@
-package com.reactor.dumbledore.prime.stocks
+package com.reactor.dumbledore.prime.services.stocks
 
 import com.reactor.dumbledore.utilities.Tools
 import java.math.BigDecimal
 import com.reactor.dumbledore.prime.cards.Card
 import com.fasterxml.jackson.databind.JsonNode
+
 
 class StockCard(company:String, symbol:String) extends Card{
 	val id = Tools.generateHash(company);

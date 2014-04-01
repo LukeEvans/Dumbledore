@@ -8,7 +8,7 @@ import com.reactor.dumbledore.prime.notifications.request.Request
 import akka.actor.ActorRef
 import com.reactor.dumbledore.prime.data.ListSet
 import com.reactor.dumbledore.messaging.EntertainmentRequestContainer
-import com.reactor.dumbledore.prime.youtube.Youtube
+import com.reactor.dumbledore.prime.services.youtube.Youtube
 import com.reactor.dumbledore.prime.services.comics.Comics
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._

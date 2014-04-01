@@ -1,4 +1,4 @@
-package com.reactor.dumbledore.prime.stocks
+package com.reactor.dumbledore.prime.services.stocks
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
@@ -6,6 +6,7 @@ import scala.collection.mutable.ListBuffer
 import com.fasterxml.jackson.databind.JsonNode
 import com.reactor.dumbledore.prime.cards.Card
 import com.reactor.dumbledore.utilities.Tools
+
 
 object YahooStocksAPI {
   val baseURL = "http://query.yahooapis.com/v1/public/yql?" +

@@ -4,7 +4,12 @@ package com.reactor.dumbledore.prime.constants
  */
 object Prime {
  
+  
   //  Service IDs  //
+  
+  val COMICS = "comics"
+    
+  val EVENTS = "events"
   
   val FACEBOOK = "facebook"
     
@@ -14,23 +19,21 @@ object Prime {
     
   val FACEBOOK_MESSAGES	 = "facebook_messages"  
     
-  val TWITTER = "twitter"
-  
-  val POPULAR_VIDEOS = "popular_videos"
-    
-  val TOP_RENTALS = "top_rentals"
-  
-  val COMICS = "comics"
-  
-  val WEATHER = "weather"
-    
-  val TRAFFIC = "traffic"
+  val NEARBY_PHOTOS = "nearby_photos"
   
   val NEARBY_PLACES = "nearby_places"
+    
+  val POPULAR_VIDEOS = "popular_videos"
   
   val STOCKS  = "stocks"
     
-  val NEARBY_PHOTOS = "nearby_photos"
+  val TOP_RENTALS = "top_rentals"
+  
+  val TRAFFIC = "traffic"
+    
+  val TWITTER = "twitter"
+    
+  val WEATHER = "weather"
     
     
   //  API IDs  //

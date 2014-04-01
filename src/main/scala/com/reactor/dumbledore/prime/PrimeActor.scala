@@ -2,7 +2,7 @@ package com.reactor.dumbledore.prime
 
 import com.reactor.patterns.pull.FlowControlActor
 import com.reactor.patterns.pull.FlowControlArgs
-import com.reactor.dumbledore.prime.youtube.Youtube
+import com.reactor.dumbledore.prime.services.youtube.Youtube
 import com.reactor.dumbledore.messaging.requests.YoutubeRequest
 import com.reactor.dumbledore.messaging.requests.PrimeRequest
 import akka.actor.ActorRef
