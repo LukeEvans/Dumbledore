@@ -159,8 +159,13 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
     
     val rentalsRank = Rank(Prime.TOP_RENTALS)
     						.add247(5)
-    						
+    												
     rankConfigs.put(Prime.TOP_RENTALS, rentalsRank)
+    
+    val songsRank = Rank(Prime.TOP_SONGS)
+    						.add247(5)
+    						
+    rankConfigs.put(Prime.TOP_SONGS, songsRank)
     
     
     rankConfigs = setNewsConfigs(rankConfigs)

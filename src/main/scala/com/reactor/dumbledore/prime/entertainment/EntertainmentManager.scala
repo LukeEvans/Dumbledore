@@ -60,6 +60,7 @@ class EntertainmentManager {
     services.put(Prime.POPULAR_VIDEOS, YoutubeService())
     services.put(Prime.COMICS, ComicService())
     services.put(Prime.TOP_RENTALS, RentalService())
+    services.put(Prime.TOP_SONGS, MusicService())
     
     return services
   }
@@ -85,6 +86,16 @@ case class ComicService() extends EntertainmentService(Prime.COMICS){
   /** get Random comics from comic api */
   def process = {
     (getId, 50, Comics.getRandomToday)
+  }
+}
+
+/** Itunes Service
+ */
+case class MusicService() extends EntertainmentService(Prime.TOP_SONGS){
+  
+  /** get top itunes rentals */
+  def process = {
+    (getId, 0, Itunes.getTopSongs(5))
   }
 }
 
