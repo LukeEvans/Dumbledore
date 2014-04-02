@@ -33,6 +33,7 @@ import spray.routing.StandardRoute
 import com.reactor.dumbledore.messaging.requests.ChannelFeedRequest
 import com.gravity.goose._
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.reactor.dumbledore.prime.services.sports.StatsAPI
 
 trait ApiService extends HttpService{
 
