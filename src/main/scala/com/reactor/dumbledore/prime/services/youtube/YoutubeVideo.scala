@@ -1,9 +1,12 @@
-package com.reactor.dumbledore.prime.youtube
+package com.reactor.dumbledore.prime.services.youtube
 
 import java.util.Date
 import java.text.SimpleDateFormat
 import com.fasterxml.jackson.databind.JsonNode
 
+
+/** Youtube Video Object
+ */
 class YoutubeVideo {
   val `type` = "youtube"
   val story_type = "youtube"
@@ -19,6 +22,8 @@ class YoutubeVideo {
   var likes:Int = 0
   var dislikes:Int = 0
   
+  
+  /** JsonNode Constructor */
   def this(videoNode:JsonNode){
     this()
     if(videoNode.has("id"))

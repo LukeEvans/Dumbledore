@@ -1,10 +1,13 @@
-package com.reactor.dumbledore.prime.youtube
+package com.reactor.dumbledore.prime.services.youtube
 
 import scala.collection.mutable.ListBuffer
 import com.reactor.dumbledore.utilities.Tools
 import com.fasterxml.jackson.databind.JsonNode
 import scala.collection.JavaConversions._
 
+
+/** Youtube Service
+ */
 object Youtube {
   private val baseDataUrl = "https://www.googleapis.com/youtube/v3/";
   private val apiKey = "AIzaSyDEv9_zQNRGpw789wTE5NbnUn4IywHUR5U";

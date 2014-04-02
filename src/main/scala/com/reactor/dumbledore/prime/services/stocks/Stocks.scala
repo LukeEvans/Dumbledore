@@ -1,4 +1,4 @@
-package com.reactor.dumbledore.prime.stocks
+package com.reactor.dumbledore.prime.services.stocks
 
 import com.reactor.patterns.pull.FlowControlActor
 import com.reactor.patterns.pull.FlowControlArgs
@@ -9,6 +9,7 @@ import com.reactor.dumbledore.utilities.Tools
 class StockMessage extends Serializable
 
 trait serial
+
 case class Read(udid:String) extends serial
 case class Update(udid:String, ticker:String) extends serial
 case class Create(udid:String) extends serial

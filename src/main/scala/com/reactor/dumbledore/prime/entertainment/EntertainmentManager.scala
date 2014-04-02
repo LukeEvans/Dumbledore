@@ -2,11 +2,12 @@ package com.reactor.dumbledore.prime.entertainment
 
 import scala.collection.mutable.Map
 import scala.collection.mutable.ListBuffer
-import com.reactor.dumbledore.prime.youtube.Youtube
+import com.reactor.dumbledore.prime.services.youtube.Youtube
 import com.reactor.dumbledore.prime.services.comics.Comics
 import com.reactor.dumbledore.prime.notifications.request.Request
 import com.reactor.dumbledore.prime.constants.Prime
-import com.reactor.dumbledore.prime.itunes.Itunes
+import com.reactor.dumbledore.prime.services.itunes.Itunes
+import com.reactor.dumbledore.prime.services.events.Events
 
 /** EntertainmentService wrapper class
  */
@@ -94,5 +95,15 @@ case class RentalService() extends EntertainmentService(Prime.TOP_RENTALS){
   /** get top itunes rentals */
   def process = {
     (getId, 0, Itunes.getTopMovies(5))
+  }
+}
+
+/** Events Service
+ */
+case class EventService() extends EntertainmentService(Prime.EVENTS){
+  
+  /** get top events */
+  def process = {
+    (getId, 0, Events.getEvents(5))
   }
 }

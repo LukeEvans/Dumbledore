@@ -1,10 +1,39 @@
-package com.reactor.dumbledore.prime.itunes
+package com.reactor.dumbledore.prime.services.itunes
 
 import scala.collection.mutable.ListBuffer
 import com.reactor.dumbledore.prime.cards.Card
 import com.fasterxml.jackson.databind.JsonNode
 import scala.collection.JavaConversions._
 import com.reactor.dumbledore.utilities.Tools
+
+
+/** Itunes */
+object Itunes {
+  val baseRSSURL = "https://itunes.apple.com/us/rss/"  
+    
+  def getTopMovies(limit: Int):ListBuffer[Object] = {
+    
+    val response = Tools.fetchURL(baseRSSURL + "topmovies/limit=" + limit + "/json")
+    
+    if(response.get("feed").has("entry"))
+      return extractData(response.get("feed").get("entry"), (new ItunesMovie(_)))
+    else
+      return ListBuffer[Object]()
+  }
+  
+  
+  def extractData(dataNode:JsonNode, constructor:(JsonNode) => Object):ListBuffer[Object] = {
+    val cards = ListBuffer[Object]()
+    
+    for(node <- dataNode){
+    	cards.add(constructor(node))
+    }
+    
+    cards
+  }
+  
+}
+
 
 class ItunesMovie{
   
@@ -45,30 +74,4 @@ class ItunesMovie{
       case e:Exception => e.printStackTrace()
     }
   }
-}
-
-object Itunes {
-  val baseRSSURL = "https://itunes.apple.com/us/rss/"  
-    
-  def getTopMovies(limit: Int):ListBuffer[Object] = {
-    
-    val response = Tools.fetchURL(baseRSSURL + "topmovies/limit=" + limit + "/json")
-    
-    if(response.get("feed").has("entry"))
-      return extractData(response.get("feed").get("entry"), (new ItunesMovie(_)))
-    else
-      return ListBuffer[Object]()
-  }
-  
-  
-  def extractData(dataNode:JsonNode, constructor:(JsonNode) => Object):ListBuffer[Object] = {
-    val cards = ListBuffer[Object]()
-    
-    for(node <- dataNode){
-    	cards.add(constructor(node))
-    }
-    
-    cards
-  }
-  
 }
