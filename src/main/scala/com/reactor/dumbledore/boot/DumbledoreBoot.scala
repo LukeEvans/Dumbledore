@@ -25,8 +25,8 @@ import com.reactor.patterns.pull.FlowControlConfig
 import com.reactor.patterns.pull.FlowControlFactory
 import com.reactor.dumbledore.prime.notifications.NotificationArgs
 import com.reactor.dumbledore.prime.channels.ChannelArgs
-import com.reactor.dumbledore.prime.twitter.TwitterArgs
-import com.reactor.dumbledore.prime.twitter.TwitterBuilderArgs
+import com.reactor.dumbledore.prime.services.twitter.TwitterArgs
+import com.reactor.dumbledore.prime.services.twitter.TwitterBuilderArgs
 import com.reactor.dumbledore.prime.PrimeActorArgs
 
 class DumbledoreBoot extends Bootable{
@@ -47,10 +47,10 @@ class DumbledoreBoot extends Bootable{
     val extractorFlowConfig = FlowControlConfig(name="extractorActor", actorType="com.reactor.dumbledore.prime.abstraction.ExtractionActor", parallel = 30)
     val extractorActor = FlowControlFactory.flowControlledActorForSystem(system, extractorFlowConfig)
     
-    val twitterStoryBuilderFlowConfig = FlowControlConfig(name="twitterStoryBuilderActor", actorType="com.reactor.dumbledore.prime.twitter.TwitterStoryBuilderActor", parallel = 30)    
+    val twitterStoryBuilderFlowConfig = FlowControlConfig(name="twitterStoryBuilderActor", actorType="com.reactor.dumbledore.prime.services.twitter.TwitterStoryBuilderActor", parallel = 30)    
     val twitterStoryActor = FlowControlFactory.flowControlledActorForSystem(system, twitterStoryBuilderFlowConfig, TwitterBuilderArgs(extractorActor))
     
-    val twitterServiceFlowConfig = FlowControlConfig(name="twitterServiceActor", actorType="com.reactor.dumbledore.prime.twitter.TwitterServiceActor", parallel = 8)    
+    val twitterServiceFlowConfig = FlowControlConfig(name="twitterServiceActor", actorType="com.reactor.dumbledore.prime.services.twitter.TwitterServiceActor", parallel = 8)    
     val twitterServiceActor = FlowControlFactory.flowControlledActorForSystem(system, twitterServiceFlowConfig, TwitterArgs(twitterStoryActor))
     
     val serviceFlowConfig = FlowControlConfig(name="serviceActor", actorType="com.reactor.dumbledore.prime.services.ServiceActor", parallel=6)    

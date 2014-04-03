@@ -50,8 +50,8 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
   override def receive = {
     
     // Notification Request
-    case reqContainer:NotificationRequestContainer => 
-      manage(reqContainer.request, sender)
+    case NotificationRequestContainer(request) => 
+      manage(request, sender)
     
     // Unkown Message
     case a:Any => 

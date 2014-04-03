@@ -1,4 +1,4 @@
-package com.reactor.dumbledore.prime.twitter
+package com.reactor.dumbledore.prime.services.twitter
 
 import scala.collection.mutable.ListBuffer
 import java.util.Date

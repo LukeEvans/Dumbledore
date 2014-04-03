@@ -1,4 +1,4 @@
-package com.reactor.dumbledore.prime.twitter
+package com.reactor.dumbledore.prime.services.twitter
 
 import com.reactor.patterns.pull.FlowControlActor
 import com.reactor.patterns.pull.FlowControlArgs
