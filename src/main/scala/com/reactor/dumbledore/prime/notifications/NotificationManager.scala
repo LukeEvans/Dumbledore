@@ -37,7 +37,7 @@ class NotificationManager {
              case Some(range) =>     
                
                if( !service.isDismissed(request.dismissTime, now)) // If card has not been dismissed within the regeneration time frame 
-            	   validServices.put(request.id, WebRequestData(service.serviceType, service.notifEndpoint, service.rank, range.params, request.cards))            	   
+            	   validServices.put(request.id, WebRequestData(service.serviceType, service.notifEndpoint, range.params, request.cards))            	   
                else 
                  println("Card is dismissed")
                              
@@ -61,7 +61,7 @@ class NotificationManager {
       service =>
         service._2.getRangeAction(date) match{
           case Some(range) => 
-            validServices.put(service._1, WebRequestData(service._2.serviceType, service._2.notifEndpoint, service._2.rank, range.params, ListBuffer[String]()))
+            validServices.put(service._1, WebRequestData(service._2.serviceType, service._2.notifEndpoint, range.params, ListBuffer[String]()))
           case None => println("Not a valid time")
         }
     }
@@ -73,17 +73,17 @@ class NotificationManager {
    */
   def init():Unit = {
 
-    val traffic = new NotificationConfig(Prime.DUMBLEDORE, "/", 1).add247(None)
+    val traffic = new NotificationConfig(Prime.DUMBLEDORE, "/").add247(None)
     
     services put (Prime.TRAFFIC, traffic)
     
     
-    val weather = new NotificationConfig(Prime.V036, "/weather", 2).add247(None)
+    val weather = new NotificationConfig(Prime.V036, "/weather").add247(None)
 
     services put ("weather", weather)
     
     
-    val nearbyPlaces = new NotificationConfig(Prime.DUMBLEDORE, "/", 0)
+    val nearbyPlaces = new NotificationConfig(Prime.DUMBLEDORE, "/")
     						.addRange(Time(6, 0), Time(10, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "coffee")))
 							.addRange(Time(11, 0), Time(13, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "lunch")))
 							.addRange(Time(14, 0), Time(16, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "coffee")))
@@ -92,36 +92,31 @@ class NotificationManager {
 							.add247(None)
     
 	services put (Prime.NEARBY_PLACES, nearbyPlaces)
-							
-    
-//    val stocks = new StaticNotificationConfig(Prime.V036, "/stocks", 4).add247(None)
-//
-//    services put (Prime.STOCKS, stocks)
     
     
-    val stocks2 = new StaticNotificationConfig(Prime.DUMBLEDORE, "/", 4).add247(None)
+    val stocks2 = new StaticNotificationConfig(Prime.DUMBLEDORE, "/").add247(None)
 
     services put (Prime.STOCKS, stocks2)
     
     
-    val fbBdays = new NotificationConfig(Prime.V036, "/social/facebook/birthdays", 5)
+    val fbBdays = new NotificationConfig(Prime.V036, "/social/facebook/birthdays")
 						.addRange(Time(20, 0), Time(23,59), Day.MONDAY, Day.SUNDAY, Some(Map("tomorrow" -> "true")))
 						.add247(None)
 						
     services put (Prime.FACEBOOK_BIRTHDAYS, fbBdays)
     
     
-    val fbMessages = new NotificationConfig(Prime.V036, "/social/facebook/inbox", 6).add247(None)
+    val fbMessages = new NotificationConfig(Prime.V036, "/social/facebook/inbox").add247(None)
     
     services put (Prime.FACEBOOK_MESSAGES, fbMessages)
     
     
-    val fbNotifications = new NotificationConfig(Prime.V036, "/social/facebook/notifications", 7).add247(None)
+    val fbNotifications = new NotificationConfig(Prime.V036, "/social/facebook/notifications").add247(None)
     
     services put (Prime.FACEBOOK_NOTIFICATIONS, fbNotifications)
     
     
-    val nearbyPhotos = new NotificationConfig(Prime.V036, "/instagram/location", 8).add247(None)
+    val nearbyPhotos = new NotificationConfig(Prime.V036, "/instagram/location").add247(None)
     
     services put (Prime.NEARBY_PHOTOS, nearbyPhotos)
     
@@ -132,17 +127,17 @@ class NotificationManager {
    */
   def devInit():Unit = {
     
-    val traffic = new NotificationConfig(Prime.DUMBLEDORE, "/", 1).add247(None)
+    val traffic = new NotificationConfig(Prime.DUMBLEDORE, "/").add247(None)
     
     devServices put (Prime.TRAFFIC, traffic)
     
     
-    val weather = new NotificationConfig(Prime.V036, "/weather", 2).add247(None)
+    val weather = new NotificationConfig(Prime.V036, "/weather").add247(None)
     
     devServices put (Prime.WEATHER, weather)
 
     
-    val nearbyPlaces = new NotificationConfig(Prime.DUMBLEDORE, "/", 0)
+    val nearbyPlaces = new NotificationConfig(Prime.DUMBLEDORE, "/")
     						.addRange(Time(7, 0), Time(9, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "coffee")))
 							.addRange(Time(11, 0), Time(12, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "lunch")))
 							.addRange(Time(15, 0), Time(16, 59), Day.MONDAY, Day.SUNDAY, Some(Map("type" -> "coffee")))
@@ -152,27 +147,27 @@ class NotificationManager {
     devServices put (Prime.NEARBY_PLACES, nearbyPlaces)
     
     
-    val stocks = new StaticNotificationConfig(Prime.V036, "/stocks", 4).add247(None)
+    val stocks = new StaticNotificationConfig(Prime.V036, "/stocks").add247(None)
     
     devServices put (Prime.STOCKS, stocks)
     
     
-    val fbBdays = new NotificationConfig(Prime.V036, "/social/facebook/birthdays", 5).add247(None) 
+    val fbBdays = new NotificationConfig(Prime.V036, "/social/facebook/birthdays").add247(None) 
     
     devServices put (Prime.FACEBOOK_BIRTHDAYS, fbBdays)
     
     
-    val fbMessages = new NotificationConfig(Prime.V036, "/social/facebook/inbox", 6).add247(None)
+    val fbMessages = new NotificationConfig(Prime.V036, "/social/facebook/inbox").add247(None)
     
     devServices put (Prime.FACEBOOK_MESSAGES, fbMessages)
     
     
-    val fbNotifications = new NotificationConfig(Prime.V036, "/social/facebook/notifications", 7).add247(None)
+    val fbNotifications = new NotificationConfig(Prime.V036, "/social/facebook/notifications").add247(None)
     
     devServices put (Prime.FACEBOOK_NOTIFICATIONS, fbNotifications)
     
     
-    val nearbyPhotos = new NotificationConfig(Prime.V036, "/instagram/location", 8).add247(None)
+    val nearbyPhotos = new NotificationConfig(Prime.V036, "/instagram/location").add247(None)
     
     devServices put (Prime.NEARBY_PHOTOS, nearbyPhotos)
   

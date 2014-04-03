@@ -1,7 +1,7 @@
 package com.reactor.dumbledore.prime.notifications.time
 
 
-class StaticNotificationConfig(serviceType:String, notifEndpoint:String, rank:Int) extends NotificationConfig(serviceType, notifEndpoint, rank) {
+class StaticNotificationConfig(serviceType:String, notifEndpoint:String) extends NotificationConfig(serviceType, notifEndpoint) {
 
   override def isValidTime(nowDate:Date):Boolean = {
     

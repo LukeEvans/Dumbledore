@@ -133,7 +133,7 @@ class PrimeActor(args:PrimeActorArgs) extends FlowControlActor(args) {
     requests.foreach{
       request => 
         if(request.id.equalsIgnoreCase("facebook") || request.id.equalsIgnoreCase("twitter")){
-          futureSocial += ListSet(request.id, 99, ListBuffer[Object]())
+          futureSocial += ListSet(request.id, ListBuffer[Object]())
         }
     }
     return future{futureSocial}

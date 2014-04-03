@@ -11,7 +11,7 @@ import com.reactor.dumbledore.prime.notifications.time.Date
 
 
 /** String mapped to ListBuffer */
-case class ListSet[T](card_id:String, rank:Int, set_data:ListBuffer[T]){
+case class ListSet[T](card_id:String, set_data:ListBuffer[T]){
   
   var score = 0
   

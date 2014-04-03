@@ -51,7 +51,7 @@ class ServiceActor(args:FlowControlArgs) extends FlowControlActor(args){
     request.service_id match{
       
       case Prime.TRAFFIC => 
-        reply(origin, ListSetContainer(Traffic.getTraffic(request.requestData.rank)))
+        reply(origin, ListSetContainer(Traffic.getTraffic()))
         
         
       case "nearby_places" => 
@@ -63,7 +63,7 @@ class ServiceActor(args:FlowControlArgs) extends FlowControlActor(args){
                 param.getOrElse("long", "-73.940").toDouble,
                 3)
                   
-            reply(origin, ListSetContainer(ListSet(Prime.NEARBY_PLACES, 5, set)))
+            reply(origin, ListSetContainer(ListSet(Prime.NEARBY_PLACES, set)))
            
             
           case None => reply(origin, null)
@@ -77,7 +77,7 @@ class ServiceActor(args:FlowControlArgs) extends FlowControlActor(args){
         
         val stockSet = YahooStocksAPI.getStockCards(stockTickers) 
         
-        reply(origin, ListSetContainer(ListSet(Prime.STOCKS, 0, stockSet)))
+        reply(origin, ListSetContainer(ListSet(Prime.STOCKS, stockSet)))
         
       }
     }

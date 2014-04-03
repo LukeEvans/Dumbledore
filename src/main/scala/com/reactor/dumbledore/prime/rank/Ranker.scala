@@ -63,7 +63,7 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
    
       case Some(rank) =>
 
-        val newSet = ListSet(set.card_id, 0, set.set_data)
+        val newSet = ListSet(set.card_id, set.set_data)
         
         newSet.setScore(date, rank)
         

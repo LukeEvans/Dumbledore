@@ -8,7 +8,7 @@ import com.reactor.dumbledore.prime.constants.Day
 
 /** Notification Configuration 
  */
-case class NotificationConfig(serviceType:String, notifEndpoint:String, rank:Int, reloadMinutes:Long = 30) {
+case class NotificationConfig(serviceType:String, notifEndpoint:String, reloadMinutes:Long = 30) {
   
   val timeRanges:ArrayBuffer[TimeRange] = new ArrayBuffer[TimeRange]
   
