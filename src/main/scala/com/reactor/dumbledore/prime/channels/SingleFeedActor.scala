@@ -46,7 +46,7 @@ class SingleFeedActor(args:FlowControlArgs) extends FlowControlActor(args) {
       data => futureNodes += future{ Tools.objectToJsonNode(data)}//Tools.objectToJsonNode(data)
     }
     
-    ListSet(data.feed_id, 0, Await.result(Future.sequence(futureNodes), atMost = 1 seconds))
+    ListSet(data.feed_id, Await.result(Future.sequence(futureNodes), atMost = 1 seconds))
   }
   
   /** Build News Set mongo query */

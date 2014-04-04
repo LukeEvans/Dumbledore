@@ -1,4 +1,4 @@
-package com.reactor.dumbledore.prime.twitter
+package com.reactor.dumbledore.prime.services.twitter
 
 import twitter4j.conf.ConfigurationBuilder
 import net.sf.ehcache.search.expression.Criteria
@@ -9,7 +9,6 @@ import twitter4j.TwitterFactory
 import twitter4j.Paging
 import java.util.List
 import com.fasterxml.jackson.databind.JsonNode
-
 
 class TwitterAPI {
     val CONSUMER_KEY = "cpUcO0OmLkj0Newu2w7KA";

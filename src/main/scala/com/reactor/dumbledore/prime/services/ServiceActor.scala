@@ -12,6 +12,7 @@ import com.reactor.dumbledore.prime.services.traffic.Traffic
 import com.reactor.dumbledore.prime.constants.Prime
 import com.reactor.dumbledore.prime.services.yelp.Yelp
 import com.reactor.dumbledore.prime.data.ListSet
+import com.reactor.dumbledore.prime.services.stocks.YahooStocksAPI
 
 
 class ServiceActor(args:FlowControlArgs) extends FlowControlActor(args){
@@ -48,8 +49,10 @@ class ServiceActor(args:FlowControlArgs) extends FlowControlActor(args){
   def handleDumbledoreRequest(request:ServiceRequest, origin:ActorRef){
     
     request.service_id match{
+      
       case Prime.TRAFFIC => 
-        reply(origin, ListSetContainer(Traffic.getTraffic(request.requestData.rank)))
+        reply(origin, ListSetContainer(Traffic.getTraffic()))
+        
         
       case "nearby_places" => 
         request.params match{
@@ -60,11 +63,23 @@ class ServiceActor(args:FlowControlArgs) extends FlowControlActor(args){
                 param.getOrElse("long", "-73.940").toDouble,
                 3)
                   
-            reply(origin, ListSetContainer(ListSet(Prime.NEARBY_PLACES, 0, set)))
+            reply(origin, ListSetContainer(ListSet(Prime.NEARBY_PLACES, set)))
            
             
           case None => reply(origin, null)
         }
+        
+     
+      case Prime.STOCKS =>{
+        val data = request.requestData
+        
+        val stockTickers = if(data.ids != null && data.ids.nonEmpty) data.ids else ListBuffer("TSLA", "AAPL", "FB")
+        
+        val stockSet = YahooStocksAPI.getStockCards(stockTickers) 
+        
+        reply(origin, ListSetContainer(ListSet(Prime.STOCKS, stockSet)))
+        
+      }
     }
   }
 }

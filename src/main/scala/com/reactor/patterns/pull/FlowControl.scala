@@ -10,6 +10,8 @@ import akka.actor.ActorLogging
 import com.reactor.patterns.pull.MasterWorkerProtocol._
 import akka.actor.ActorContext
 import akka.actor.ActorSystem
+import akka.cluster.routing.ClusterRouterPool
+import akka.cluster.routing.ClusterRouterPoolSettings
 
 class FlowControlArgs() {
   var master:ActorRef = null
@@ -59,8 +61,8 @@ class TestFlowControlMaster(config:FlowControlConfig, args:FlowControlArgs) exte
   args.addMaster(self)
 
   // Router to manager workers
-  val splitRouter = context.actorOf(Props(classOf[FlowControlWorker], config, args).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
-      ClusterRouterSettings(
+  val splitRouter = context.actorOf(Props(classOf[FlowControlWorker], config, args).withRouter(ClusterRouterPool(RoundRobinRouter(), 
+      ClusterRouterPoolSettings(
 	  totalInstances = 1000, maxInstancesPerNode = config.parallel,
 	  allowLocalRoutees = true, None))))
 }
@@ -71,8 +73,8 @@ class FlowControlMaster(config:FlowControlConfig, args:FlowControlArgs) extends 
   args.addMaster(self)
 
   // Router to manager workers
-  val splitRouter = context.actorOf(Props(classOf[FlowControlWorker], config, args).withRouter(ClusterRouterConfig(RoundRobinRouter(), 
-      ClusterRouterSettings(
+  val splitRouter = context.actorOf(Props(classOf[FlowControlWorker], config, args).withRouter(ClusterRouterPool(RoundRobinRouter(), 
+      ClusterRouterPoolSettings(
 	  totalInstances = 1000, maxInstancesPerNode = config.parallel,
 	  allowLocalRoutees = true, useRole = Some(config.role)))))
 }

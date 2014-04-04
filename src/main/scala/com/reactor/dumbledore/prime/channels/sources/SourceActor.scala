@@ -38,7 +38,7 @@ class SourceActor(args:FlowControlArgs) extends FlowControlActor(args) {
       data => futureNodes += future(Tools.objectToJsonNode(data))
     }
     
-    reply(origin, ListSet(id, 0, Await.result(Future.sequence(futureNodes), atMost = 3 seconds)))
+    reply(origin, ListSet(id, Await.result(Future.sequence(futureNodes), atMost = 3 seconds)))
     complete()
   }
   

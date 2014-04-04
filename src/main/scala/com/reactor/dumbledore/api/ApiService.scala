@@ -65,7 +65,7 @@ trait ApiService extends HttpService{
           val response = new Response()
           val request = new PrimeRequest(obj)
           complete{
-            primeActor.ask(request)(15.seconds).mapTo[ListBuffer[ListSet[Object]]] map{
+            primeActor.ask(request)(30.seconds).mapTo[ListBuffer[ListSet[Object]]] map{
     	      data => response.finish(data, mapper)
     	    }
           }

@@ -1,19 +1,23 @@
-package com.reactor.dumbledore.prime.twitter
+package com.reactor.dumbledore.prime.services.twitter
 
+import scala.collection.JavaConversions._
+import scala.collection.mutable.ListBuffer
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.util.Failure
+import scala.util.Success
+import com.reactor.dumbledore.messaging.TwitterStoryData
+import com.reactor.dumbledore.messaging.requests.TwitterRequest
 import com.reactor.patterns.pull.FlowControlActor
 import com.reactor.patterns.pull.FlowControlArgs
 import akka.actor.ActorRef
-import com.reactor.dumbledore.messaging.requests.TwitterRequest
-import scala.collection.mutable.ListBuffer
-import scala.collection.JavaConversions._
-import scala.concurrent.Future
-import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
-import akka.util.Timeout
 import akka.pattern.ask
-import com.reactor.dumbledore.messaging.TwitterStoryData
-import scala.util.Success
-import scala.util.Failure
+import akka.util.Timeout
+import com.reactor.store.MongoDB
+import com.reactor.dumbledore.utilities.Tools
+import com.reactor.dumbledore.utilities.Conversions
+
 
 case class TwitterArgs(twitterStoryBuilderActor:ActorRef) extends FlowControlArgs{
   override def workerArgs(): FlowControlArgs ={
@@ -24,8 +28,10 @@ case class TwitterArgs(twitterStoryBuilderActor:ActorRef) extends FlowControlArg
 }
 
 class TwitterServiceActor(args:TwitterArgs) extends FlowControlActor(args) {
+  
   val twitterStoryBuilder = args.twitterStoryBuilderActor
   val twitterAPI = new TwitterAPI
+  
   ready()
   
   override def receive = {
@@ -36,6 +42,17 @@ class TwitterServiceActor(args:TwitterArgs) extends FlowControlActor(args) {
   
   def handleTwitterRequest(request:TwitterRequest, origin:ActorRef){
     implicit val timeout = Timeout(20 seconds)
+   
+    
+//    TwitterMongoCache.checkCache(request.twitterToken) match{
+//      case Some(cachedSet) =>
+//        reply(origin, cachedSet)
+//        complete()
+//        return
+//      case None => // Move on to twitter logic
+//    }
+
+    
     val statuses = twitterAPI.getHomeTimeLine(20, request.twitterToken, request.twitterSecret)
     
     val requests = ListBuffer[Future[TwitterStory]]()
@@ -50,6 +67,9 @@ class TwitterServiceActor(args:TwitterArgs) extends FlowControlActor(args) {
         results.foreach( result => stories += result )
         
         val set = shorten(8, stories)
+        
+        TwitterMongoCache.cache(request.twitterToken, set)
+        
         reply(origin, set)
         complete()
       
@@ -59,7 +79,7 @@ class TwitterServiceActor(args:TwitterArgs) extends FlowControlActor(args) {
     }
   }
   
-  def shorten(size:Int, list:ListBuffer[TwitterStory]):ListBuffer[TwitterStory] = {
+  private def shorten(size:Int, list:ListBuffer[TwitterStory]):ListBuffer[TwitterStory] = {
     
     val newList = ListBuffer[TwitterStory]()
     

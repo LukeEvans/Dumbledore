@@ -90,26 +90,21 @@ class TimedRank(id:String) extends Rank(id){
       timeRange =>{
         if(time.isInRange(timeRange.range)){
           
-          println("")
           val recentScore = mostRecent.calcRecentScore
           
-          println("range score: " + timeRange.score)
-          println("recent:   " + recentScore)
-          
           if(recentScore < 0){
-            println("neg       " + timeRange.score)
+            
             return timeRange.score
           }
           else if(recentScore > 120){
-            println(" 5")
+            
             return 5  
           }
-          
           else{
+            
             val fract = ((120 - recentScore).toDouble/120)
-            println("fract:     " + fract)
             val newScore = (fract * timeRange.score)
-            println("new score: " + newScore.toInt)
+
             return newScore.toInt
           }
 

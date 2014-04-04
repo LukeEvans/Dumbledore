@@ -51,7 +51,7 @@ class EntertainmentActor(args:FlowControlArgs) extends FlowControlActor(args) {
     Future.sequence(futureData) onComplete{
       
       case Success(dataList) => 
-        dataList.foreach(data => entertainData += ListSet(data._1, data._2, data._3))
+        dataList.foreach(data => entertainData += ListSet(data._1, data._3))
         reply(origin, entertainData)
         
       case Failure(e) =>

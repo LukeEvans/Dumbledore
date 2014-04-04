@@ -115,7 +115,7 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
             list += story
       }
         
-      dataArray += ListSet(d.card_id, 20, list.clone)
+      dataArray += ListSet(d.card_id, list.clone)
     }
 
     reply(origin, dataArray)

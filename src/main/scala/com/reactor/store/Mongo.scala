@@ -1,15 +1,24 @@
 package com.reactor.store
 
 import scala.collection.mutable.ListBuffer
-
 import com.mongodb.BasicDBObject
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoURI
+import com.novus.salat.grater
+import com.novus.salat.global._
+import com.reactor.dumbledore.prime.services.twitter.TwitterCacheSet
 
 
 class MongoDB {
 	val uri = MongoURI("mongodb://levans002:dakota1@ds031887.mongolab.com:31887/winston-db")
 	val db = uri.connectDB
+	
+	def insert(dbObj:DBObject, coll:String){
+	  
+	  val collect = db.right.get.getCollection(coll)
+	  
+	  collect.insert(dbObj)
+	}
 	
 	def find(queryObj:DBObject, coll:String, limit:Int):ListBuffer[Object] = {
 	  val collect = db.right.get.getCollection(coll)

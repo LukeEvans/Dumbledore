@@ -4,8 +4,8 @@ import org.specs2.mutable.Specification
 import org.specs2.time._
 import com.reactor.dumbledore.prime.notifications.NotificationArgs
 import com.reactor.dumbledore.prime.channels.ChannelArgs
-import com.reactor.dumbledore.prime.twitter.TwitterArgs
-import com.reactor.dumbledore.prime.twitter.TwitterBuilderArgs
+import com.reactor.dumbledore.prime.services.twitter.TwitterArgs
+import com.reactor.dumbledore.prime.services.twitter.TwitterBuilderArgs
 import com.reactor.patterns.pull.FlowControlConfig
 import com.reactor.patterns.pull.FlowControlFactory
 import spray.http._
@@ -35,10 +35,10 @@ class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService 
   val extractorFlowConfig = FlowControlConfig(name="extractorActor", actorType="com.reactor.dumbledore.prime.abstraction.ExtractionActor", parallel = 30)
   val extractorActor = FlowControlFactory.flowControlledActorForTests(system, extractorFlowConfig)
     
-  val twitterStoryBuilderFlowConfig = FlowControlConfig(name="twitterStoryBuilderActor", actorType="com.reactor.dumbledore.prime.twitter.TwitterStoryBuilderActor", parallel = 30)    
+  val twitterStoryBuilderFlowConfig = FlowControlConfig(name="twitterStoryBuilderActor", actorType="com.reactor.dumbledore.prime.services.twitter.TwitterStoryBuilderActor", parallel = 30)    
   val twitterStoryActor = FlowControlFactory.flowControlledActorForTests(system, twitterStoryBuilderFlowConfig, TwitterBuilderArgs(extractorActor))
     
-  val twitterServiceFlowConfig = FlowControlConfig(name="twitterServiceActor", actorType="com.reactor.dumbledore.prime.twitter.TwitterServiceActor", parallel = 8)    
+  val twitterServiceFlowConfig = FlowControlConfig(name="twitterServiceActor", actorType="com.reactor.dumbledore.prime.services.twitter.TwitterServiceActor", parallel = 8)    
   val twitterActor = FlowControlFactory.flowControlledActorForTests(system, twitterServiceFlowConfig, TwitterArgs(twitterStoryActor))
     
   val serviceFlowConfig = FlowControlConfig(name="serviceActor", actorType="com.reactor.dumbledore.prime.services.ServiceActor", parallel=6)    
