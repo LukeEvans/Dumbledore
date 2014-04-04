@@ -16,9 +16,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import com.reactor.store.MongoDB
 import com.reactor.dumbledore.utilities.Tools
-import org.joda.time.format.DateTimeFormat
-import org.elasticsearch.common.joda.time.format.DateTimeFormatter
-import org.joda.time.DateTime
+import com.reactor.dumbledore.utilities.Conversions
 
 
 case class TwitterArgs(twitterStoryBuilderActor:ActorRef) extends FlowControlArgs{
@@ -33,7 +31,6 @@ class TwitterServiceActor(args:TwitterArgs) extends FlowControlActor(args) {
   
   val twitterStoryBuilder = args.twitterStoryBuilderActor
   val twitterAPI = new TwitterAPI
-  val mongo = new MongoDB
   
   ready()
   
@@ -47,13 +44,13 @@ class TwitterServiceActor(args:TwitterArgs) extends FlowControlActor(args) {
     implicit val timeout = Timeout(20 seconds)
    
     
-    checkCache(request.twitterToken) match{
-      case Some(cachedSet) =>
-        reply(origin, cachedSet)
-        complete()
-        return
-      case None => // Move on to twitter logic
-    }
+//    TwitterMongoCache.checkCache(request.twitterToken) match{
+//      case Some(cachedSet) =>
+//        reply(origin, cachedSet)
+//        complete()
+//        return
+//      case None => // Move on to twitter logic
+//    }
 
     
     val statuses = twitterAPI.getHomeTimeLine(20, request.twitterToken, request.twitterSecret)
@@ -70,6 +67,9 @@ class TwitterServiceActor(args:TwitterArgs) extends FlowControlActor(args) {
         results.foreach( result => stories += result )
         
         val set = shorten(8, stories)
+        
+        TwitterMongoCache.cache(request.twitterToken, set)
+        
         reply(origin, set)
         complete()
       
@@ -95,28 +95,5 @@ class TwitterServiceActor(args:TwitterArgs) extends FlowControlActor(args) {
     }
     
     return newList
-  }
-  
-  private def checkCache(token:String):Option[ListBuffer[TwitterStory]] = {
-    
-    val cachedSet = mongo.findOneSimple("token", token, "cache-twitter_story_sets")
-    
-    if(cachedSet == null)
-      return None
-    
-    val cacheJson = Tools.objectToJsonNode(cachedSet)
-    
-    val dateString = if(cacheJson.has("cacheDate")) cacheJson.get("cacheDate").get("$date").asText else null   
-    val formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-    
-    val dateTime = formatter.parseDateTime(dateString)
-    
-    val nowDateTime = new DateTime
-    
-    if(nowDateTime.getMillis() - dateTime.getMillis() < 7200000){
-      return None //Return the ListBuffer of cached Twitter Stories
-    }
-    
-    None
   }
 }

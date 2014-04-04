@@ -1,7 +1,6 @@
 package com.reactor.dumbledore.prime.services.itunes
 
 import scala.collection.mutable.ListBuffer
-import com.reactor.dumbledore.prime.cards.Card
 import com.fasterxml.jackson.databind.JsonNode
 import scala.collection.JavaConversions._
 import com.reactor.dumbledore.utilities.Tools
