@@ -14,8 +14,11 @@ import com.reactor.dumbledore.prime.entities.EntityList
 import com.reactor.dumbledore.prime.abstraction.Abstraction
 import com.reactor.dumbledore.prime.abstraction.Extractor
 import com.reactor.dumbledore.utilities.Timer
+import java.io.Serializable
+import com.mongodb.casbah.commons.MongoDBObject
 
-class TwitterStory {
+class TwitterStory{
+  
   var db:String = null
   var id:String = null
   var `type`:String = null
@@ -218,4 +221,22 @@ class TwitterStory {
     score = (rtScore + favScore + dateScore.toInt)
     score
   }
+  
+  def toDBObject() = {
+    
+    val entityObj = if(entities != null) entities.map( entity => entity.toDBObject) else null
+    
+    val obj = MongoDBObject("db" -> db, "id" -> id, "type"-> `type`,
+        "story_type" -> story_type, "header" -> header, "description" -> description,
+        "entities" -> entityObj, "speech" -> speech, "valid" -> valid,
+        "tweet" -> tweet, "time_stamp" -> timestamp, "name" -> name,
+        "prof_pic" -> prof_pic, "cover_pic" -> cover_pic, "url" -> url,
+        "images" -> images, "favorite_count" -> favorite_count, "retweet_count" -> retweet_count,
+        "user_favorited" -> user_favorited, "user_retweeted" -> user_retweeted,
+        "handle" -> handle, "timeScore" -> timeScore, "score" -> score,
+        "date" -> date, "linkScore" -> linkScore)
+    
+    obj
+  }
+  
 }
