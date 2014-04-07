@@ -37,7 +37,7 @@ class TwitterStoryBuilderActor(args:TwitterBuilderArgs) extends FlowControlActor
   }
   
   def handleStoryRequest(status:Status, meID:Long, origin:ActorRef){
-    implicit val timeout = Timeout(2 seconds)
+    implicit val timeout = Timeout(3 seconds)
     
     val story = new TwitterStory(status, meID)
     

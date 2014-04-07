@@ -20,7 +20,7 @@ class StockCard{
 	this()  
     symbol = node.get("symbol").asText()
     company = node.get("Name").asText()
-    var id = Tools.generateHash(symbol)
+    id = Tools.generateHash(symbol)
     updateValues(node.get("LastTradePriceOnly").asDouble, node.get("Change").asDouble())
   }
 	

@@ -7,6 +7,7 @@ import com.reactor.store.MongoDB
 import com.reactor.dumbledore.utilities.Conversions
 import org.elasticsearch.common.joda.time.format.DateTimeFormat
 import com.mongodb.casbah.commons.MongoDBObject
+import java.util.Date
 
 object TwitterMongoCache {
   
@@ -18,9 +19,14 @@ object TwitterMongoCache {
     
     val cacheSet = new TwitterCacheSet(token, data)
     
+    val cachedSet = mongo.findOneSimple("token", token, "cache-twitter_story_sets")
+    
+    if(cachedSet != null)
+      mongo.findOneSimpleAndDelete("token", token, cacheCollection)
+    
     val cache = cacheSet.asDBObject
     
-    //mongo.insert(cache, cacheCollection) 
+    mongo.insert(cache, cacheCollection) 
   }
    
   
@@ -62,18 +68,20 @@ object TwitterMongoCache {
 
 class TwitterCacheSet{
   var token:String = null
-  var date:DateTime = new DateTime
-  var data:ListBuffer[Object] = null
+  var date:Date = new Date
+  var data:ListBuffer[TwitterStory] = null
   
-  def this(token:String, dat:ListBuffer[TwitterStory]){
+  def this(token:String, data:ListBuffer[TwitterStory]){
     this()
     this.token = token
     this.data = data
   }
   
   def asDBObject() ={
-    val dbObj = MongoDBObject
-
+    
+    val dataList = data.map( obj => obj.toDBObject)
+    
+    val dbObj = MongoDBObject("token" -> token, "date" -> date, "data" -> dataList)
     
     dbObj
   }

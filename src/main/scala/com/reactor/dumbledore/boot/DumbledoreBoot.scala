@@ -44,38 +44,50 @@ class DumbledoreBoot extends Bootable{
     val winstonAPIFlowConfig = FlowControlConfig(name="winstonAPIActor", actorType="com.reactor.dumbledore.prime.legacy.WinstonAPIActor")    
     val winstonAPIActor = FlowControlFactory.flowControlledActorForSystem(system, winstonAPIFlowConfig)
     
+    
     val extractorFlowConfig = FlowControlConfig(name="extractorActor", actorType="com.reactor.dumbledore.prime.abstraction.ExtractionActor", parallel = 30)
     val extractorActor = FlowControlFactory.flowControlledActorForSystem(system, extractorFlowConfig)
+    
     
     val twitterStoryBuilderFlowConfig = FlowControlConfig(name="twitterStoryBuilderActor", actorType="com.reactor.dumbledore.prime.services.twitter.TwitterStoryBuilderActor", parallel = 30)    
     val twitterStoryActor = FlowControlFactory.flowControlledActorForSystem(system, twitterStoryBuilderFlowConfig, TwitterBuilderArgs(extractorActor))
     
+    
     val twitterServiceFlowConfig = FlowControlConfig(name="twitterServiceActor", actorType="com.reactor.dumbledore.prime.services.twitter.TwitterServiceActor", parallel = 8)    
     val twitterServiceActor = FlowControlFactory.flowControlledActorForSystem(system, twitterServiceFlowConfig, TwitterArgs(twitterStoryActor))
+    
     
     val serviceFlowConfig = FlowControlConfig(name="serviceActor", actorType="com.reactor.dumbledore.prime.services.ServiceActor", parallel=6)    
     val serviceActor = FlowControlFactory.flowControlledActorForSystem(system, serviceFlowConfig)
     
+    
     val notificationFlowConfig = FlowControlConfig(name="notificationActor", actorType="com.reactor.dumbledore.prime.notifications.NotificationActor", parallel =3)    
     val notificationActor = FlowControlFactory.flowControlledActorForSystem(system, notificationFlowConfig, NotificationArgs(serviceActor))
+    
     
     val feedFlowConfig = FlowControlConfig(name="feedActor", actorType="com.reactor.dumbledore.prime.channels.SingleFeedActor", parallel=9)    
     val feedActor = FlowControlFactory.flowControlledActorForSystem(system, feedFlowConfig)
     
+    
     val sourceFlowConfig = FlowControlConfig(name="sourceActor", actorType="com.reactor.dumbledore.prime.channels.sources.SourceActor", parallel=5)    
     val sourceActor = FlowControlFactory.flowControlledActorForSystem(system, sourceFlowConfig)
+    
     
     val channelsFlowConfig = FlowControlConfig(name="channelsActor", actorType="com.reactor.dumbledore.prime.channels.ChannelsActor")    
     val channelsActor = FlowControlFactory.flowControlledActorForSystem(system, channelsFlowConfig, ChannelArgs(feedActor, sourceActor))
     
+    
     val entFlowConfig = FlowControlConfig(name="entActor", actorType="com.reactor.dumbledore.prime.entertainment.EntertainmentActor", parallel=5)    
     val entActor = FlowControlFactory.flowControlledActorForSystem(system, entFlowConfig)
+    
     
     val rankFlowConfig = FlowControlConfig(name="rankActor", actorType="com.reactor.dumbledore.prime.rank.SetRankerActor", parallel=5)    
     val rankActor = FlowControlFactory.flowControlledActorForSystem(system, rankFlowConfig)
     
+    
     val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor")
     val primeActor = FlowControlFactory.flowControlledActorForSystem(system, primeFlowConfig, PrimeActorArgs(channelsActor, notificationActor, entActor, rankActor))   
+    
     
 	val service = system.actorOf(Props(classOf[ApiActor], winstonAPIActor, notificationActor, channelsActor, twitterServiceActor, primeActor).withRouter(	
 	  ClusterRouterPool(AdaptiveLoadBalancingPool(akka.cluster.routing.MixMetricsSelector), 
@@ -84,7 +96,7 @@ class DumbledoreBoot extends Bootable{
    	  allowLocalRoutees = true, useRole = Some("dumbledore-frontend")))),
    	  name = "serviceRouter")
   
-   	 IO(Http) ! Http.Bind(service, interface = "0.0.0.0", port = 8080)
+   	IO(Http) ! Http.Bind(service, interface = "0.0.0.0", port = 8080)
   }
   
   def startup = Cluster(system).subscribe(system.actorOf(Props(classOf[Listener], system), name = "clusterListener"), classOf[ClusterDomainEvent])

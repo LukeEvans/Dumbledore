@@ -13,6 +13,13 @@ class MongoDB {
 	val uri = MongoURI("mongodb://levans002:dakota1@ds031887.mongolab.com:31887/winston-db")
 	val db = uri.connectDB
 	
+	def findAndDelete(dbObj:DBObject, coll:String){
+	  
+	  val collect = db.right.get.getCollection(coll)
+	  
+	  collect.remove(dbObj)
+	}
+	
 	def insert(dbObj:DBObject, coll:String){
 	  
 	  val collect = db.right.get.getCollection(coll)
@@ -46,6 +53,15 @@ class MongoDB {
 	  var queryObject = new BasicDBObject(field, value)
 	  findOne(queryObject, coll)
 	}
+	
+	
+	def findOneSimpleAndDelete(field:String, value:String, coll:String) = {
+	  
+	  var queryObject = new BasicDBObject(field, value)
+	  
+	  findAndDelete(queryObject, coll)
+	}
+	
 	
 	def findAll(coll:String):ListBuffer[Object] = {
 	  val collect = db.right.get.getCollection(coll)

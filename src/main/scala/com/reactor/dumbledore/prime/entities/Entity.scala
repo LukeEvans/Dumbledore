@@ -1,6 +1,7 @@
 package com.reactor.dumbledore.prime.entities
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.mongodb.casbah.commons.MongoDBObject
 
 class Entity {
   var entity_name:String = null
@@ -34,5 +35,13 @@ class Entity {
     s += "Text: " + entity_name + " Type: " + entity_type + " Sentiment: " + sentiment + "\n";
     System.out.println("entityString : " + s);
     return s;
+  }
+  
+  def toDBObject() = {
+    
+    val obj = MongoDBObject("entity_name" -> entity_name, "entity_type" -> entity_type,
+        "entity_score" -> entity_score, "sentiment" -> sentiment)
+    
+    obj
   }
 }
