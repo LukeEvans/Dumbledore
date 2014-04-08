@@ -152,9 +152,9 @@ class NotificationManager {
     devServices put (Prime.NEARBY_PLACES, nearbyPlaces)
     
     
-    val stocks = new StaticNotificationConfig(Prime.V036, "/stocks").add247(None)
-    
-    devServices put (Prime.STOCKS, stocks)
+    val stocks = new StaticNotificationConfig(Prime.DUMBLEDORE, "/").add247(None)
+
+    services put (Prime.STOCKS, stocks)
     
     
     val fbBdays = new NotificationConfig(Prime.V036, "/social/facebook/birthdays").add247(None) 
