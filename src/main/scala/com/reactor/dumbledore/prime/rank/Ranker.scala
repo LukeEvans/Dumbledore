@@ -168,6 +168,12 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
     rankConfigs.put(Prime.TOP_SONGS, songsRank)
     
     
+    val donationsRank = Rank(Prime.DONATIONS)
+    						.add247(5)
+    						
+    rankConfigs.put(Prime.DONATIONS, donationsRank)
+    
+    
     rankConfigs = setNewsConfigs(rankConfigs)
     
     return rankConfigs

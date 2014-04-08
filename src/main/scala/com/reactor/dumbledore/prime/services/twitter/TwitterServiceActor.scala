@@ -44,13 +44,13 @@ class TwitterServiceActor(args:TwitterArgs) extends FlowControlActor(args) {
     implicit val timeout = Timeout(20 seconds)
    
     
-//    TwitterMongoCache.checkCache(request.twitterToken) match{
-//      case Some(cachedSet) =>
-//        reply(origin, cachedSet)
-//        complete()
-//        return
-//      case None => // Move on to twitter logic
-//    }
+    TwitterMongoCache.checkCache(request.twitterToken) match{
+      case Some(cachedSet) =>
+        reply(origin, cachedSet)
+        complete()
+        return
+      case None => // Move on to twitter logic
+    }
 
     
     val statuses = twitterAPI.getHomeTimeLine(20, request.twitterToken, request.twitterSecret)

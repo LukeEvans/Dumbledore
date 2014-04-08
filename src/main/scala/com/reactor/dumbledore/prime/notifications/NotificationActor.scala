@@ -94,7 +94,7 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
 	    	  val serviceData = listSetContainer.data
 	    	  
 	    	  if(serviceData.set_data != null && !serviceData.set_data.isEmpty)
-	    		responseData += serviceData//orderDataSet(serviceData, responseData)
+	    		responseData += serviceData 
 	          else
 	            log.error("Notification Actor: Error receiving data from service - " + serviceData.card_id)
 	    }
@@ -129,18 +129,5 @@ class NotificationActor(args:NotificationArgs) extends FlowControlActor(args) {
     }    
     results
   }
-  
-  /** Order the dataset based on rank */
-//  private def orderDataSet(set:ListSet[Object], dataSet:ListBuffer[ListSet[Object]]):ListBuffer[ListSet[Object]] = {
-//    if(dataSet.isEmpty) return dataSet += set
-//    
-//    val newList = dataSet.clone
-//    
-//    var index = 0   
-//    dataSet.takeWhile(data => data.rank < set.rank ).foreach(_ => index += 1)  
-//    newList.insert(index, set)
-//    
-//    newList
-//  }
   
 }
