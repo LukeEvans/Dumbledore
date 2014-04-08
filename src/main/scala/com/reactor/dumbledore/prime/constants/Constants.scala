@@ -9,6 +9,8 @@ object Prime {
   
   val COMICS = "comics"
     
+  val DONATIONS = "donations"
+    
   val EVENTS = "events"
   
   val FACEBOOK = "facebook"

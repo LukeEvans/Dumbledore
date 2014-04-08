@@ -13,6 +13,8 @@ import com.reactor.dumbledore.prime.constants.Prime
 import com.reactor.dumbledore.prime.services.yelp.Yelp
 import com.reactor.dumbledore.prime.data.ListSet
 import com.reactor.dumbledore.prime.services.stocks.YahooStocksAPI
+import com.reactor.dumbledore.prime.services.donations.DonorsChoose
+import com.reactor.dumbledore.prime.services.donations.DonorsChoose
 
 
 class ServiceActor(args:FlowControlArgs) extends FlowControlActor(args){
@@ -78,6 +80,28 @@ class ServiceActor(args:FlowControlArgs) extends FlowControlActor(args){
         val stockSet = YahooStocksAPI.getStockCards(stockTickers) 
         
         reply(origin, ListSetContainer(ListSet(Prime.STOCKS, stockSet)))
+        
+      }
+      
+      case Prime.DONATIONS =>{
+        
+        val data = request.requestData
+        
+        data.params match{
+          case Some(params) =>
+            val lat = params.getOrElse("lat", "40.0176")
+            val long = params.getOrElse("long", "-105.2797")
+            
+            val donations = DonorsChoose.findProjects(lat.toDouble, long.toDouble, 5)
+            
+            reply(origin, ListSetContainer(ListSet(Prime.DONATIONS, donations)))
+            
+          case None =>
+            
+            val donations = DonorsChoose.findProjects(40.0176, -105.2797, 5)
+            
+            reply(origin, ListSetContainer(ListSet(Prime.DONATIONS, donations)))
+        }
         
       }
     }

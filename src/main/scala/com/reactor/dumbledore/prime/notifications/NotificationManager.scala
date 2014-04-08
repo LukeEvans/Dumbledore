@@ -120,6 +120,11 @@ class NotificationManager {
     
     services put (Prime.NEARBY_PHOTOS, nearbyPhotos)
     
+    
+    val donations = new NotificationConfig(Prime.DUMBLEDORE, "/").add247(None)
+    
+    services put (Prime.DONATIONS, donations)
+    
   }
   
   
