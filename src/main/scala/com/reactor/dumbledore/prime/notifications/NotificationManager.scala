@@ -94,9 +94,9 @@ class NotificationManager {
 	services put (Prime.NEARBY_PLACES, nearbyPlaces)
     
     
-    val stocks2 = new StaticNotificationConfig(Prime.DUMBLEDORE, "/").add247(None)
+    val stocks = new StaticNotificationConfig(Prime.DUMBLEDORE, "/").add247(None)
 
-    services put (Prime.STOCKS, stocks2)
+    services put (Prime.STOCKS, stocks)
     
     
     val fbBdays = new NotificationConfig(Prime.V036, "/social/facebook/birthdays")
@@ -132,6 +132,7 @@ class NotificationManager {
    */
   def devInit():Unit = {
     
+    
     val traffic = new NotificationConfig(Prime.DUMBLEDORE, "/").add247(None)
     
     devServices put (Prime.TRAFFIC, traffic)
@@ -154,7 +155,7 @@ class NotificationManager {
     
     val stocks = new StaticNotificationConfig(Prime.DUMBLEDORE, "/").add247(None)
 
-    services put (Prime.STOCKS, stocks)
+    devServices put (Prime.STOCKS, stocks)
     
     
     val fbBdays = new NotificationConfig(Prime.V036, "/social/facebook/birthdays").add247(None) 
