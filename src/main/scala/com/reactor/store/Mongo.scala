@@ -7,12 +7,16 @@ import com.mongodb.casbah.MongoURI
 import com.novus.salat.grater
 import com.novus.salat.global._
 import com.reactor.dumbledore.prime.services.twitter.TwitterCacheSet
+import com.mongodb.DBCursor
 
 
 class MongoDB {
 	val uri = MongoURI("mongodb://levans002:dakota1@ds031887.mongolab.com:31887/winston-db")
 	val db = uri.connectDB
 	
+	
+	/** Find and remove one instance of the DBObject
+	 */
 	def findAndDelete(dbObj:DBObject, coll:String){
 	  
 	  val collect = db.right.get.getCollection(coll)
@@ -20,6 +24,9 @@ class MongoDB {
 	  collect.remove(dbObj)
 	}
 	
+	
+	/** Insert DBObject
+	 */
 	def insert(dbObj:DBObject, coll:String){
 	  
 	  val collect = db.right.get.getCollection(coll)
@@ -27,6 +34,9 @@ class MongoDB {
 	  collect.insert(dbObj)
 	}
 	
+	
+	/** Find Objects matching query DBObject with a limit number of objects
+	 */
 	def find(queryObj:DBObject, coll:String, limit:Int):ListBuffer[Object] = {
 	  val collect = db.right.get.getCollection(coll)
 	  val cursor = collect.find(queryObj).limit(limit).sort(MongoDBObject("date" -> -1))
@@ -36,6 +46,17 @@ class MongoDB {
 	    dataList += cursor.next()
 	  }
 	  dataList
+	}
+	
+	
+	def findFirst(coll:String, limit:Option[Int] = None):DBCursor = {
+	  
+	  val collect = db.right.get.getCollection(coll)
+	  
+	  limit match{
+	    case Some(lim) => return collect.find().limit(lim)
+	    case None => return collect.find()
+	  }
 	}
 	
 	def findOne(queryObject:BasicDBObject, coll:String):Object = {

@@ -222,6 +222,9 @@ class TwitterStory{
     score
   }
   
+  
+  /** Create MongoDBObject with variables as fields
+   */
   def toDBObject() = {
     
     val entityObj = if(entities != null) entities.map( entity => entity.toDBObject) else null
