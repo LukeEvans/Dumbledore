@@ -1,0 +1,8 @@
+- name: Undeploy and Distribute
+  hosts: 
+  - tag_Name_Dumbledore-Jenkins-Dev
+  user: ubuntu
+  sudo: true
+  gather_facts: false
+  roles:
+      - datadog
