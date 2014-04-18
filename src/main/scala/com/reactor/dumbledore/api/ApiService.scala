@@ -34,6 +34,12 @@ import com.reactor.dumbledore.messaging.requests.ChannelFeedRequest
 import com.gravity.goose._
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.reactor.dumbledore.prime.services.sports.StatsAPI
+import com.reactor.patterns.throttle.TimerBasedThrottler
+import com.reactor.patterns.throttle.Throttler.Rate
+import akka.actor.Props
+import com.reactor.patterns.throttle.Dispatcher
+import com.reactor.patterns.throttle.Throttler.SetTarget
+
 
 trait ApiService extends HttpService{
 
@@ -222,6 +228,12 @@ class ApiActor(winston:ActorRef, notifications:ActorRef, channels:ActorRef, twit
 	val channelsActor = channels
 	val twitterActor = twitter
 	val primeActor = prime
+	
+	val dispatcher = actorRefFactory.actorOf(Props(classOf[Dispatcher], primeActor), "dispatcher")
+	val throttler = actorRefFactory.actorOf(Props(new TimerBasedThrottler(new Rate(40, 1 seconds))))
+	
+	throttler ! SetTarget(Some(dispatcher))
+	
 	println("Starting API Service actor...")
   
 implicit def ReductoExceptionHandler(implicit log: LoggingContext) =
