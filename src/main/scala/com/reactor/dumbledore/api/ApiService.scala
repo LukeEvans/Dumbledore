@@ -39,6 +39,9 @@ import com.reactor.patterns.throttle.Throttler.Rate
 import akka.actor.Props
 import com.reactor.patterns.throttle.Dispatcher
 import com.reactor.patterns.throttle.Throttler.SetTarget
+import com.reactor.patterns.transport.RESTRequest
+import com.reactor.patterns.transport.DispatchRequest
+import com.reactor.patterns.throttle.Throttler.Queue
 
 
 trait ApiService extends HttpService{
@@ -49,6 +52,7 @@ trait ApiService extends HttpService{
   val twitterActor:ActorRef
   val primeActor:ActorRef
   
+  implicit val throttler:ActorRef
   private implicit val timeout = Timeout(5 seconds);
   private implicit val actorSystem = ActorSystem("DumbledoreClusterSystem-0-1")
   
@@ -195,30 +199,39 @@ trait ApiService extends HttpService{
       getFromFile(resourcePath)
     }
  
-   /** Handle Get or Post Requests
-    * 
-    */
-   def getOrPost(comp:Object => StandardRoute):RequestContext => Unit = {
+    
+    /** Handle Get or Post Requests
+     */
+    def getOrPost(comp:Object => StandardRoute):RequestContext => Unit = {
 
-     get{
-       respondWithMediaType(MediaTypes.`application/json`){
-         entity(as[HttpRequest]){
-           obj =>{
-             comp(obj)
-           }
-         }
-       }
-     }~
-     post{
-       respondWithMediaType(MediaTypes.`application/json`){
-         entity(as[String]){
-           obj =>{
-             comp(obj)
-           }
-         }
-       }	
-     }
-   }
+      get{
+        respondWithMediaType(MediaTypes.`application/json`){
+          entity(as[HttpRequest]){
+            obj =>{
+              comp(obj)
+            }
+          }
+        }
+      }~
+      post{
+        respondWithMediaType(MediaTypes.`application/json`){
+          entity(as[String]){
+            obj =>{
+              comp(obj)
+            }
+          }
+        }	
+      }
+    }
+    
+    
+    /** Initiate requests for throttler
+     */
+    def initiateRequest(request:RESTRequest, ctx: RequestContext){
+      
+      val dispatchReq = DispatchRequest(com.reactor.patterns.transport.RequestContainer(request), ctx, mapper)
+      throttler.tell(Queue(dispatchReq), Actor.noSender)
+    }
 }
 
 class ApiActor(winston:ActorRef, notifications:ActorRef, channels:ActorRef, twitter:ActorRef, prime:ActorRef) extends Actor with ApiService {

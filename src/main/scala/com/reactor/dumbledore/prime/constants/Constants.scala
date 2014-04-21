@@ -29,6 +29,8 @@ object Prime {
   
   val STOCKS  = "stocks"
     
+  val QUOTE = "quote"
+    
   val TOP_RENTALS = "top_rentals"
     
   val TOP_SONGS = "top_songs"

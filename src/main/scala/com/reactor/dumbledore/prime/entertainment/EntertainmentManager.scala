@@ -8,6 +8,7 @@ import com.reactor.dumbledore.prime.notifications.request.Request
 import com.reactor.dumbledore.prime.constants.Prime
 import com.reactor.dumbledore.prime.services.itunes.Itunes
 import com.reactor.dumbledore.prime.services.events.Events
+import com.reactor.dumbledore.prime.services.quote.QuoteOfTheDay
 
 /** EntertainmentService wrapper class
  */
@@ -61,6 +62,7 @@ class EntertainmentManager {
     services.put(Prime.COMICS, ComicService())
     services.put(Prime.TOP_RENTALS, RentalService())
     services.put(Prime.TOP_SONGS, MusicService())
+    services.put(Prime.QUOTE, QuoteService())
     
     return services
   }
@@ -117,4 +119,15 @@ case class EventService() extends EntertainmentService(Prime.EVENTS){
   def process = {
     (getId, 0, Events.getEvents(5))
   }
+}
+
+/** Quote Service
+ */
+case class QuoteService() extends EntertainmentService(Prime.QUOTE){
+  
+  /** get quote of day */
+  def process = {
+    (getId, 0, QuoteOfTheDay.getToday)
+  }
+  
 }
