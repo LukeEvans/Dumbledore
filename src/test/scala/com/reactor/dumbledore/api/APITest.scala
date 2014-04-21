@@ -23,10 +23,16 @@ import com.reactor.dumbledore.prime.notifications.request.Request
 import com.reactor.dumbledore.prime.constants.Prime
 import scala.collection.mutable.ListBuffer
 import com.reactor.dumbledore.messaging.requests.FeedRequestData
+import com.reactor.patterns.throttle.TimerBasedThrottler
+import com.reactor.patterns.throttle.Throttler.Rate
+import scala.concurrent.duration.FiniteDuration
 
 
 class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService {
   def actorRefFactory = system 
+  
+  val rateTime = new scala.concurrent.duration.FiniteDuration(1, java.util.concurrent.TimeUnit.SECONDS) 
+  val throttler = actorRefFactory.actorOf(Props(new TimerBasedThrottler(new Rate(40, rateTime))))
   
   // Initialize Actors
   val winstonAPIFlowConfig = FlowControlConfig(name="winstonAPIActor", actorType="com.reactor.dumbledore.prime.legacy.WinstonAPIActor")    
