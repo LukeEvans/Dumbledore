@@ -6,6 +6,7 @@ class Quote {
   var id:String = null
   var author:String = null
   var text:String = null
+  var source:String = "BrainyQuote"
 
   def this(id:String, author:String, text:String){
     this()

@@ -44,10 +44,13 @@ object QuoteOfTheDay {
         
             val quote = new Quote(id, author, text)
         
-            quotes += quote
+            if(quotes.size < 1)
+              quotes += quote
             
           }
       }
+      
+      
       
       return quotes
       
