@@ -175,7 +175,7 @@ trait ApiService extends HttpService{
     	}
       }      
     }~
-    path("loaderio-31d8c2cac95d79a88fc7a1db9668583c"){
+    path("loaderio-31d8c2cac95d79a88fc7a1db9668583c"+".txt"){
       val localLoadPath = "/Users/kevincolin/Development/Winston/projects/Dumbledore/loader"
       val remoteLoadPath = "/home/ubuntu/loader"
       getFromFile(remoteLoadPath)
