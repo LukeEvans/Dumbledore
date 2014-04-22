@@ -49,11 +49,7 @@ class SingleFeedActor(args:FlowControlArgs) extends FlowControlActor(args) {
     ListSet(data.feed_id, Await.result(Future.sequence(futureNodes), atMost = 1 seconds))
   }
   
-  /** Build News Set mongo query */
-//  private def buildQuery(feedID:String, excluded:ListBuffer[String]):DBObject = {
-//	("source_category" $eq feedID) ++ $and(("source_id" $ne excluded(0)):: ("source_id" $ne "engadget")) ++ ("valid" $eq true)
-//  }
-  
+  /** Build News Set mongo query */  
   private def buildQuery(feedID:String, excludedSources:ListBuffer[String]):DBObject = {
     ("source_category" $eq feedID) ++ ("valid" $eq true) ++ exclusionQuery(excludedSources)
   }

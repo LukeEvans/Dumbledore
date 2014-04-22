@@ -96,30 +96,40 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
   
   /** Get Nested array story sets */
   def getChannelData(channelData:ListBuffer[FeedRequestData], origin:ActorRef){
-    implicit val timeout = Timeout(30 seconds)
-    val dataArray = ListBuffer[ListSet[Object]]()
+    implicit val timeout = Timeout(2 seconds)
     
-    val dataList = ListBuffer[Future[ListSet[JsonNode]]]()
-    channelData.foreach{
-      data => dataList += (feedActor ? data).mapTo[ListSet[JsonNode]]
-    }
+    try{
+      val dataArray = ListBuffer[ListSet[Object]]()
     
-    val list = ListBuffer[Object]()
-    val data = Await.result(Future.sequence(dataList), atMost = 3 seconds)
-    data map{
-      d => 
-        list.clear     
-        d.set_data map{
-          node =>
-            val story = new KCStory(node)
-            list += story
+      val dataList = ListBuffer[Future[ListSet[JsonNode]]]()
+      channelData.foreach{
+        data => dataList += (feedActor ? data).mapTo[ListSet[JsonNode]]
       }
+    
+      val list = ListBuffer[Object]()
+      val data = Await.result(Future.sequence(dataList), atMost = 2 seconds)
+      
+      data map{
+        d => 
+          list.clear     
+          d.set_data map{
+            node =>
+              val story = new KCStory(node)
+              list += story
+        }
         
-      dataArray += ListSet(d.card_id, list.clone)
-    }
+        dataArray += ListSet(d.card_id, list.clone)
+      }
 
-    reply(origin, dataArray)
-    complete()
+      reply(origin, dataArray)
+      complete()
+    
+    } catch{
+      case e:Exception =>
+        e.printStackTrace()
+        reply(origin, ListBuffer[Object]())
+        complete()
+    }
   }
   
   def getSourceData(sources:ListBuffer[String], origin:ActorRef){

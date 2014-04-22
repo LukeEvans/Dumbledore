@@ -56,7 +56,7 @@ case class TwitterStoryData(status:Status, me:Long) extends request
 //==========================
 
 // Ranking Containers
-case class PrimeRankContainer(set:PrimeSet, now:DateTime)
+case class PrimeRankContainer(set:PrimeSet, now:DateTime, dev:Boolean)
 
 // Youtube Containers
 case class YoutubeData(request:YoutubeRequest)
