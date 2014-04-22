@@ -45,7 +45,7 @@ class DumbledoreBoot extends Bootable{
     val winstonAPIActor = FlowControlFactory.flowControlledActorForSystem(system, winstonAPIFlowConfig)
     
     
-    val extractorFlowConfig = FlowControlConfig(name="extractorActor", actorType="com.reactor.dumbledore.prime.abstraction.ExtractionActor", parallel = 100)
+    val extractorFlowConfig = FlowControlConfig(name="extractorActor", actorType="com.reactor.dumbledore.prime.abstraction.ExtractionActor", parallel = 20)
     val extractorActor = FlowControlFactory.flowControlledActorForSystem(system, extractorFlowConfig)
     
     
@@ -57,35 +57,35 @@ class DumbledoreBoot extends Bootable{
     val twitterServiceActor = FlowControlFactory.flowControlledActorForSystem(system, twitterServiceFlowConfig, TwitterArgs(twitterStoryActor))
     
     
-    val serviceFlowConfig = FlowControlConfig(name="serviceActor", actorType="com.reactor.dumbledore.prime.services.ServiceActor", parallel=100)    
+    val serviceFlowConfig = FlowControlConfig(name="serviceActor", actorType="com.reactor.dumbledore.prime.services.ServiceActor", parallel=20)    
     val serviceActor = FlowControlFactory.flowControlledActorForSystem(system, serviceFlowConfig)
     
     
-    val notificationFlowConfig = FlowControlConfig(name="notificationActor", actorType="com.reactor.dumbledore.prime.notifications.NotificationActor", parallel =100)    
+    val notificationFlowConfig = FlowControlConfig(name="notificationActor", actorType="com.reactor.dumbledore.prime.notifications.NotificationActor", parallel =20)    
     val notificationActor = FlowControlFactory.flowControlledActorForSystem(system, notificationFlowConfig, NotificationArgs(serviceActor))
     
     
-    val feedFlowConfig = FlowControlConfig(name="feedActor", actorType="com.reactor.dumbledore.prime.channels.SingleFeedActor", parallel=100)    
+    val feedFlowConfig = FlowControlConfig(name="feedActor", actorType="com.reactor.dumbledore.prime.channels.SingleFeedActor", parallel=20)    
     val feedActor = FlowControlFactory.flowControlledActorForSystem(system, feedFlowConfig)
     
     
-    val sourceFlowConfig = FlowControlConfig(name="sourceActor", actorType="com.reactor.dumbledore.prime.channels.sources.SourceActor", parallel=100)    
+    val sourceFlowConfig = FlowControlConfig(name="sourceActor", actorType="com.reactor.dumbledore.prime.channels.sources.SourceActor", parallel=20)    
     val sourceActor = FlowControlFactory.flowControlledActorForSystem(system, sourceFlowConfig)
     
     
-    val channelsFlowConfig = FlowControlConfig(name="channelsActor", actorType="com.reactor.dumbledore.prime.channels.ChannelsActor", parallel=100)    
+    val channelsFlowConfig = FlowControlConfig(name="channelsActor", actorType="com.reactor.dumbledore.prime.channels.ChannelsActor", parallel=20)    
     val channelsActor = FlowControlFactory.flowControlledActorForSystem(system, channelsFlowConfig, ChannelArgs(feedActor, sourceActor))
     
     
-    val entFlowConfig = FlowControlConfig(name="entActor", actorType="com.reactor.dumbledore.prime.entertainment.EntertainmentActor", parallel=100)    
+    val entFlowConfig = FlowControlConfig(name="entActor", actorType="com.reactor.dumbledore.prime.entertainment.EntertainmentActor", parallel=20)    
     val entActor = FlowControlFactory.flowControlledActorForSystem(system, entFlowConfig)
     
     
-    val rankFlowConfig = FlowControlConfig(name="rankActor", actorType="com.reactor.dumbledore.prime.rank.SetRankerActor", parallel=100)    
+    val rankFlowConfig = FlowControlConfig(name="rankActor", actorType="com.reactor.dumbledore.prime.rank.SetRankerActor", parallel=20)    
     val rankActor = FlowControlFactory.flowControlledActorForSystem(system, rankFlowConfig)
     
     
-    val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor", parallel=100)
+    val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor", parallel=20)
     val primeActor = FlowControlFactory.flowControlledActorForSystem(system, primeFlowConfig, PrimeActorArgs(channelsActor, notificationActor, entActor, rankActor))   
     
     
