@@ -12,8 +12,11 @@ import com.reactor.dumbledore.prime.services.youtube.Youtube
 import com.reactor.dumbledore.prime.services.comics.Comics
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
+import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
 import scala.util.Failure
 import scala.util.Success
+import akka.util.Timeout
 
 class EntertainmentActor(args:FlowControlArgs) extends FlowControlActor(args) {
   

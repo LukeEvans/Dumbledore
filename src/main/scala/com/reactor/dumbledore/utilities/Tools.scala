@@ -240,4 +240,5 @@ object Tools {
   	def randomIntFromRange(min:Int, max:Int):Int = {
   	  min + (Math.random() * ((max - min) + 1)).toInt
   	}
+  	
 }

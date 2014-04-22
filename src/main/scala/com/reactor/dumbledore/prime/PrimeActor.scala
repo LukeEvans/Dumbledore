@@ -72,7 +72,7 @@ class PrimeActor(args:PrimeActorArgs) extends FlowControlActor(args) {
           set => primeSet ++= set
         }
 
-        val futureRankedSet = (rankActor ? PrimeRankContainer(primeSet, request.time.offsetTime)).mapTo[PrimeSet]
+        val futureRankedSet = (rankActor ? PrimeRankContainer(primeSet, request.time.offsetTime, request.all)).mapTo[PrimeSet]
         
         futureRankedSet.onComplete{
           case Success(rankedSet) =>

@@ -9,6 +9,11 @@ import com.reactor.dumbledore.prime.constants.Prime
 import com.reactor.dumbledore.prime.services.itunes.Itunes
 import com.reactor.dumbledore.prime.services.events.Events
 import com.reactor.dumbledore.prime.services.quote.QuoteOfTheDay
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.concurrent._
+import scala.concurrent.duration._
 
 /** EntertainmentService wrapper class
  */
@@ -16,6 +21,20 @@ abstract class EntertainmentService(id:String){
   
   // Abstract method process should return a tuple containing an ID, a rank, and a ListBuffer[Object] of data
   def process:(String, Int, ListBuffer[Object])
+  
+  def processWithTimeout(proc:() => (String, Int, ListBuffer[Object]), timeOut: Int){
+	try{
+      
+      val futureData = future{proc.apply}
+      
+      (getId, 50, Await.result(futureData, atMost = timeOut seconds))
+      
+    } catch{
+      case e:Exception =>
+        e.printStackTrace()
+        (getId, 50, ListBuffer[Object]())
+    }
+  }
   
   def getId:String = id
 }
@@ -76,7 +95,17 @@ case class YoutubeService() extends EntertainmentService(Prime.POPULAR_VIDEOS){
   
   /** get 8 most popular videos from Youtube */
   def process ={
-    (getId, 50, Youtube.getYoutube(None, 8))
+	    try{
+	      
+	      val futureData = future{Youtube.getYoutube(None, 8)}
+	      
+	      (getId, 50, Await.result(futureData, atMost = 2 seconds))
+	      
+	    } catch{
+	      case e:Exception =>
+	        e.printStackTrace()
+	        (getId, 50, ListBuffer[Object]())
+	    }
   }
 }
 
@@ -87,7 +116,17 @@ case class ComicService() extends EntertainmentService(Prime.COMICS){
   
   /** get Random comics from comic api */
   def process = {
-    (getId, 50, Comics.getRandomToday)
+    try{
+      
+      val futureData = future{Comics.getRandomToday}
+      
+      (getId, 50, Await.result(futureData, atMost = 2 seconds))
+      
+    } catch{
+      case e:Exception =>
+        e.printStackTrace()
+        (getId, 50, ListBuffer[Object]())
+    }
   }
 }
 
@@ -97,7 +136,17 @@ case class MusicService() extends EntertainmentService(Prime.TOP_SONGS){
   
   /** get top itunes rentals */
   def process = {
-    (getId, 0, Itunes.getTopSongs(5))
+	try{
+      
+      val futureData = future{Itunes.getTopSongs(5)}
+      
+      (getId, 50, Await.result(futureData, atMost = 2 seconds))
+      
+    } catch{
+      case e:Exception =>
+        e.printStackTrace()
+        (getId, 50, ListBuffer[Object]())
+    }
   }
 }
 
@@ -107,7 +156,17 @@ case class RentalService() extends EntertainmentService(Prime.TOP_RENTALS){
   
   /** get top itunes rentals */
   def process = {
-    (getId, 0, Itunes.getTopMovies(5))
+	try{
+      
+      val futureData = future{Itunes.getTopMovies(5)}
+      
+      (getId, 50, Await.result(futureData, atMost = 2 seconds))
+      
+    } catch{
+      case e:Exception =>
+        e.printStackTrace()
+        (getId, 50, ListBuffer[Object]())
+    }
   }
 }
 
@@ -117,7 +176,17 @@ case class EventService() extends EntertainmentService(Prime.EVENTS){
   
   /** get top events */
   def process = {
-    (getId, 0, Events.getEvents(5))
+	try{
+      
+      val futureData = future{Events.getEvents(5)}
+      
+      (getId, 50, Await.result(futureData, atMost = 2 seconds))
+      
+    } catch{
+      case e:Exception =>
+        e.printStackTrace()
+        (getId, 50, ListBuffer[Object]())
+    }
   }
 }
 
@@ -127,7 +196,17 @@ case class QuoteService() extends EntertainmentService(Prime.QUOTE){
   
   /** get quote of day */
   def process = {
-    (getId, 0, QuoteOfTheDay.getToday)
+	try{
+      
+      val futureData = future{QuoteOfTheDay.getToday}
+      
+      (getId, 50, Await.result(futureData, atMost = 2 seconds))
+      
+    } catch{
+      case e:Exception =>
+        e.printStackTrace()
+        (getId, 50, ListBuffer[Object]())
+    }
   }
   
 }

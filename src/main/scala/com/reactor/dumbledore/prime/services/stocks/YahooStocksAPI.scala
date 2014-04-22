@@ -14,20 +14,25 @@ object YahooStocksAPI {
   
   
   def getStockCards(stocks:ListBuffer[String]):ListBuffer[Object] = {
+    try{
+      val response = Tools.fetchURL(formUrl(stocks))
     
-    val response = Tools.fetchURL(formUrl(stocks))
-    
-    if(response != null){
-      if(response.get("query").has("results")){
+      if(response != null){
+        if(response.get("query").has("results")){
 
-        if(response.get("query").get("results").get("quote").isArray())
-        	return createCards(response.get("query").get("results").get("quote"))
-        else
-          return createCards(response.get("query").get("results"))
+          if(response.get("query").get("results").get("quote").isArray())
+        	  return createCards(response.get("query").get("results").get("quote"))
+          else
+            return createCards(response.get("query").get("results"))
+        }
       }
+      
+      return null;
+      
+    } catch{
+      case e:Exception => e.printStackTrace()
+      return ListBuffer[Object]()
     }
-    
-    null
   }
 
   

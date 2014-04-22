@@ -28,7 +28,7 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
   
   def receive = {
     
-    case PrimeRankContainer(primeSet, time) => rankSet(primeSet, time,  sender)
+    case PrimeRankContainer(primeSet, time, dev) => rankSet(primeSet, time, dev, sender)
     
     case a:Any => println("SetRankerActor- Unknown message received: " + a)
   }
@@ -36,7 +36,7 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
   
   /** Rank each ListSet in PrimeSet and Send back to PrimeActor
    */
-  private def rankSet(primeSet:PrimeSet, time:DateTime, origin:ActorRef){
+  private def rankSet(primeSet:PrimeSet, time:DateTime, dev:Boolean, origin:ActorRef){
     
     val rankedSet = new PrimeSet
     
@@ -44,7 +44,7 @@ class SetRankerActor(args:FlowControlArgs) extends FlowControlActor(args) {
       set =>
         val ranked = rankListSet(set, time)
         
-        if(ranked.score > 0)
+        if(ranked.score > 0 || dev)
         	rankedSet += ranked
     }
     
