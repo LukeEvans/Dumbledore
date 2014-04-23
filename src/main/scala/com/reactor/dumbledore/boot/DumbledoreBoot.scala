@@ -65,7 +65,7 @@ class DumbledoreBoot extends Bootable{
     val notificationActor = FlowControlFactory.flowControlledActorForSystem(system, notificationFlowConfig, NotificationArgs(serviceActor))
     
     
-    val feedFlowConfig = FlowControlConfig(name="feedActor", actorType="com.reactor.dumbledore.prime.channels.SingleFeedActor", parallel=200)    
+    val feedFlowConfig = FlowControlConfig(name="feedActor", actorType="com.reactor.dumbledore.prime.channels.SingleFeedActor", parallel=400)    
     val feedActor = FlowControlFactory.flowControlledActorForSystem(system, feedFlowConfig)
     
     
