@@ -69,7 +69,7 @@ class Master(serviceName:String) extends MonitoredActor(serviceName) with ActorL
     // Worker is alive. Add him to the list, watch him for
     // death, and let him know if there's work to be done
     case WorkerCreated(worker) =>
-      log.info("Worker created: {}", worker)
+      //log.info("Worker created: {}", worker)
       context.watch(worker)
       workers += (worker -> None)
       notifyWorkers()
