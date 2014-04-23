@@ -65,7 +65,7 @@ class DumbledoreBoot extends Bootable{
     val notificationActor = FlowControlFactory.flowControlledActorForSystem(system, notificationFlowConfig, NotificationArgs(serviceActor))
     
     
-    val feedFlowConfig = FlowControlConfig(name="feedActor", actorType="com.reactor.dumbledore.prime.channels.SingleFeedActor", parallel=20)    
+    val feedFlowConfig = FlowControlConfig(name="feedActor", actorType="com.reactor.dumbledore.prime.channels.SingleFeedActor", parallel=50)    
     val feedActor = FlowControlFactory.flowControlledActorForSystem(system, feedFlowConfig)
     
     
@@ -77,7 +77,7 @@ class DumbledoreBoot extends Bootable{
     val channelsActor = FlowControlFactory.flowControlledActorForSystem(system, channelsFlowConfig, ChannelArgs(feedActor, sourceActor))
     
     
-    val entFlowConfig = FlowControlConfig(name="entActor", actorType="com.reactor.dumbledore.prime.entertainment.EntertainmentActor", parallel=20)    
+    val entFlowConfig = FlowControlConfig(name="entActor", actorType="com.reactor.dumbledore.prime.entertainment.EntertainmentActor", parallel=50)    
     val entActor = FlowControlFactory.flowControlledActorForSystem(system, entFlowConfig)
     
     
@@ -85,7 +85,7 @@ class DumbledoreBoot extends Bootable{
     val rankActor = FlowControlFactory.flowControlledActorForSystem(system, rankFlowConfig)
     
     
-    val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor", parallel=20)
+    val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor", parallel=50)
     val primeActor = FlowControlFactory.flowControlledActorForSystem(system, primeFlowConfig, PrimeActorArgs(channelsActor, notificationActor, entActor, rankActor))   
     
     
