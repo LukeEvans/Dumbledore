@@ -81,7 +81,7 @@ class DumbledoreBoot extends Bootable{
     val entActor = FlowControlFactory.flowControlledActorForSystem(system, entFlowConfig)
     
     
-    val rankFlowConfig = FlowControlConfig(name="rankActor", actorType="com.reactor.dumbledore.prime.rank.SetRankerActor", parallel=20)    
+    val rankFlowConfig = FlowControlConfig(name="rankActor", actorType="com.reactor.dumbledore.prime.rank.SetRankerActor", parallel=50)    
     val rankActor = FlowControlFactory.flowControlledActorForSystem(system, rankFlowConfig)
     
     

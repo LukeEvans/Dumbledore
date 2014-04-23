@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode
 
 class DonationProject {
   
+  val story_type:String = "donation"
+  val source:String = "Donors Choose"
   var id:String = null
   var proposalURL:String = null
   var fundURL:String = null
@@ -14,6 +16,7 @@ class DonationProject {
   var percent_funded:Double = 0
   var cost_to_complete:Double = 0
   var total_price:Double = 0
+  var speech:String = null
   
   
 
@@ -32,8 +35,10 @@ class DonationProject {
     if(node.has("imageURL"))
       imageURL = node.get("imageURL").asText()
       
-    if(node.has("title"))
+    if(node.has("title")){
       title = node.get("title").asText()
+      speech = "Here is a donation project for " + title + "."
+    }
       
     if(node.has("shortDescription"))
       description = node.get("shortDescription").asText()

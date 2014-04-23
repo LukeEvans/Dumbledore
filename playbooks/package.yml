@@ -5,4 +5,5 @@
   sudo: false
   gather_facts: false
   roles:
+      - test
       - package
