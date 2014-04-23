@@ -25,6 +25,8 @@ import scala.util.Failure
 import scala.util.Success
 import com.reactor.dumbledore.prime.notifications.request.Request
 import com.reactor.dumbledore.messaging.PrimeRankContainer
+import com.reactor.patterns.transport.ResponseContainer
+import com.reactor.patterns.transport.RESTResponse
 
 case class PrimeActorArgs(channelActor:ActorRef, notificationActor:ActorRef, entertainmentActor:ActorRef, rankActor:ActorRef) extends FlowControlArgs{  
   override def workerArgs(): FlowControlArgs ={
@@ -32,6 +34,14 @@ case class PrimeActorArgs(channelActor:ActorRef, notificationActor:ActorRef, ent
     newArgs.addMaster(master)
     return newArgs
   }
+}
+
+class PrimeTimeResponse(list:ListBuffer[ListSet[Object]]) extends RESTResponse(list){
+  val status = "ok"
+  var response_time = 0
+  val data = list
+  
+  
 }
 
 class PrimeActor(args:PrimeActorArgs) extends FlowControlActor(args) {
@@ -79,7 +89,8 @@ class PrimeActor(args:PrimeActorArgs) extends FlowControlActor(args) {
             
             rankedSet.sort.foreach(set => println("Set ID: " + set.card_id + "  Set Score: " + set.score))
             
-            reply(origin, rankedSet.sort)
+//            reply(origin, rankedSet.sort)
+            reply(origin, ResponseContainer(new PrimeTimeResponse(rankedSet.sort)))
             complete()
             
           case Failure(e) => e.printStackTrace()

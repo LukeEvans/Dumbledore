@@ -59,6 +59,7 @@ trait ApiService extends HttpService{
   val mapper = new ObjectMapper() with ScalaObjectMapper
     mapper.registerModule(DefaultScalaModule)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    //mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
      
   val apiRoute =
     path(""){
@@ -70,16 +71,26 @@ trait ApiService extends HttpService{
       }
     }~
     path("primetime"){
-      getOrPost{
-        obj =>
-          val response = new Response()
-          val request = new PrimeRequest(obj)
-          complete{
-            primeActor.ask(request)(30.seconds).mapTo[ListBuffer[ListSet[Object]]] map{
-    	      data => response.finish(data, mapper)
-    	    }
+      post{
+        respondWithMediaType(MediaTypes.`application/json`){
+          entity(as[String]){ obj => ctx =>
+            val request = new PrimeRequest(obj)
+            
+            initiateRequest(request, ctx)
           }
+        }
       }
+//      getOrPost{
+//        obj => 
+//          val response = new Response()
+//          val request = new PrimeRequest(obj)
+//
+//          complete{
+//            primeActor.ask(request)(30.seconds).mapTo[ListBuffer[ListSet[Object]]] map{
+//    	      data => response.finish(data, mapper)
+//    	    }
+//          }
+//      }
     }~
     path("notifications"){
       getOrPost{
@@ -232,9 +243,9 @@ trait ApiService extends HttpService{
     
     /** Initiate requests for throttler
      */
-    def initiateRequest(request:RESTRequest, ctx: RequestContext){
+    def initiateRequest(request:APIRequest, ctx: RequestContext){
       
-      val dispatchReq = DispatchRequest(com.reactor.patterns.transport.RequestContainer(request), ctx, mapper)
+      val dispatchReq = DispatchRequest(com.reactor.patterns.transport.RequestContainer2(request), ctx, mapper)
       throttler.tell(Queue(dispatchReq), Actor.noSender)
     }
 }
