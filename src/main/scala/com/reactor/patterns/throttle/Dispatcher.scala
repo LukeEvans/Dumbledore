@@ -14,14 +14,14 @@ import com.reactor.patterns.transport._
 import akka.actor.ActorSelection
 
 
-class Dispatcher(reductoRouter:ActorRef) extends MonitoredActor("reducto-dispatcher"){
+class Dispatcher(primeRouter:ActorRef) extends MonitoredActor("prime-dispatcher"){
 
   def receive = {
     case DispatchRequest(request, ctx, mapper) => 
          val start = Platform.currentTime
          val tempActor = context.actorOf(Props(classOf[PerRequestActor], start, ctx, mapper))
         	
-        reductoRouter.tell(request, tempActor)
+        primeRouter.tell(request.req, tempActor)
         log.info("Handling request: " + request)
     
     case OverloadedDispatchRequest(message) =>

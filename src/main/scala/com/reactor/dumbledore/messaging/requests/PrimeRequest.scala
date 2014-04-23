@@ -7,7 +7,6 @@ import com.reactor.prime.user.UserCredentials
 import com.fasterxml.jackson.databind.JsonNode
 import scala.collection.JavaConversions._
 import com.reactor.dumbledore.utilities.Conversions
-import org.elasticsearch.rest.RestRequest
 
 class PrimeRequest(obj:Object) extends APIRequest(obj){
   
