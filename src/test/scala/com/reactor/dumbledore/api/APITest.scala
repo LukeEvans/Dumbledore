@@ -26,13 +26,13 @@ import com.reactor.dumbledore.messaging.requests.FeedRequestData
 import com.reactor.patterns.throttle.TimerBasedThrottler
 import com.reactor.patterns.throttle.Throttler.Rate
 import scala.concurrent.duration.FiniteDuration
+import com.reactor.patterns.throttle.Dispatcher
+import com.reactor.patterns.throttle.Throttler.SetTarget
 
 
 class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService {
   def actorRefFactory = system 
   
-  val rateTime = new scala.concurrent.duration.FiniteDuration(1, java.util.concurrent.TimeUnit.SECONDS) 
-  val throttler = actorRefFactory.actorOf(Props(new TimerBasedThrottler(new Rate(40, rateTime))))
   
   // Initialize Actors
   val winstonAPIFlowConfig = FlowControlConfig(name="winstonAPIActor", actorType="com.reactor.dumbledore.prime.legacy.WinstonAPIActor")    
@@ -71,6 +71,11 @@ class ApiServiceSpec extends Specification with Specs2RouteTest with ApiService 
   val primeFlowConfig = FlowControlConfig(name="primeActor", actorType="com.reactor.dumbledore.prime.PrimeActor")
   val primeActor = FlowControlFactory.flowControlledActorForTests(system, primeFlowConfig, PrimeActorArgs(channelsActor, notificationActor, entActor, rankActor))
   
+  val dispatcher = actorRefFactory.actorOf(Props(classOf[Dispatcher], primeActor), "dispatcher")
+  val rateTime = new scala.concurrent.duration.FiniteDuration(1, java.util.concurrent.TimeUnit.SECONDS) 
+  val throttler = actorRefFactory.actorOf(Props(new TimerBasedThrottler(new Rate(40, rateTime))))
+  
+  throttler ! SetTarget(Some(dispatcher))
   
   // Set Time
   val time = new scala.concurrent.duration.FiniteDuration(10, java.util.concurrent.TimeUnit.SECONDS)  

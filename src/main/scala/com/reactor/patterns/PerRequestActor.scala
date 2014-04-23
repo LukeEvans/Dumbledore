@@ -20,7 +20,7 @@ class PerRequestActor(startTime: Long, ctx: RequestContext, mapper: ObjectMapper
     import context._
     
     // Increment count for per request actors
-    statsd.count("per-requst-actors", 1)
+    statsd.count("per-request-actors", 1)
     
 	setReceiveTimeout(10.seconds)
   
