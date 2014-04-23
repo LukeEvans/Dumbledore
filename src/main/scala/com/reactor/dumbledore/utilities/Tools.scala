@@ -154,20 +154,30 @@ object Tools {
         try {
                 var httpClient = new DefaultHttpClient();
                 httpClient.getParams().setParameter("http.socket.timeout", new Integer(5000));
-                        var getRequest = new HttpGet(parseUrl(url).toString());
-                        getRequest.addHeader("accept", "application/json");
+                
+                var getRequest = new HttpGet(parseUrl(url).toString());
+                getRequest.addHeader("accept", "application/json");
 
-                        var response = httpClient.execute(getRequest);
-
-                        // Return JSON
-                        var mapper = new ObjectMapper();
-                        var reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
-                        return mapper.readTree(reader);
+                var response = httpClient.execute(getRequest);
+                
+                // Return JSON
+                var mapper = new ObjectMapper();
+                
+                var contentStream = response.getEntity().getContent()
+                var reader = new BufferedReader(new InputStreamReader(contentStream, "UTF-8"));
+                
+                var json = mapper.readTree(reader);
+                
+                contentStream.close()                
+                httpClient.getConnectionManager().shutdown()
+                
+                return json;
 
                 } catch{
                   case e:Exception =>{
                         System.out.println("Failure: " + url);
                         e.printStackTrace();
+                      
                         return null;
                   }
                 }
