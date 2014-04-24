@@ -8,7 +8,7 @@ import akka.actor.ActorRef
 
 class MongoActor(args:FlowControlArgs) extends FlowControlActor(args) {
 
-  private val mongo = new MongoDB
+  private val mongo = new MongoDB2("reactor-news")
   
   ready
   
@@ -24,7 +24,7 @@ class MongoActor(args:FlowControlArgs) extends FlowControlActor(args) {
   
   def handleMongoQuery(mongoQuery:MongoQuery, origin:ActorRef){
     
-    val data = mongo.find(mongoQuery.query, mongoQuery.collection, mongoQuery.limit)
+    val data = mongo.find(mongoQuery.query, mongoQuery.limit)
     
     reply(origin, data)
     complete()
