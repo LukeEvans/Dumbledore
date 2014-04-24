@@ -24,10 +24,11 @@ case class JsonParseError(msg:String)
 // Accio request and responses
 case class RequestContainer(req:RESTRequest)
 case class RequestContainer2(req:APIRequest)
+case class StringRequestContainer(req:String)
 case class ResponseContainer(resp:RESTResponse)
 
 // Dispatch messages
-case class DispatchRequest(request:RequestContainer2, ctx:RequestContext, mapper:ObjectMapper)
+case class DispatchRequest(request:StringRequestContainer, ctx:RequestContext, mapper:ObjectMapper)
 case class OverloadedDispatchRequest(message:Any)
   
 // HTTP Request

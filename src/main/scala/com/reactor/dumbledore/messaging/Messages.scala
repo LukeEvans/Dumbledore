@@ -13,6 +13,7 @@ import com.reactor.dumbledore.messaging.requests._
 import com.reactor.dumbledore.prime.notifications.request.Request
 import com.reactor.dumbledore.prime.PrimeSet
 import org.joda.time.DateTime
+import com.mongodb.DBObject
 
 class Message extends Serializable
 
@@ -62,3 +63,5 @@ case class PrimeRankContainer(set:PrimeSet, now:DateTime, dev:Boolean)
 case class YoutubeData(request:YoutubeRequest)
 
 
+// Mongo Containers
+case class MongoQuery(collection:String, query:DBObject, limit:Int)

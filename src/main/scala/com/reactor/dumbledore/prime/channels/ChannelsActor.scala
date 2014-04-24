@@ -96,7 +96,7 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
   
   /** Get Nested array story sets */
   def getChannelData(channelData:ListBuffer[FeedRequestData], origin:ActorRef){
-    implicit val timeout = Timeout(3 seconds)
+    implicit val timeout = Timeout(5 seconds)
     
     try{
       val dataArray = ListBuffer[ListSet[Object]]()
@@ -107,7 +107,7 @@ class ChannelsActor(args:ChannelArgs) extends FlowControlActor(args){
       }
     
       val list = ListBuffer[Object]()
-      val data = Await.result(Future.sequence(dataList), atMost = 3 seconds)
+      val data = Await.result(Future.sequence(dataList), atMost = 5 seconds)
       
       data map{
         d => 
