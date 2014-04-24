@@ -66,7 +66,6 @@ trait ApiService extends HttpService{
       getOrPost{
         obj =>
           complete{
-            Thread.sleep(2000)
             "Dumbledore API 1.2!!!"
           }
       }
@@ -74,8 +73,7 @@ trait ApiService extends HttpService{
     path("primetime"){
       post{
         respondWithMediaType(MediaTypes.`application/json`){
-          entity(as[String]){ obj => ctx =>
-            val request = new PrimeRequest(obj)
+          entity(as[String]){ request => ctx =>
             
             initiateRequest(request, ctx)
           }
@@ -244,9 +242,9 @@ trait ApiService extends HttpService{
     
     /** Initiate requests for throttler
      */
-    def initiateRequest(request:APIRequest, ctx: RequestContext){
+    def initiateRequest(request:String, ctx: RequestContext){
       
-      val dispatchReq = DispatchRequest(com.reactor.patterns.transport.RequestContainer2(request), ctx, mapper)
+      val dispatchReq = DispatchRequest(com.reactor.patterns.transport.StringRequestContainer(request), ctx, mapper)
       throttler.tell(Queue(dispatchReq), Actor.noSender)
     }
 }

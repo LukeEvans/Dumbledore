@@ -56,6 +56,11 @@ class PrimeActor(args:PrimeActorArgs) extends FlowControlActor(args) {
   override def postStop = println("Prime Actor Terminated...")
 
   override def receive = {
+    
+    case reqString:String =>
+      val request = new PrimeRequest(reqString)
+      primeTime(request, sender)
+    
     case request:PrimeRequest =>
       primeTime(request, sender)
       

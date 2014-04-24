@@ -28,6 +28,8 @@ import com.reactor.dumbledore.prime.channels.ChannelArgs
 import com.reactor.dumbledore.prime.services.twitter.TwitterArgs
 import com.reactor.dumbledore.prime.services.twitter.TwitterBuilderArgs
 import com.reactor.dumbledore.prime.PrimeActorArgs
+import com.reactor.store.MongoDB
+import com.reactor.dumbledore.prime.channels.SingleFeedActorArgs
 
 class DumbledoreBoot extends Bootable{
   val ip = IPTools.getPrivateIp(); 
@@ -40,6 +42,9 @@ class DumbledoreBoot extends Bootable{
   implicit val system = ActorSystem("DumbledoreClusterSystem-0-1", config)
   
   Cluster(system) registerOnMemberUp{
+    
+    val mongoFlowConfig = FlowControlConfig(name="mongoActor", actorType = "com.reactor.store.MongoActor", parallel = 20)
+    val mongoActor = FlowControlFactory.flowControlledActorForSystem(system, mongoFlowConfig)
     
     val winstonAPIFlowConfig = FlowControlConfig(name="winstonAPIActor", actorType="com.reactor.dumbledore.prime.legacy.WinstonAPIActor")    
     val winstonAPIActor = FlowControlFactory.flowControlledActorForSystem(system, winstonAPIFlowConfig)
@@ -65,8 +70,8 @@ class DumbledoreBoot extends Bootable{
     val notificationActor = FlowControlFactory.flowControlledActorForSystem(system, notificationFlowConfig, NotificationArgs(serviceActor))
     
     
-    val feedFlowConfig = FlowControlConfig(name="feedActor", actorType="com.reactor.dumbledore.prime.channels.SingleFeedActor", parallel=400)    
-    val feedActor = FlowControlFactory.flowControlledActorForSystem(system, feedFlowConfig)
+    val singleFeedFlowConfig = FlowControlConfig(name="feedActor", actorType="com.reactor.dumbledore.prime.channels.SingleFeedActor", parallel=400)    
+    val singleFeedActor = FlowControlFactory.flowControlledActorForSystem(system, singleFeedFlowConfig, SingleFeedActorArgs(mongoActor))
     
     
     val sourceFlowConfig = FlowControlConfig(name="sourceActor", actorType="com.reactor.dumbledore.prime.channels.sources.SourceActor", parallel=20)    
@@ -74,7 +79,7 @@ class DumbledoreBoot extends Bootable{
     
     
     val channelsFlowConfig = FlowControlConfig(name="channelsActor", actorType="com.reactor.dumbledore.prime.channels.ChannelsActor", parallel=20)    
-    val channelsActor = FlowControlFactory.flowControlledActorForSystem(system, channelsFlowConfig, ChannelArgs(feedActor, sourceActor))
+    val channelsActor = FlowControlFactory.flowControlledActorForSystem(system, channelsFlowConfig, ChannelArgs(singleFeedActor, sourceActor))
     
     
     val entFlowConfig = FlowControlConfig(name="entActor", actorType="com.reactor.dumbledore.prime.entertainment.EntertainmentActor", parallel=50)    
