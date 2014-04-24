@@ -66,6 +66,7 @@ trait ApiService extends HttpService{
       getOrPost{
         obj =>
           complete{
+            Thread.sleep(2000)
             "Dumbledore API 1.2!!!"
           }
       }
