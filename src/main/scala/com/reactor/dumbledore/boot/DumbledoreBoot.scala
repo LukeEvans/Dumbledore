@@ -43,7 +43,7 @@ class DumbledoreBoot extends Bootable{
   
   Cluster(system) registerOnMemberUp{
     
-    val mongoFlowConfig = FlowControlConfig(name="mongoActor", actorType = "com.reactor.store.MongoActor", parallel = 20)
+    val mongoFlowConfig = FlowControlConfig(name="mongoActor", actorType = "com.reactor.store.MongoActor", parallel = 50)
     val mongoActor = FlowControlFactory.flowControlledActorForSystem(system, mongoFlowConfig)
     
     val winstonAPIFlowConfig = FlowControlConfig(name="winstonAPIActor", actorType="com.reactor.dumbledore.prime.legacy.WinstonAPIActor")    
