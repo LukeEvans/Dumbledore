@@ -176,6 +176,11 @@ class NotificationManager {
     val nearbyPhotos = new NotificationConfig(Prime.V036, "/instagram/location").add247(None)
     
     devServices put (Prime.NEARBY_PHOTOS, nearbyPhotos)
+    
+        
+    val donations = new NotificationConfig(Prime.DUMBLEDORE, "/").add247(None)
+    
+    services put (Prime.DONATIONS, donations)
   
   }
 }
